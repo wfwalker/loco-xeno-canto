@@ -1,0 +1,14 @@
+{
+  "name": "loco-xeno-canto",
+  "version": "0.0.1",
+  "description": "sounds of your local birds",
+  "main": "server.js",
+  "dependencies": {
+    "express": "*",    
+    "url": "*",    
+    "request": "*",    
+    "http": "*"
+  },
+  "author": "Bill Walker",
+  "license": "MPL, v 2.0"
+}
