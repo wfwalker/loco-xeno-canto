@@ -36,7 +36,7 @@ function getSounds(inID, latinName) {
 			sounds = data;
 
 			console.log(data.recordings[0].file);
-			$('#' + inID).append('<audio src="' + data.recordings[0].file + '" type="audio/mpeg" controls autoplay loop></audio>')
+			$('#' + inID).append('<audio src="' + data.recordings[0].file + '" type="audio/mpeg" controls loop></audio>')
 		},
 		error: function(xhr, status, error) {
 			console.log('xeno canto fail');
@@ -46,8 +46,8 @@ function getSounds(inID, latinName) {
 	});
 }
 
-function getRecentNearbySightings(lat, long) {
-	var queryParams = { lat: 37.8, lng: -122.5, fmt: 'json' };
+function getRecentNearbySightings(inLatitude, inLongitude) {
+	var queryParams = { lat: inLatitude, lng: inLongitude, fmt: 'json' };
 	var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent?' + $.param(queryParams);
 	console.log(urlString);
 
@@ -55,13 +55,13 @@ function getRecentNearbySightings(lat, long) {
 		console.log('got data');
 		console.log(data);
 		for (var index in data) {
-			$('#scienceNames').append('<div id="' + index + '">' + data[index].sciName + '</div>');
+			$('#scienceNames').append('<div id="' + index + '">' + data[index].comName + '</div>');
 			scienceNames.push(data[index].sciName);
 		}
 
-		getSounds(0, scienceNames[0]);
-		getSounds(1, scienceNames[1]);
-		getSounds(2, scienceNames[2]);
+		for (index in data) {
+			getSounds(index, scienceNames[index]);
+		}
 	});
 }
 
