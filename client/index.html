@@ -6,49 +6,60 @@
 
 	<body>	
 		<div class='container'>
-		<div class='row'>
-		<div class='col-md-12'>
+			<div class='row'>
+				<div class='col-md-12'>
 
-		<h1>loco xeno canto</h1>
+					<h1>loco xeno canto</h1>
 
-		<p>this is a set of experiments using geolocation, eBird API, and xeno-canto API</p>
+					<p>this is a set of experiments using geolocation, eBird API, and xeno-canto API</p>
 
-		<div class='panel panel-default'>
-			<div class='panel-heading'>
-				your birds
-			</div>
-			<div class='panel-body'>
-				<div id='location'>
+					<div class='panel panel-default'>
+						<div class='panel-heading'>
+							your birds
+						</div>
+						<div class='panel-body'>
+							<div id='location'>
+							</div>
+						</div>
+					</div>
+
+					<div class='panel panel-default'>
+						<div class='panel-heading'>
+							Birding by ear quiz!
+						</div>
+						<div class='panel-body'>
+							<p>
+								hit the 'choose' button to choose a random recently sighted bird and listen to its recording.
+								hit the 'answer' button to see if you were right.
+							</p>
+
+							<h1>
+								<span id='sightingindex'></span><span style='display: none' id='commonname'></span>
+							</h1>
+
+							<div id='quiz'>
+							</div>
+
+							<div id='hint'>
+							</div>
+
+							<div id='audio'>
+							</div>
+
+							<button class='btn btn-lg btn-primary' id='choose'>next bird</button>
+							<button class='btn btn-lg btn-primary' id='another'>another song</button>
+							<button class='btn btn-lg btn-primary' id='answer'>show answer</button>
+						</div>
+					</div>
+
+					<div id='sounds'>
+					</div>
+
+					<div id='scienceNames'>
+					</div>
+
 				</div>
 			</div>
-		</div>
-
-		<div class='panel panel-default'>
-			<div class='panel-heading'>
-				Birding by ear quiz!
-			</div>
-			<div class='panel-body'>
-				<p>
-					hit the 'choose' button to choose a random recently sighted bird and listen to its recording.
-					hit the 'answer' button to see if you were right.
-				</p>
-
-				<div id='quiz'>
-				</div>
-
-				<button class='btn btn-primary' id='choose'>choose</button>
-				<button class='btn btn-primary' id='answer'>answer</button>
-			</div>
-		</div>
-
-		<div id='sounds'>
-		</div>
-
-		<div id='scienceNames'>
-		</div>
-
-		</div>
-		</div>
 		</div>
 
 		<script src="js/jquery.min.js" type="text/javascript"></script>	

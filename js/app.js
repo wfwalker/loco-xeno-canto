@@ -2,6 +2,7 @@
 
 var sightings = [];
 var sounds = [];
+var chosen = 0;
 
 function getLocation() {
 	if (navigator.geolocation) {
@@ -22,31 +23,54 @@ function getLocation() {
 	}
 }
 
-function getSounds(inID, latinName) {
-	var urlString = '/sounds/' + latinName.replace(' ', '+');
-	console.log('seeking sound data ' + urlString);
+function chooseRandomRecording(inID) {
+	$('#audio').empty();
 
-	$.ajax({
-		url: urlString,
-		dataType: 'json',
-		success: function(data) {
-			sounds[inID] = data.recordings[0].file;
-			if (data.recordings) {
-				$('#quiz').append('<audio src="' + data.recordings[0].file + '" type="audio/mpeg" autoplay controls loop></audio>')
-			} else {
-				$('#quiz').append('no recordings found');
+	if (sounds[inID] && sounds[inID].recordings) {
+		var soundsData = sounds[inID];
+		var randomRecordingID = Math.floor(Math.random() * soundsData.recordings.length);
+
+		console.log(soundsData.recordings[randomRecordingID]);
+		$('#audio').append('<audio src="' + soundsData.recordings[randomRecordingID].file + '" type="audio/mpeg" autoplay controls loop></audio>')
+		$('#audio').append('<div>recorded at ' + soundsData.recordings[randomRecordingID].loc + '</div>');
+	} else {
+		console.log('no sounds for #' + inID);
+		$('#audio').append('no recordings found');
+	}
+}
+
+function getSounds(inID) {
+	$('#audio').empty();
+	$('#audio').append('loading sound data');
+
+
+	if (sounds[inID]) {
+		chooseRandomRecording(inID);		
+	} else {
+		var latinName = sightings[inID].sciName;
+		var urlString = '/sounds/' + latinName.replace(' ', '+');
+		console.log('seeking sound data ' + urlString);
+
+		$.ajax({
+			url: urlString,
+			dataType: 'json',
+			success: function(data) {
+				if (data.recordings) {
+					sounds[inID] = data;
+					chooseRandomRecording(inID);
+				} else {
+					$('#audio').append('no recordings found');
+				}
+			},
+			error: function(xhr, status, error) {
+				console.log('xeno canto fail');
+				$('#audio').append('no recordings found');
 			}
-		},
-		error: function(xhr, status, error) {
-			console.log('xeno canto fail');
-			$('#quiz').append('no recordings found');
-		}
-	});
+		});		
+	}
 }
 
 function getRecentNearbySightings(inLatitude, inLongitude) {
-	$('#location').append('<img src="http://maps.googleapis.com/maps/api/staticmap?markers=color:blue|size:small|' + inLatitude + ',' + inLongitude + '&size=100x100&zoom=5&sensor=false" />');
-
 	var queryParams = { lat: inLatitude, lng: inLongitude, fmt: 'json' };
 	var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent?' + $.param(queryParams);
 	console.log(urlString);
@@ -61,18 +85,32 @@ function getRecentNearbySightings(inLatitude, inLongitude) {
 }
 
 $(document).ready(function(){ 
-	console.log('hello, world');
-
 	$('#choose').click(function() {
-		var chosen = Math.floor(Math.random() * sightings.length);
-		$('#quiz').empty();
-		$('#quiz').append('<h1>#' + chosen + '</h1>');
-		$('#quiz').append('<div id="commonname" style="display: none">' + sightings[chosen].comName + '</div>');
-		getSounds(chosen, sightings[chosen].sciName);
+		// clear and hide the old answer, hint, sighting #, and audio player
+		$('#commonname').empty();
+		$('#commonname').hide();
+		$('#hint').empty();
+		$('#sightingindex').empty();
+		$('#audio').empty();
+
+		// choose a new sighting
+		chosen = Math.floor(Math.random() * sightings.length);
+		$('#sightingindex').append('<h1>#' + chosen + '</h1>');
+
+		// show a new hint, put the answer into the DOM but don't show it
+		$('#hint').append('seen at ' + sightings[chosen].locName);
+		$('#commonname').append(sightings[chosen].comName);
+
+		// get sounds for this species if needed, and pick one at random
+		getSounds(chosen);
 	});
 
 	$('#answer').click(function() {
 		$('#commonname').show();
+	});
+
+	$('#another').click(function() {
+		getSounds(chosen);
 	});
 
 	getLocation();
