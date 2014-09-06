@@ -1,13 +1,38 @@
 // app.js
 
+var myPosition;
 var sightings = [];
 var sounds = [];
 var chosen = 0;
+
+// http://www.movable-type.co.uk/scripts/latlong.html
+
+function degreesToRadians(inDegrees) {
+	return 2 * 3.14159 * inDegrees / 360.0;
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+	var R = 6371; // km
+	var φ1 = degreesToRadians(lat1);
+	var φ2 = degreesToRadians(lat2);
+	var Δφ = degreesToRadians(lat2-lat1);
+	var Δλ = degreesToRadians(lon2-lon1);
+
+	var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+	        Math.cos(φ1) * Math.cos(φ2) *
+	        Math.sin(Δλ/2) * Math.sin(Δλ/2);
+	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+	var d = R * c;
+
+	return d;
+}
 
 function getLocation() {
 	if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(
 			function success(position) {
+				myPosition = position;
 				$('#location').append('<div>' + position.coords.latitude + ',' + position.coords.longitude + '</div>');
 				getRecentNearbySightings(position.coords.latitude, position.coords.longitude);
 			},
@@ -31,8 +56,9 @@ function chooseRandomRecording(inID) {
 		var randomRecordingID = Math.floor(Math.random() * soundsData.recordings.length);
 
 		console.log(soundsData.recordings[randomRecordingID]);
+		var kmDistance = haversine(myPosition.coords.latitude, myPosition.coords.longitude, soundsData.recordings[randomRecordingID].lat, soundsData.recordings[randomRecordingID].lng);
 		$('#audio').append('<audio src="' + soundsData.recordings[randomRecordingID].file + '" type="audio/mpeg" autoplay controls loop></audio>')
-		$('#audio').append('<div>recorded at ' + soundsData.recordings[randomRecordingID].loc + '</div>');
+		$('#audio').append('<div>recorded ' + Math.round(kmDistance) + ' kilometers away</div>');
 	} else {
 		console.log('no sounds for #' + inID);
 		$('#audio').append('no recordings found');
