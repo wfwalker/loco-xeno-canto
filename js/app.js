@@ -76,6 +76,7 @@ function getSounds(inID) {
 		var latinName = sightings[inID].sciName;
 		var urlString = '/sounds/' + latinName.replace(' ', '+');
 		console.log('seeking sound data ' + urlString);
+		$('#another').removeClass('disabled');
 
 		$.ajax({
 			url: urlString,
@@ -103,7 +104,10 @@ function getRecentNearbySightings(inLatitude, inLongitude) {
 
 	$.getJSON(urlString, function(data) {
 		console.log('got data');
-		$('#location').append('<div>' + data.length + ' sightings</div>')
+		$('#location').append('<div>' + data.length + ' sightings</div>');
+		$('#choose').removeClass('disabled');
+		$('#answer').removeClass('disabled');
+		
 		for (var index in data) {
 			sightings.push(data[index]);
 		}
