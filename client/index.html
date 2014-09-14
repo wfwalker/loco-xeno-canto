@@ -1,69 +1,85 @@
 <html>
 	<head>
-		<title>loco xeno canto</title>
+		<title>BirdVox</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	    <link rel="stylesheet" type="text/css" href="/bootstrap.css" />
 	</head>
 
-	<body>	
+	<body style='background: gray; padding-top: 10px'>	
 		<div class='container'>
 			<div class='row'>
 				<div class='col-md-12'>
-
-					<h1>loco xeno canto</h1>
-
-					<p>this is a set of experiments using geolocation, eBird API, and xeno-canto API</p>
-
 					<div class='panel panel-default'>
-						<div class='panel-heading'>
-							your birds
-						</div>
-						<div class='panel-body'>
-							<div id='location'>
-							</div>
+					<div class='panel-heading' style='font-size: 18pt'>BirdVox</div>
+
+					<div class='panel-body'>
+						this is a set of experiments using
+						<a href='https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/Using_geolocation'>geolocation</a>,
+						<a href='https://confluence.cornell.edu/display/CLOISAPI/eBird+API+1.1'>eBird API</a>, and
+						<a href='http://www.xeno-canto.org/article/153'>xeno-canto API</a>
+					</div>					
+
+					<div class="progress">
+						<div class="progress-bar" role="progressbar" style="width: 0%">
 						</div>
 					</div>
+					</div>
+				</div>
+			</div>
 
+			<div class='row'>			
+				<div class='col-md-6'>
 					<div class='panel panel-default'>
 						<div class='panel-heading'>
-							Birding by ear quiz!
+							What Bird Is It?
 						</div>
 						<div class='panel-body'>
-							<p>
-								hit the 'choose' button to choose a random recently sighted bird and listen to its recording.
-								hit the 'answer' button to see if you were right.
-							</p>
-
-							<h1>
-								<span id='sightingindex'></span><span style='display: none' id='commonname'></span>
-							</h1>
+							<div class="input-group input-group-lg">
+								<input type="text" id='commonname' class="form-control" placeholder="Species">
+							</div>
 
 							<div id='quiz'>
 							</div>
 
-							<div id='hint'>
+							<div id='hint' style='padding-bottom: 10px'>
 							</div>
 
-							<div id='audio'>
-							</div>
-
-							<button class='disabled btn btn-lg btn-primary' id='choose'>next bird</button>
-							<button class='disabled btn btn-lg btn-primary' id='another'>another song</button>
-							<button class='disabled btn btn-lg btn-primary' id='answer'>show answer</button>
+							<button class='disabled btn btn-primary' id='choose'>next bird</button>
+							<button class='disabled btn btn-primary' id='answer'>answer</button>
 						</div>
 					</div>
-
-					<div id='sounds'>
+				</div>				
+				<div class='col-md-6'>
+					<div class='panel panel-default'>
+						<div class='panel-heading'>
+							<span id='soundsHeading'>Bird Songs</span>
+						</div>
+						<div class='panel-body'>
+							<div id='audio'>
+								<audio> </audio>
+							</div>
+							<div style='padding-bottom: 10px; padding-top: 10px'>
+								<span id='readyState'></span> <span id='audioDescription'></span>
+							</div>
+							<div class='btn-group'>
+								<button class='disabled btn btn-primary btn-lg' id='another'>
+									<span class='glyphicon glyphicon-fast-forward'></span>
+								</button>
+								<button class='btn btn-primary btn-lg' id='play'>
+									<span class='glyphicon glyphicon-play'></span>
+								</button>
+								<button class='btn btn-primary btn-lg' id='pause'>
+									<span class='glyphicon glyphicon-pause'></span>
+								</button>
+							</div>
+						</div>
 					</div>
-
-					<div id='scienceNames'>
-					</div>
-
-				</div>
+				</div>				
 			</div>
 		</div>
 
 		<script src="js/jquery.min.js" type="text/javascript"></script>	
+		<script src="js/bootstrap.js" type="text/javascript"></script>	
 		<script src="js/app.js" type="text/javascript"></script>	
 	</body>
 </html>
