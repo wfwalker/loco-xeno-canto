@@ -72,7 +72,7 @@ function chooseRandomRecording(inID) {
 			console.log("PROGRESS");
 			console.log($('audio')[0].readyState);
 			if ($('audio')[0].readyState == 4) {
-				$('#readyState').text($('audio')[0].duration + ' sec');
+				$('#readyState').text(Math.round($('audio')[0].duration) + ' sec');
 				$('#audioDescription').text(currentSound.type + ' recorded ' + Math.round(kmDistance) + ' kilometers away in ' + currentSound.loc);
 			} else if ($('audio')[0].readyState == 3) {
 				$('#readyState').text('loading');
@@ -134,6 +134,7 @@ function getRecentNearbySightings(inLatitude, inLongitude) {
 		}
 
 		$('.progress-bar').css('width', '66%');
+		$('#quizHeading').text(sightings.length + ' birds to identify');
 		chooseNextBird();
 	});
 }
@@ -152,7 +153,8 @@ function chooseNextBird() {
 	console.log(sightings[chosen]);
 
 	// show a new hint, put the answer into the DOM but don't show it
-	$('#hint').append('Seen at ' + sightings[chosen].locName + ' on ' + sightings[chosen].obsDt);
+	$('#sightingLocation').text(sightings[chosen].locName);
+	$('#sightingDate').text(sightings[chosen].obsDt);
 
 	// get sounds for this species if needed, and pick one at random
 	getSounds(chosen);	
