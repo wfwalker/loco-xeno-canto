@@ -17,8 +17,8 @@ function PlaceTimeBirdSongs() {
 	this.sounds = [];
 }
 
-PlaceTimeBirdSongs.prototype.sample = function() {
-	console.log('you invoked sample() on PlaceTimeBirdSongs');
+PlaceTimeBirdSongs.prototype.chooseRandomSighting = function() {
+	return Math.floor(Math.random() * this.sightings.length);
 }
 
 // Fix up for prefixing
@@ -165,7 +165,7 @@ function chooseNextBird() {
 	$('#sightingindex').empty();
 
 	// choose a new sighting
-	gCurrentQuizSighting = Math.floor(Math.random() * gQuizScope.sightings.length);
+	gCurrentQuizSighting = gQuizScope.chooseRandomSighting();
 	$('#sightingindex').append('#' + gCurrentQuizSighting + ' ');
 	$('#answer').removeClass('disabled');
 	console.log(gQuizScope.sightings[gCurrentQuizSighting]);
