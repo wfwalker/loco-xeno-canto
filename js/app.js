@@ -1,12 +1,23 @@
 // app.js
 
+// TODO: error handling for bogus sciName (throw exception?)
+// TODO: push state / fragments in URL, repeatable testing?
+// TODO: structured global / singleton
+// TODO: factor out use of JSON api's for reuse
+// TODO: add ember for quiz?
+// TODO: do real web audio API four calls at once
+// MAYBE: instead of using audio elements, use https://developer.mozilla.org/en-US/docs/Web/API/AudioContext.decodeAudioData
+
 var myPosition;
 var sightings = [];
 var sounds = [];
 var chosen = 0;
 
-// http://www.movable-type.co.uk/scripts/latlong.html
+// Fix up for prefixing
+window.AudioContext = window.AudioContext||window.webkitAudioContext;
+context = new AudioContext();
 
+// http://www.movable-type.co.uk/scripts/latlong.html
 function degreesToRadians(inDegrees) {
 	return 2 * 3.14159 * inDegrees / 360.0;
 }
@@ -28,6 +39,7 @@ function haversine(lat1, lon1, lat2, lon2) {
 	return d;
 }
 
+// TODO: handle errors
 function getLocation() {
 	if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(
@@ -51,7 +63,6 @@ function chooseRandomRecording(inID) {
 	$('audio')[0].pause();
 	$('#readyState').text('picking');
 	$('#audioDescription').text('next sound');
-	console.log("SAPPPED");
 
 	if (sounds[inID] && sounds[inID].recordings) {
 		var soundsData = sounds[inID];
@@ -60,8 +71,8 @@ function chooseRandomRecording(inID) {
 
 		console.log(soundsData.recordings[randomRecordingID]);
 		var kmDistance = haversine(myPosition.coords.latitude, myPosition.coords.longitude, currentSound.lat, currentSound.lng);
-		$('#audio').empty();
-		$('#audio').append('<audio id="player" src="' + currentSound.file + '" type="audio/mpeg" autoplay loop ></audio>');
+		$('audio')[0].setAttribute('src', currentSound.file);
+		// $('#audio').append('<audio id="player" src="' + currentSound.file + '" type="audio/mpeg" autoplay loop ></audio>');
 
 		$('audio')[0].addEventListener('playing', function() {
 			console.log("PLAYING");
