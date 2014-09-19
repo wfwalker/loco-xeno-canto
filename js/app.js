@@ -6,12 +6,20 @@
 // TODO: factor out use of JSON api's for reuse
 // TODO: add ember for quiz?
 // TODO: do real web audio API four calls at once
-// MAYBE: instead of using audio elements, use https://developer.mozilla.org/en-US/docs/Web/API/AudioContext.decodeAudioData
+// TODO: real object for sound library
 
-var myPosition;
-var sightings = [];
-var sounds = [];
-var chosen = 0;
+var gQuizScope = new PlaceTimeBirdSongs();
+var gCurrentQuizSighting = 0;
+
+function PlaceTimeBirdSongs() {
+	this.position = null;
+	this.sightings = [];
+	this.sounds = [];
+}
+
+PlaceTimeBirdSongs.prototype.sample = function() {
+	console.log('you invoked sample() on PlaceTimeBirdSongs');
+}
 
 // Fix up for prefixing
 window.AudioContext = window.AudioContext||window.webkitAudioContext;
@@ -43,12 +51,13 @@ function haversine(lat1, lon1, lat2, lon2) {
 function getLocation() {
 	if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(
-			function success(position) {
-				myPosition = position;
+			function success(inPosition) {
+				gQuizScope.position = inPosition;
 				$('.progress-bar').css('width', '33%');
-				getRecentNearbySightings(position.coords.latitude, position.coords.longitude);
+				getRecentNearbySightings(inPosition.coords.latitude, inPosition.coords.longitude);
 			},
 			function error() {
+				// TODO: still set gQuizScope.position
 				console.log('error');
 				getRecentNearbySightings(37, -122);
 			},
@@ -64,15 +73,14 @@ function chooseRandomRecording(inID) {
 	$('#readyState').text('picking');
 	$('#audioDescription').text('next sound');
 
-	if (sounds[inID] && sounds[inID].recordings) {
-		var soundsData = sounds[inID];
+	if (gQuizScope.sounds[inID] && gQuizScope.sounds[inID].recordings) {
+		var soundsData = gQuizScope.sounds[inID];
 		var randomRecordingID = Math.floor(Math.random() * soundsData.recordings.length);
 		var currentSound = soundsData.recordings[randomRecordingID];
 
 		console.log(soundsData.recordings[randomRecordingID]);
-		var kmDistance = haversine(myPosition.coords.latitude, myPosition.coords.longitude, currentSound.lat, currentSound.lng);
+		var kmDistance = haversine(gQuizScope.position.coords.latitude, gQuizScope.position.coords.longitude, currentSound.lat, currentSound.lng);
 		$('audio')[0].setAttribute('src', currentSound.file);
-		// $('#audio').append('<audio id="player" src="' + currentSound.file + '" type="audio/mpeg" autoplay loop ></audio>');
 
 		$('audio')[0].addEventListener('playing', function() {
 			console.log("PLAYING");
@@ -93,7 +101,6 @@ function chooseRandomRecording(inID) {
 
 		} else {
 		console.log('no sounds for #' + inID);
-		$('#audio').append('no recordings found');
 	}
 }
 
@@ -103,11 +110,11 @@ function getSounds(inID) {
 	$('#audioDescription').text('recordings for this bird');
 	$('audio')[0].pause();
 
-	if (sounds[inID]) {
+	if (gQuizScope.sounds[inID]) {
 		chooseRandomRecording(inID);		
 		$('#another').removeClass('disabled');
 	} else {
-		var latinName = sightings[inID].sciName;
+		var latinName = gQuizScope.sightings[inID].sciName;
 		var urlString = '/sounds/' + latinName.replace(' ', '+');
 		console.log('seeking sound data ' + urlString);
 
@@ -116,7 +123,7 @@ function getSounds(inID) {
 			dataType: 'json',
 			success: function(data) {
 				if (data.recordings) {
-					sounds[inID] = data;
+					gQuizScope.sounds[inID] = data;
 					$('#soundsHeading').text(data.recordings.length + ' Recordings');
 					chooseRandomRecording(inID);
 					$('#another').removeClass('disabled');
@@ -141,11 +148,11 @@ function getRecentNearbySightings(inLatitude, inLongitude) {
 		console.log('got data');
 
 		for (var index in data) {
-			sightings.push(data[index]);
+			gQuizScope.sightings.push(data[index]);
 		}
 
 		$('.progress-bar').css('width', '66%');
-		$('#quizHeading').text(sightings.length + ' birds to identify');
+		$('#quizHeading').text(gQuizScope.sightings.length + ' birds to identify');
 		chooseNextBird();
 	});
 }
@@ -158,17 +165,17 @@ function chooseNextBird() {
 	$('#sightingindex').empty();
 
 	// choose a new sighting
-	chosen = Math.floor(Math.random() * sightings.length);
-	$('#sightingindex').append('#' + chosen + ' ');
+	gCurrentQuizSighting = Math.floor(Math.random() * gQuizScope.sightings.length);
+	$('#sightingindex').append('#' + gCurrentQuizSighting + ' ');
 	$('#answer').removeClass('disabled');
-	console.log(sightings[chosen]);
+	console.log(gQuizScope.sightings[gCurrentQuizSighting]);
 
 	// show a new hint, put the answer into the DOM but don't show it
-	$('#sightingLocation').text(sightings[chosen].locName);
-	$('#sightingDate').text(sightings[chosen].obsDt);
+	$('#sightingLocation').text(gQuizScope.sightings[gCurrentQuizSighting].locName);
+	$('#sightingDate').text(gQuizScope.sightings[gCurrentQuizSighting].obsDt);
 
 	// get sounds for this species if needed, and pick one at random
-	getSounds(chosen);	
+	getSounds(gCurrentQuizSighting);	
 	$('.progress-bar').css('width', '100%');	
 	$('.progress').hide();	
 }
@@ -179,7 +186,7 @@ $(document).ready(function(){
 	});
 
 	$('#answer').click(function() {
-		$('#commonname').val(sightings[chosen].comName);
+		$('#commonname').val(gQuizScope.sightings[gCurrentQuizSighting].comName);
 		$('#choose').removeClass('disabled');
 		$('#answer').addClass('disabled');
 	});
@@ -193,7 +200,7 @@ $(document).ready(function(){
 	});
 
 	$('#another').click(function() {
-		getSounds(chosen);
+		getSounds(gCurrentQuizSighting);
 	});
 
 	getLocation();
