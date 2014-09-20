@@ -11,16 +11,6 @@
 var gQuizScope = new PlaceTimeBirdSongs();
 var gCurrentQuizSighting = 0;
 
-function PlaceTimeBirdSongs() {
-	this.position = null;
-	this.sightings = [];
-	this.sounds = [];
-}
-
-PlaceTimeBirdSongs.prototype.chooseRandomSighting = function() {
-	return Math.floor(Math.random() * this.sightings.length);
-}
-
 // Fix up for prefixing
 window.AudioContext = window.AudioContext||window.webkitAudioContext;
 context = new AudioContext();
@@ -54,106 +44,69 @@ function getLocation() {
 			function success(inPosition) {
 				gQuizScope.position = inPosition;
 				$('.progress-bar').css('width', '33%');
-				getRecentNearbySightings(inPosition.coords.latitude, inPosition.coords.longitude);
+
+				gQuizScope.getSightings(function() {
+					$('.progress-bar').css('width', '66%');
+					$('#quizHeading').text(gQuizScope.sightings.length + ' birds to identify');
+					chooseNextBird();
+				});
+
+				// getRecentNearbySightings(inPosition.coords.latitude, inPosition.coords.longitude);
 			},
 			function error() {
-				// TODO: still set gQuizScope.position
 				console.log('error');
-				getRecentNearbySightings(37, -122);
+				var fakePosition = { coords: { latitude: 37, longitude: -122 }};
+				gQuizScope.position = fakePosition;
+				$('.progress-bar').css('width', '33%');
+				
+				gQuizScope.getSightings(function() {
+					$('.progress-bar').css('width', '66%');
+					$('#quizHeading').text(gQuizScope.sightings.length + ' birds to identify');
+					chooseNextBird();
+				});
 			},
 			{
 			});
 	} else {
-		getRecentNearbySightings(37, -122);
+		console.log('browser does not support geolocation');
+		var fakePosition = { coords: { latitude: 37, longitude: -122 }};
+		gQuizScope.position = fakePosition;
+		$('.progress-bar').css('width', '33%');
+		
+		gQuizScope.getSightings(function() {
+			$('.progress-bar').css('width', '66%');
+			$('#quizHeading').text(gQuizScope.sightings.length + ' birds to identify');
+			chooseNextBird();
+		});
 	}
 }
 
-function chooseRandomRecording(inID) {
+function chooseRandomRecording(soundsData) {
 	$('audio')[0].pause();
 	$('#readyState').text('picking');
 	$('#audioDescription').text('next sound');
 
-	if (gQuizScope.sounds[inID] && gQuizScope.sounds[inID].recordings) {
-		var soundsData = gQuizScope.sounds[inID];
-		var randomRecordingID = Math.floor(Math.random() * soundsData.recordings.length);
-		var currentSound = soundsData.recordings[randomRecordingID];
+	var randomRecordingID = Math.floor(Math.random() * soundsData.recordings.length);
+	var currentSound = soundsData.recordings[randomRecordingID];
 
-		console.log(soundsData.recordings[randomRecordingID]);
-		var kmDistance = haversine(gQuizScope.position.coords.latitude, gQuizScope.position.coords.longitude, currentSound.lat, currentSound.lng);
-		$('audio')[0].setAttribute('src', currentSound.file);
+	console.log(soundsData.recordings[randomRecordingID]);
+	var kmDistance = haversine(gQuizScope.position.coords.latitude, gQuizScope.position.coords.longitude, currentSound.lat, currentSound.lng);
+	$('audio')[0].setAttribute('src', currentSound.file);
 
-		$('audio')[0].addEventListener('playing', function() {
-			console.log("PLAYING");
-			console.log($('audio')[0].duration);
-		});
+	$('audio')[0].addEventListener('playing', function() {
+		console.log("PLAYING");
+		console.log($('audio')[0].duration);
+	});
 
-		$('audio')[0].addEventListener('progress', function(e) {
-			console.log("PROGRESS");
-			console.log($('audio')[0].readyState);
-			if ($('audio')[0].readyState == 4) {
-				$('#readyState').text(Math.round($('audio')[0].duration) + ' sec');
-				$('#audioDescription').text(currentSound.type + ' recorded ' + Math.round(kmDistance) + ' kilometers away in ' + currentSound.loc);
-			} else if ($('audio')[0].readyState == 3) {
-				$('#readyState').text('loading');
-			}
-		});
-
-
-		} else {
-		console.log('no sounds for #' + inID);
-	}
-}
-
-function getSounds(inID) {
-	$('#another').addClass('disabled');
-	$('#readyState').text('loading');
-	$('#audioDescription').text('recordings for this bird');
-	$('audio')[0].pause();
-
-	if (gQuizScope.sounds[inID]) {
-		chooseRandomRecording(inID);		
-		$('#another').removeClass('disabled');
-	} else {
-		var latinName = gQuizScope.sightings[inID].sciName;
-		var urlString = '/sounds/' + latinName.replace(' ', '+');
-		console.log('seeking sound data ' + urlString);
-
-		$.ajax({
-			url: urlString,
-			dataType: 'json',
-			success: function(data) {
-				if (data.recordings) {
-					gQuizScope.sounds[inID] = data;
-					$('#soundsHeading').text(data.recordings.length + ' Recordings');
-					chooseRandomRecording(inID);
-					$('#another').removeClass('disabled');
-				} else {
-					$('#audio').append('no recordings found');
-				}
-			},
-			error: function(xhr, status, error) {
-				console.log('xeno canto fail');
-				$('#audio').append('no recordings found');
-			}
-		});		
-	}
-}
-
-function getRecentNearbySightings(inLatitude, inLongitude) {
-	var queryParams = { lat: inLatitude, lng: inLongitude, fmt: 'json' };
-	var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent?' + $.param(queryParams);
-	console.log(urlString);
-
-	$.getJSON(urlString, function(data) {
-		console.log('got data');
-
-		for (var index in data) {
-			gQuizScope.sightings.push(data[index]);
+	$('audio')[0].addEventListener('progress', function(e) {
+		console.log("PROGRESS");
+		console.log($('audio')[0].readyState);
+		if ($('audio')[0].readyState == 4) {
+			$('#readyState').text(Math.round($('audio')[0].duration) + ' sec');
+			$('#audioDescription').text(currentSound.type + ' recorded ' + Math.round(kmDistance) + ' kilometers away in ' + currentSound.loc);
+		} else if ($('audio')[0].readyState == 3) {
+			$('#readyState').text('loading');
 		}
-
-		$('.progress-bar').css('width', '66%');
-		$('#quizHeading').text(gQuizScope.sightings.length + ' birds to identify');
-		chooseNextBird();
 	});
 }
 
@@ -175,7 +128,11 @@ function chooseNextBird() {
 	$('#sightingDate').text(gQuizScope.sightings[gCurrentQuizSighting].obsDt);
 
 	// get sounds for this species if needed, and pick one at random
-	getSounds(gCurrentQuizSighting);	
+	gQuizScope.getSoundsForSighting(gCurrentQuizSighting, function(soundsData) {
+		$('#another').removeClass('disabled');
+		chooseRandomRecording(soundsData);
+	});	
+
 	$('.progress-bar').css('width', '100%');	
 	$('.progress').hide();	
 }
@@ -200,7 +157,7 @@ $(document).ready(function(){
 	});
 
 	$('#another').click(function() {
-		getSounds(gCurrentQuizSighting);
+		chooseRandomRecording(gQuizScope.sounds[gCurrentQuizSighting]);
 	});
 
 	getLocation();
