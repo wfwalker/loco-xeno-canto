@@ -5,6 +5,30 @@ function PlaceTimeBirdSongs() {
 	this.sounds = [];
 }
 
+// default location should be like { coords: { latitude: 37, longitude: -122 }
+PlaceTimeBirdSongs.prototype.setLocation = function(inDefaultLocation, callback) {
+	var myself = this;
+	
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(
+			function success(inPosition) {
+				myself.position = inPosition;
+				callback(myself.position);
+			},
+			function error() {
+				console.log('error');
+				myself.position = inDefaultLocation;
+				callback(myself.position);
+			},
+			{
+			});
+	} else {
+		console.log('browser does not support geolocation');
+		myself.position = inDefaultLocation;
+		callback(myself.position);
+	}
+}
+
 PlaceTimeBirdSongs.prototype.chooseRandomSighting = function() {
 	return Math.floor(Math.random() * this.sightings.length);
 }
