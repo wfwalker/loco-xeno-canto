@@ -51,6 +51,9 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
     });
 });
 
+// we must proxy soundfiles, see 
+// http://stackoverflow.com/questions/13958158/why-arent-safari-or-firefox-able-to-process-audio-data-from-mediaelementsource
+// https://www.npmjs.org/package/request
 
 app.use('/soundfile', function(req, resp, next) {
     var urlString = 'http://www.xeno-canto.org' + req.path;
