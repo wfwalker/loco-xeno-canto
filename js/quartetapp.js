@@ -36,7 +36,7 @@ function wireUpNodes(inIndex) {
 	panner.coneOuterAngle = 0;
 	panner.coneOuterGain = 0;
 	panner.setOrientation(1,0,0);
-	panner.setPosition(1, 1, 1);
+	panner.setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
 	panner.setVelocity(0, 0, 0);
 
 	gainNode.connect(panner);
