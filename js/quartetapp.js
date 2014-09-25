@@ -6,20 +6,41 @@
 
 var gBirds = new PlaceTimeBirdSongs();
 
-// Fix up for prefixing
+// GLOBAL initialize audio context
 window.AudioContext = window.AudioContext||window.webkitAudioContext;
 var audioContext = new AudioContext();
 
+var listener = audioContext.listener;
+listener.dopplerFactor = 1;
+listener.speedOfSound = 343.3;
+listener.setOrientation(0,0,-1,0,1,0);
 
 // TODO can we mess with playback rate
 // https://developer.mozilla.org/en-US/Apps/Build/Audio_and_video_delivery/HTML5_playbackRate_explained
 
 function wireUpNodes(inIndex) {
 	var source = audioContext.createMediaElementSource($('audio')[inIndex]);
+
 	var gainNode = audioContext.createGain();
 	gainNode.gain.value = 0.99;
 	source.connect(gainNode);
-	gainNode.connect(audioContext.destination);
+
+	// see https://developer.mozilla.org/en-US/docs/Web/API/PannerNode
+	var panner = audioContext.createPanner();
+	panner.panningModel = 'HRTF';
+	panner.distanceModel = 'inverse';
+	panner.refDistance = 1;
+	panner.maxDistance = 10000;
+	panner.rolloffFactor = 1;
+	panner.coneInnerAngle = 360;
+	panner.coneOuterAngle = 0;
+	panner.coneOuterGain = 0;
+	panner.setOrientation(1,0,0);
+	panner.setPosition(1, 1, 1);
+	panner.setVelocity(0, 0, 0);
+
+	gainNode.connect(panner);
+	panner.connect(audioContext.destination);
 }
 
 wireUpNodes(0);
