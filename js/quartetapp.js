@@ -1,11 +1,7 @@
 // app.js
 
 // TODO: error handling for bogus sciName (throw exception?)
-// TODO: push state / fragments in URL, repeatable testing?
-// TODO: structured global / singleton
-// TODO: factor out use of JSON api's for reuse
 // TODO: add ember for quiz?
-// TODO: do real web audio API four calls at once
 // TODO: real object for sound library
 
 var gBirds = new PlaceTimeBirdSongs();
@@ -14,18 +10,18 @@ var gBirds = new PlaceTimeBirdSongs();
 window.AudioContext = window.AudioContext||window.webkitAudioContext;
 var audioContext = new AudioContext();
 
-var source0 = audioContext.createMediaElementSource($('audio')[0]);
-var gainNode = audioContext.createGain();
-gainNode.gain.value = 0.99;
-source0.connect(gainNode);
-gainNode.connect(audioContext.destination);
+function wireUpNodes(inIndex) {
+	var source = audioContext.createMediaElementSource($('audio')[inIndex]);
+	var gainNode = audioContext.createGain();
+	gainNode.gain.value = 0.99;
+	source.connect(gainNode);
+	gainNode.connect(audioContext.destination);
+}
 
-var source1 = audioContext.createMediaElementSource($('audio')[1]);
-source1.connect(audioContext.destination);
-var source2 = audioContext.createMediaElementSource($('audio')[2]);
-source2.connect(audioContext.destination);
-var source3 = audioContext.createMediaElementSource($('audio')[3]);
-source3.connect(audioContext.destination);
+wireUpNodes(0);
+wireUpNodes(1);
+wireUpNodes(2);
+wireUpNodes(3);
 
 function chooseRandomRecording(soundsData, playerIndex) {
 	var randomRecordingID = Math.floor(Math.random() * soundsData.recordings.length);
@@ -55,7 +51,7 @@ function chooseBird(inPlayerIndex) {
 
 	// get sounds for this species if needed, and pick one at random
 	gBirds.getSoundsForSighting(sighting, function(soundsData) {
-		$('#another').removeClass('disabled');
+		$('#label' + inPlayerIndex).text(gBirds.sightings[sighting].comName);
 		chooseRandomRecording(soundsData, inPlayerIndex);
 	});	
 }
