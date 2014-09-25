@@ -67,6 +67,7 @@ PlaceTimeBirdSongs.prototype.getSoundsForSighting = function(inID, callback) {
 					myself.sounds[inID] = data;
 					callback(myself.sounds[inID]); 
 				} else {
+					console.log('xeno canto fail');
 					callback(null);
 				}
 			},
