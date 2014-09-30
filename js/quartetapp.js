@@ -6,6 +6,8 @@
 
 var gBirds = new PlaceTimeBirdSongs();
 
+var soundSources = [];
+
 // GLOBAL initialize audio context
 window.AudioContext = window.AudioContext||window.webkitAudioContext;
 var audioContext = new AudioContext();
@@ -19,11 +21,12 @@ listener.setOrientation(0,0,-1,0,1,0);
 // https://developer.mozilla.org/en-US/Apps/Build/Audio_and_video_delivery/HTML5_playbackRate_explained
 
 function wireUpNodes(inIndex) {
-	var source = audioContext.createMediaElementSource($('audio')[inIndex]);
+	// soundSources[inIndex] = audioContext.createBufferSource();
+	soundSources[inIndex] = audioContext.createMediaElementSource($('audio')[inIndex]);
 
 	var gainNode = audioContext.createGain();
 	gainNode.gain.value = 0.99;
-	source.connect(gainNode);
+	soundSources[inIndex].connect(gainNode);
 
 	// see https://developer.mozilla.org/en-US/docs/Web/API/PannerNode
 	var panner = audioContext.createPanner();
@@ -48,6 +51,37 @@ wireUpNodes(1);
 wireUpNodes(2);
 wireUpNodes(3);
 
+function setBufferFromURL(inSource, inSoundDataURL) {
+	console.log('setBufferFromURL ' + inSource + ' ' + inSoundDataURL);
+
+	$.ajax({
+		url: inSoundDataURL,
+		dataType: 'text',
+		success: function(data, textStatus, xhr) {
+			console.log('GOT DATA ' + textStatus);
+
+	        var buf = new ArrayBuffer(data.length);
+	        var bufView = new Uint8Array(buf);
+	        for (var i = 0; i < data.length; i++) {
+	          bufView[i] = data.charCodeAt(i);
+	        }
+
+		    audioContext.decodeAudioData(buf, function(decodedBuffer) {
+		    	console.log('inside decodeAudioData');
+		    	console.log(decodedBuffer);
+				inSource.buffer = decodedBuffer;
+				inSource.start();
+			});
+			
+		},
+		error: function(xhr, status, error) {
+			console.log('soundfile data fail');
+			console.log(status);
+			console.log(error);
+		}
+	});		
+}
+
 function chooseRandomRecording(soundsData, playerIndex) {
 	var randomRecordingID = Math.floor(Math.random() * soundsData.recordings.length);
 
@@ -61,19 +95,18 @@ function chooseRandomRecording(soundsData, playerIndex) {
 
 	console.log(currentSound);
 	$('#label' + playerIndex).text(currentSound.en);
-	// TODO: parse currentSound.file as URL, get path, make root relative request
+
 	var soundURL = currentSound.file.replace('http://www.xeno-canto.org','/soundfile');
 	console.log(soundURL);
 	$('audio')[playerIndex].setAttribute('src', soundURL);
 
+	// setBufferFromURL(soundSources[playerIndex], soundURL);
+
 	$('audio')[playerIndex].addEventListener('playing', function() {
-		console.log("PLAYING");
 		$('#status' + playerIndex).text('playing');
 	});
 
 	$('audio')[playerIndex].addEventListener('progress', function(e) {
-		console.log("PROGRESS");
-
 		if ($('audio')[playerIndex].readyState == 4) {
 			$('#status' + playerIndex).text('playing');
 		} else if ($('audio')[playerIndex].readyState == 3) {
@@ -85,6 +118,7 @@ function chooseRandomRecording(soundsData, playerIndex) {
 function chooseBird(inPlayerIndex) {
 	var sighting = gBirds.chooseRandomSighting();
 	console.log('chooseBird random sighting ' + sighting);
+	console.log(gBirds.sightings[sighting]);
 
 	// get sounds for this species if needed, and pick one at random
 	gBirds.getSoundsForSighting(sighting, function(soundsData) {
