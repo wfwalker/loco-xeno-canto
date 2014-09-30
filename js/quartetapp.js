@@ -6,12 +6,14 @@
 
 var gBirds = new PlaceTimeBirdSongs();
 
+// GLOBAL sound sources for bird song playback
 var soundSources = [];
 
 // GLOBAL initialize audio context
 window.AudioContext = window.AudioContext||window.webkitAudioContext;
 var audioContext = new AudioContext();
 
+// GLOBAL initialize listener
 var listener = audioContext.listener;
 listener.dopplerFactor = 1;
 listener.speedOfSound = 343.3;
@@ -126,7 +128,7 @@ $(document).ready(function(){
 	// TODO: can we play sounds backwards
 	// TODO: can we incorporate the vocoder demo?
 
-	$('#randomize').click(function(e) {
+	$('#pitches').click(function(e) {
 		console.log('RANDOMIZE');
 
 		soundSources[0].playbackRate.value = 0.2 + Math.random();		
