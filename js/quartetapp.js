@@ -122,6 +122,18 @@ $(document).ready(function(){
 			chooseBird(3);
 		});
 	});
+
+	// TODO: can we play sounds backwards
+	// TODO: can we incorporate the vocoder demo?
+
+	$('#randomize').click(function(e) {
+		console.log('RANDOMIZE');
+
+		soundSources[0].playbackRate.value = 0.2 + Math.random();		
+		soundSources[1].playbackRate.value = 0.2 + Math.random();		
+		soundSources[2].playbackRate.value = 0.2 + Math.random();		
+		soundSources[3].playbackRate.value = 0.2 + Math.random();		
+	});
 });
 
 
