@@ -21,8 +21,7 @@ listener.setOrientation(0,0,-1,0,1,0);
 // https://developer.mozilla.org/en-US/Apps/Build/Audio_and_video_delivery/HTML5_playbackRate_explained
 
 function wireUpNodes(inIndex) {
-	// soundSources[inIndex] = audioContext.createBufferSource();
-	soundSources[inIndex] = audioContext.createMediaElementSource($('audio')[inIndex]);
+	soundSources[inIndex] = audioContext.createBufferSource();
 
 	var gainNode = audioContext.createGain();
 	gainNode.gain.value = 0.99;
@@ -51,35 +50,29 @@ wireUpNodes(1);
 wireUpNodes(2);
 wireUpNodes(3);
 
-function setBufferFromURL(inSource, inSoundDataURL) {
-	console.log('setBufferFromURL ' + inSource + ' ' + inSoundDataURL);
+function setBufferFromURL(inIndex, inSoundDataURL) {
+	console.log('setBufferFromURL ' + inIndex + ' ' + inSoundDataURL);
 
-	$.ajax({
-		url: inSoundDataURL,
-		dataType: 'text',
-		success: function(data, textStatus, xhr) {
-			console.log('GOT DATA ' + textStatus);
+	var mp3Request = new XMLHttpRequest();
 
-	        var buf = new ArrayBuffer(data.length);
-	        var bufView = new Uint8Array(buf);
-	        for (var i = 0; i < data.length; i++) {
-	          bufView[i] = data.charCodeAt(i);
-	        }
+	mp3Request.onload = function(e) {
+		$('#status' + inIndex).text('decoding');
+		console.log(mp3Request.response);
 
-		    audioContext.decodeAudioData(buf, function(decodedBuffer) {
-		    	console.log('inside decodeAudioData');
-		    	console.log(decodedBuffer);
-				inSource.buffer = decodedBuffer;
-				inSource.start();
-			});
-			
-		},
-		error: function(xhr, status, error) {
-			console.log('soundfile data fail');
-			console.log(status);
-			console.log(error);
-		}
-	});		
+	    audioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
+	    	console.log('inside decodeAudioData');
+	    	console.log(decodedBuffer);
+			soundSources[inIndex].buffer = decodedBuffer;
+			soundSources[inIndex].loop = true;
+			$('#status' + inIndex).text('playing');
+			soundSources[inIndex].start();
+		});
+	};
+
+	mp3Request.open("GET", inSoundDataURL, true);
+	mp3Request.responseType = 'arraybuffer';
+	$('#status' + inIndex).text('downloading');
+	mp3Request.send();
 }
 
 function chooseRandomRecording(soundsData, playerIndex) {
@@ -98,21 +91,8 @@ function chooseRandomRecording(soundsData, playerIndex) {
 
 	var soundURL = currentSound.file.replace('http://www.xeno-canto.org','/soundfile');
 	console.log(soundURL);
-	$('audio')[playerIndex].setAttribute('src', soundURL);
 
-	// setBufferFromURL(soundSources[playerIndex], soundURL);
-
-	$('audio')[playerIndex].addEventListener('playing', function() {
-		$('#status' + playerIndex).text('playing');
-	});
-
-	$('audio')[playerIndex].addEventListener('progress', function(e) {
-		if ($('audio')[playerIndex].readyState == 4) {
-			$('#status' + playerIndex).text('playing');
-		} else if ($('audio')[playerIndex].readyState == 3) {
-			$('#status' + playerIndex).text('loading');
-		}
-	});
+	setBufferFromURL(playerIndex, soundURL);
 }
 
 function chooseBird(inPlayerIndex) {

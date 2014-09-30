@@ -59,5 +59,6 @@ app.use('/soundfile', function(req, resp, next) {
     var urlString = 'http://www.xeno-canto.org' + req.path;
     console.log('seeking sound file ' + urlString);
     req.pipe(request({ uri: urlString, strictSSL: false })).pipe(resp);
+    console.log('seeking sound file set up pipe');
 });
 
