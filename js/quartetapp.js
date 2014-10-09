@@ -8,6 +8,7 @@ var gBirds = new PlaceTimeBirdSongs();
 
 // GLOBAL sound sources for bird song playback
 var soundSources = [];
+var panners = [];
 
 // GLOBAL initialize audio context
 window.AudioContext = window.AudioContext||window.webkitAudioContext;
@@ -30,21 +31,21 @@ function wireUpNodes(inIndex) {
 	soundSources[inIndex].connect(gainNode);
 
 	// see https://developer.mozilla.org/en-US/docs/Web/API/PannerNode
-	var panner = audioContext.createPanner();
-	panner.panningModel = 'HRTF';
-	panner.distanceModel = 'inverse';
-	panner.refDistance = 1;
-	panner.maxDistance = 10000;
-	panner.rolloffFactor = 1;
-	panner.coneInnerAngle = 360;
-	panner.coneOuterAngle = 0;
-	panner.coneOuterGain = 0;
-	panner.setOrientation(1,0,0);
-	panner.setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
-	panner.setVelocity(0, 0, 0);
+	panners[inIndex] = audioContext.createPanner();
+	panners[inIndex].panningModel = 'HRTF';
+	panners[inIndex].distanceModel = 'inverse';
+	panners[inIndex].refDistance = 1;
+	panners[inIndex].maxDistance = 10000;
+	panners[inIndex].rolloffFactor = 1;
+	panners[inIndex].coneInnerAngle = 360;
+	panners[inIndex].coneOuterAngle = 0;
+	panners[inIndex].coneOuterGain = 0;
+	panners[inIndex].setOrientation(1,0,0);
+	panners[inIndex].setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
+	panners[inIndex].setVelocity(0, 0, 0);
 
-	gainNode.connect(panner);
-	panner.connect(audioContext.destination);
+	gainNode.connect(panners[inIndex]);
+	panners[inIndex].connect(audioContext.destination);
 }
 
 wireUpNodes(0);
@@ -129,13 +130,23 @@ $(document).ready(function(){
 	// TODO: can we incorporate the vocoder demo?
 
 	$('#pitches').click(function(e) {
-		console.log('RANDOMIZE');
+		console.log('RANDOMIZE PITCHES');
 
 		soundSources[0].playbackRate.value = 0.2 + Math.random();		
 		soundSources[1].playbackRate.value = 0.2 + Math.random();		
 		soundSources[2].playbackRate.value = 0.2 + Math.random();		
 		soundSources[3].playbackRate.value = 0.2 + Math.random();		
 	});
+
+	$('#locations').click(function(e) {
+		console.log('RANDOMIZE LOCATIONS');
+
+		panners[0].setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
+		panners[1].setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
+		panners[2].setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
+		panners[3].setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
+	});
+
 });
 
 
