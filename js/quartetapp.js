@@ -67,7 +67,7 @@ function setBufferFromURL(inIndex, inSoundDataURL) {
 			soundSources[inIndex].buffer = decodedBuffer;
 			soundSources[inIndex].loop = true;
 			$('#status' + inIndex).text('playing');
-			soundSources[inIndex].start();
+			soundSources[inIndex].start(0);
 		});
 	};
 
