@@ -1,8 +1,6 @@
 // app.js
 
-// TODO: error handling for bogus sciName (throw exception?)
 // TODO: add ember for quiz?
-// TODO: real object for sound library
 
 var gBirds = new PlaceTimeBirdSongs();
 
@@ -67,7 +65,7 @@ function setBufferFromURL(inIndex, inSoundDataURL) {
 	    	console.log(decodedBuffer);
 			soundSources[inIndex].buffer = decodedBuffer;
 			soundSources[inIndex].loop = true;
-			$('#status' + inIndex).text('playing');
+			$('#status' + inIndex).text('playing ' + Math.round(decodedBuffer.duration) + 's');
 			soundSources[inIndex].start(0);
 		});
 	};
@@ -146,6 +144,10 @@ $(document).ready(function(){
 		panners[2].setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
 		panners[3].setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
 	});
+
+	window.setInterval(function() {
+		console.log('WAKEY');
+	}, 5000);
 
 });
 
