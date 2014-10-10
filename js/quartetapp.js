@@ -18,38 +18,11 @@ listener.dopplerFactor = 1;
 listener.speedOfSound = 343.3;
 listener.setOrientation(0,0,-1,0,1,0);
 
-// TODO can we mess with playback rate
-// https://developer.mozilla.org/en-US/Apps/Build/Audio_and_video_delivery/HTML5_playbackRate_explained
-
-function wireUpNodes(inIndex) {
-	soundSources[inIndex] = audioContext.createBufferSource();
-
-	var gainNode = audioContext.createGain();
-	gainNode.gain.value = 0.99;
-	soundSources[inIndex].connect(gainNode);
-
-	// see https://developer.mozilla.org/en-US/docs/Web/API/PannerNode
-	panners[inIndex] = audioContext.createPanner();
-	panners[inIndex].panningModel = 'HRTF';
-	panners[inIndex].distanceModel = 'inverse';
-	panners[inIndex].refDistance = 1;
-	panners[inIndex].maxDistance = 10000;
-	panners[inIndex].rolloffFactor = 1;
-	panners[inIndex].coneInnerAngle = 360;
-	panners[inIndex].coneOuterAngle = 0;
-	panners[inIndex].coneOuterGain = 0;
-	panners[inIndex].setOrientation(1,0,0);
-	panners[inIndex].setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
-	panners[inIndex].setVelocity(0, 0, 0);
-
-	gainNode.connect(panners[inIndex]);
-	panners[inIndex].connect(audioContext.destination);
-}
-
-wireUpNodes(0);
-wireUpNodes(1);
-wireUpNodes(2);
-wireUpNodes(3);
+gBirdSongPlayers = [];
+gBirdSongPlayers[0] = new BirdSongPlayer(audioContext);
+gBirdSongPlayers[1] = new BirdSongPlayer(audioContext);
+gBirdSongPlayers[2] = new BirdSongPlayer(audioContext);
+gBirdSongPlayers[3] = new BirdSongPlayer(audioContext);
 
 function setBufferFromURL(inIndex, inSoundDataURL) {
 	console.log('setBufferFromURL ' + inIndex + ' ' + inSoundDataURL);
@@ -63,10 +36,10 @@ function setBufferFromURL(inIndex, inSoundDataURL) {
 	    audioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
 	    	console.log('inside decodeAudioData');
 	    	console.log(decodedBuffer);
-			soundSources[inIndex].buffer = decodedBuffer;
-			soundSources[inIndex].loop = true;
+			gBirdSongPlayers[inIndex].soundSource.buffer = decodedBuffer;
+			gBirdSongPlayers[inIndex].soundSource.loop = true;
 			$('#status' + inIndex).text('playing ' + Math.round(decodedBuffer.duration) + 's');
-			soundSources[inIndex].start(0);
+			gBirdSongPlayers[inIndex].soundSource.start(0);
 		});
 	};
 
@@ -127,22 +100,22 @@ $(document).ready(function(){
 	// TODO: can we play sounds backwards
 	// TODO: can we incorporate the vocoder demo?
 
-	$('#pitches').click(function(e) {
-		console.log('RANDOMIZE PITCHES');
+	$('#playbackRates').click(function(e) {
+		console.log('RANDOMIZE PLAYBACK RATES');
 
-		soundSources[0].playbackRate.value = 0.2 + Math.random();		
-		soundSources[1].playbackRate.value = 0.2 + Math.random();		
-		soundSources[2].playbackRate.value = 0.2 + Math.random();		
-		soundSources[3].playbackRate.value = 0.2 + Math.random();		
+		gBirdSongPlayers[0].randomizePlaybackRate();		
+		gBirdSongPlayers[1].randomizePlaybackRate();		
+		gBirdSongPlayers[2].randomizePlaybackRate();		
+		gBirdSongPlayers[3].randomizePlaybackRate();		
 	});
 
-	$('#locations').click(function(e) {
-		console.log('RANDOMIZE LOCATIONS');
+	$('#panners').click(function(e) {
+		console.log('RANDOMIZE PANNERS');
 
-		panners[0].setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
-		panners[1].setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
-		panners[2].setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
-		panners[3].setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
+		gBirdSongPlayers[0].randomizePanner();
+		gBirdSongPlayers[1].randomizePanner();
+		gBirdSongPlayers[2].randomizePanner();
+		gBirdSongPlayers[3].randomizePanner();
 	});
 
 	window.setInterval(function() {
