@@ -33,16 +33,20 @@ BirdSongPlayer.prototype.randomizePlaybackRate = function() {
 
 BirdSongPlayer.prototype.setSourceFromBuffer = function(inBuffer) {
 	console.log('setSourceFromBuffer');
+	var oldPlaybackRateValue = 1;
 
 	if (this.soundSource) {
+		oldPlaybackRateValue = this.soundSource.playbackRate.value;
 		this.soundSource.stop(0);
 		this.soundSource = null;
 	}
 
-	// start playing immediately in a loop	    	
 	this.soundSource = gAudioContext.createBufferSource();
 	this.soundSource.connect(this.gain);
 	this.soundSource.buffer = inBuffer;
+	// restore old playback rate value
+	this.soundSource.playbackRate.value = oldPlaybackRateValue;
+	// start playing immediately in a loop	    	
 	this.soundSource.loop = true;
 	this.soundSource.start();	
 }

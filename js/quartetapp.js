@@ -97,8 +97,14 @@ $(document).ready(function(){
 	});
 
 	window.setInterval(function() {
-		console.log('WAKEY');
-	}, 5000);
+		for (var i = 0; i < 4; i++) {
+			if (gBirdSongPlayers[i].soundSource) {
+				$('#playbackRate' + i).text((Math.round(100 * gBirdSongPlayers[i].soundSource.playbackRate.value) / 100.0) + "x");
+			}
+		}
+
+		$('#clock').text(Math.round(gAudioContext.currentTime) + 's');
+	}, 1000);
 
 });
 
