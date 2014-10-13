@@ -22,41 +22,36 @@ gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext);
 $(document).ready(function(){ 
 	gBirds.setLocation({ coords: { latitude: 37, longitude: -122 }}, function(position) {
 		gBirds.getSightings(function() {
-			gBirdSongPlayers[0].chooseSightingAndPlayRandomSound($('#status0'), $('#label0'));
-			gBirdSongPlayers[1].chooseSightingAndPlayRandomSound($('#status1'), $('#label1'));
-			gBirdSongPlayers[2].chooseSightingAndPlayRandomSound($('#status2'), $('#label2'));
-			gBirdSongPlayers[3].chooseSightingAndPlayRandomSound($('#status3'), $('#label3'));
+			for (var i = 0; i < gBirdSongPlayers.length; i++) {
+				gBirdSongPlayers[i].chooseSightingAndPlayRandomSound($('#status' + i), $('#label' + i));
+			}
 		});
 	});
 
-	// TODO: can we play sounds backwards
 	// TODO: can we incorporate the vocoder demo?
 
 	$('#playbackRates').click(function(e) {
 		console.log('RANDOMIZE PLAYBACK RATES');
 
-		gBirdSongPlayers[0].randomizePlaybackRate();		
-		gBirdSongPlayers[1].randomizePlaybackRate();		
-		gBirdSongPlayers[2].randomizePlaybackRate();		
-		gBirdSongPlayers[3].randomizePlaybackRate();		
+		for (var i = 0; i < gBirdSongPlayers.length; i++) {
+			gBirdSongPlayers[i].randomizePlaybackRate();
+		}
 	});
 
 	$('#panners').click(function(e) {
 		console.log('RANDOMIZE PANNERS');
 
-		gBirdSongPlayers[0].randomizePanner();
-		gBirdSongPlayers[1].randomizePanner();
-		gBirdSongPlayers[2].randomizePanner();
-		gBirdSongPlayers[3].randomizePanner();
+		for (var i = 0; i < gBirdSongPlayers.length; i++) {
+			gBirdSongPlayers[i].randomizePanner();
+		}
 	});
 
 	$('#reverse').click(function(e) {
 		console.log('REVERSE PLAYBACK');
 
-		gBirdSongPlayers[0].reversePlayback();
-		gBirdSongPlayers[1].reversePlayback();
-		gBirdSongPlayers[2].reversePlayback();
-		gBirdSongPlayers[3].reversePlayback();
+		for (var i = 0; i < gBirdSongPlayers.length; i++) {
+			gBirdSongPlayers[0].reversePlayback();
+		}
 	});
 
 	window.setInterval(function() {
