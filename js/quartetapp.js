@@ -19,50 +19,13 @@ gBirdSongPlayers[1] = new BirdSongPlayer(gAudioContext);
 gBirdSongPlayers[2] = new BirdSongPlayer(gAudioContext);
 gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext);
 
-function chooseRandomRecording(soundsData, playerIndex) {
-	if (soundsData == null || soundsData.recordings.length == 0) {
-		$('#status' + playerIndex).text('retrying');
-		console.log('FAILED loading recording for player ' + playerIndex + ', retrying');
-		chooseBird(playerIndex);
-	} else {
-		var randomRecordingID = Math.floor(Math.random() * soundsData.recordings.length);
-		var currentSound = soundsData.recordings[randomRecordingID];
-
-		console.log(currentSound);
-		$('#label' + playerIndex).text(currentSound.en);
-
-		var soundURL = currentSound.file.replace('http://www.xeno-canto.org','/soundfile');
-		console.log(soundURL);
-
-		gBirdSongPlayers[playerIndex].setBufferFromURL(soundURL, $('#status' + playerIndex))
-	}
-}
-
-function chooseBird(inPlayerIndex) {
-	var sighting = gBirds.chooseRandomSighting();
-	console.log('chooseBird random sighting ' + sighting);
-	console.log(gBirds.sightings[sighting]);
-
-	// get sounds for this species if needed, and pick one at random
-	gBirds.getSoundsForSighting(sighting, function(soundsData) {
-		if (soundsData == null) {
-			console.log('NO SOUNDS');
-			$('#status' + inPlayerIndex).text('retrying');
-			chooseBird(inPlayerIndex);
-		} else {
-			$('#label' + inPlayerIndex).text(gBirds.sightings[sighting].comName);
-			chooseRandomRecording(soundsData, inPlayerIndex);
-		}
-	});	
-}
-
 $(document).ready(function(){ 
 	gBirds.setLocation({ coords: { latitude: 37, longitude: -122 }}, function(position) {
 		gBirds.getSightings(function() {
-			chooseBird(0);
-			chooseBird(1);
-			chooseBird(2);
-			chooseBird(3);
+			gBirdSongPlayers[0].chooseSightingAndPlayRandomSound($('#status0'), $('#label0'));
+			gBirdSongPlayers[1].chooseSightingAndPlayRandomSound($('#status1'), $('#label1'));
+			gBirdSongPlayers[2].chooseSightingAndPlayRandomSound($('#status2'), $('#label2'));
+			gBirdSongPlayers[3].chooseSightingAndPlayRandomSound($('#status3'), $('#label3'));
 		});
 	});
 

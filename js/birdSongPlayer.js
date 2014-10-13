@@ -96,3 +96,43 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inStatusEle
 	mp3Request.send();
 }
 
+BirdSongPlayer.prototype.chooseRandomRecording = function(soundsData, inStatusElement, inLabelElement) {
+	if (soundsData == null || soundsData.recordings.length == 0) {
+		$('#status' + playerIndex).text('retrying');
+		console.log('FAILED loading recording for, retrying');
+		this.chooseSightingAndPlayRandomSound();
+	} else {
+		var randomRecordingID = Math.floor(Math.random() * soundsData.recordings.length);
+		var currentSound = soundsData.recordings[randomRecordingID];
+
+		console.log(currentSound);
+		inLabelElement.text(currentSound.en);
+
+		// rewrite URL's from xeno-canto JSON, route through my own server due to missing CORS
+		var soundURL = currentSound.file.replace('http://www.xeno-canto.org','/soundfile');
+		console.log(soundURL);
+
+		this.setBufferFromURL(soundURL, inStatusElement)
+	}
+}
+
+BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(inStatusElement, inLabelElement) {
+	var myself = this;
+	var sighting = gBirds.chooseRandomSighting();
+	console.log('chooseSightingAndPlayRandomSound random sighting ' + sighting);
+	console.log(gBirds.sightings[sighting]);
+
+	// get sounds for this species if needed, and pick one at random
+	gBirds.getSoundsForSighting(sighting, function(soundsData) {
+		if (soundsData == null) {
+			console.log('NO SOUNDS');
+			inStatusElement.text('retrying');
+			myself.chooseSightingAndPlayRandomSound(inStatusElement);
+		} else {
+			inLabelElement.text(gBirds.sightings[sighting].comName);
+			myself.chooseRandomRecording(soundsData, inStatusElement, inLabelElement);
+		}
+	});	
+}
+
+
