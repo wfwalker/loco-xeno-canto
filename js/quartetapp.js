@@ -4,44 +4,38 @@
 
 var gBirds = new PlaceTimeBirdSongs();
 
-// GLOBAL sound sources for bird song playback
-var soundSources = [];
-var panners = [];
-
-// GLOBAL initialize audio context
+	// GLOBAL initialize audio context and listener
 window.AudioContext = window.AudioContext||window.webkitAudioContext;
-var audioContext = new AudioContext();
+var gAudioContext = new AudioContext();
+var gListener = gAudioContext.listener;
+gListener.dopplerFactor = 1;
+gListener.speedOfSound = 343.3;
+gListener.setOrientation(0,0,-1,0,1,0);
 
-// GLOBAL initialize listener
-var listener = audioContext.listener;
-listener.dopplerFactor = 1;
-listener.speedOfSound = 343.3;
-listener.setOrientation(0,0,-1,0,1,0);
-
+// GLOBAL sound sources for bird song playback
 gBirdSongPlayers = [];
-gBirdSongPlayers[0] = new BirdSongPlayer(audioContext);
-gBirdSongPlayers[1] = new BirdSongPlayer(audioContext);
-gBirdSongPlayers[2] = new BirdSongPlayer(audioContext);
-gBirdSongPlayers[3] = new BirdSongPlayer(audioContext);
+gBirdSongPlayers[0] = new BirdSongPlayer(gAudioContext);
+gBirdSongPlayers[1] = new BirdSongPlayer(gAudioContext);
+gBirdSongPlayers[2] = new BirdSongPlayer(gAudioContext);
+gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext);
 
 function chooseRandomRecording(soundsData, playerIndex) {
 	if (soundsData == null || soundsData.recordings.length == 0) {
 		$('#status' + playerIndex).text('retrying');
 		console.log('FAILED loading recording for player ' + playerIndex + ', retrying');
 		chooseBird(playerIndex);
+	} else {
+		var randomRecordingID = Math.floor(Math.random() * soundsData.recordings.length);
+		var currentSound = soundsData.recordings[randomRecordingID];
+
+		console.log(currentSound);
+		$('#label' + playerIndex).text(currentSound.en);
+
+		var soundURL = currentSound.file.replace('http://www.xeno-canto.org','/soundfile');
+		console.log(soundURL);
+
+		gBirdSongPlayers[playerIndex].setBufferFromURL(soundURL, $('#status' + playerIndex))
 	}
-
-	var randomRecordingID = Math.floor(Math.random() * soundsData.recordings.length);
-
-	var currentSound = soundsData.recordings[randomRecordingID];
-
-	console.log(currentSound);
-	$('#label' + playerIndex).text(currentSound.en);
-
-	var soundURL = currentSound.file.replace('http://www.xeno-canto.org','/soundfile');
-	console.log(soundURL);
-
-	gBirdSongPlayers[playerIndex].setBufferFromURL(soundURL, $('#status' + playerIndex))
 }
 
 function chooseBird(inPlayerIndex) {
@@ -91,6 +85,15 @@ $(document).ready(function(){
 		gBirdSongPlayers[1].randomizePanner();
 		gBirdSongPlayers[2].randomizePanner();
 		gBirdSongPlayers[3].randomizePanner();
+	});
+
+	$('#reverse').click(function(e) {
+		console.log('REVERSE PLAYBACK');
+
+		gBirdSongPlayers[0].reversePlayback();
+		gBirdSongPlayers[1].reversePlayback();
+		gBirdSongPlayers[2].reversePlayback();
+		gBirdSongPlayers[3].reversePlayback();
 	});
 
 	window.setInterval(function() {

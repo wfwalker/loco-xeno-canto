@@ -1,10 +1,9 @@
 // BirdSongPlayer
 function BirdSongPlayer(audioContext) {
-	this.soundSource = audioContext.createBufferSource();
+	this.soundSource = null;
 	this.gain = audioContext.createGain(); 
 
 	this.gain.value = 0.99;
-	this.soundSource.connect(this.gain);
 
 	// see https://developer.mozilla.org/en-US/docs/Web/API/PannerNode
 	this.panner = audioContext.createPanner();
@@ -29,7 +28,45 @@ BirdSongPlayer.prototype.randomizePanner = function() {
 }
 
 BirdSongPlayer.prototype.randomizePlaybackRate = function() {
-	this.soundSource.playbackRate.value = 0.2 + Math.random();		
+	this.soundSource.playbackRate.value = 0.1 + Math.random();		
+}
+
+BirdSongPlayer.prototype.setSourceFromBuffer = function(inBuffer) {
+	console.log('setSourceFromBuffer');
+
+	if (this.soundSource) {
+		this.soundSource.stop(0);
+		this.soundSource = null;
+	}
+
+	// start playing immediately in a loop	    	
+	this.soundSource = gAudioContext.createBufferSource();
+	this.soundSource.connect(this.gain);
+	this.soundSource.buffer = inBuffer;
+	this.soundSource.loop = true;
+	this.soundSource.start();	
+}
+
+BirdSongPlayer.prototype.reversePlayback = function() {
+	console.log('reversePlayback');
+
+	var oldData = this.soundSource.buffer.getChannelData(0);
+	console.log(oldData);
+	var normalData = Array.prototype.slice.call( oldData );
+	Array.prototype.reverse.call(normalData);	
+	console.log(normalData);
+
+	var newBuffer = gAudioContext.createBuffer(1, this.soundSource.buffer.length, this.soundSource.buffer.sampleRate);
+	var newData = newBuffer.getChannelData(0);
+
+	for (i = 0; i < newBuffer.length; i++) {
+		newData[i] = normalData[i];
+	}	
+
+	this.setSourceFromBuffer(newBuffer);
+
+	console.log(this.soundSource.buffer.getChannelData(0));
+	console.log('DONE reversePlayback');
 }
 
 BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inStatusElement) {
@@ -43,16 +80,9 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inStatusEle
 		inStatusElement.text('decoding');
 		console.log(mp3Request.response);
 
-	    audioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
-	    	// got data! update status
-	    	console.log('inside decodeAudioData');
-	    	console.log(decodedBuffer);
-
-			// start playing immediately in a loop	    	
-			myself.soundSource.buffer = decodedBuffer;
-			myself.soundSource.loop = true;
+	    gAudioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
+	    	myself.setSourceFromBuffer(decodedBuffer);
 			inStatusElement.text('playing ' + Math.round(decodedBuffer.duration) + 's');
-			myself.soundSource.start(0);
 		});
 	};
 
