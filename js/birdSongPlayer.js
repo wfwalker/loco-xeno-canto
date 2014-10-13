@@ -1,6 +1,5 @@
 // BirdSongPlayer
 function BirdSongPlayer(audioContext) {
-	console.log('BirdSongPlayer');
 	this.soundSource = audioContext.createBufferSource();
 	this.gain = audioContext.createGain(); 
 
@@ -23,7 +22,6 @@ function BirdSongPlayer(audioContext) {
 
 	this.gain.connect(this.panner);
 	this.panner.connect(audioContext.destination);
-	console.log('END BirdSongPlayer');
 }
 
 BirdSongPlayer.prototype.randomizePanner = function() {
@@ -33,3 +31,34 @@ BirdSongPlayer.prototype.randomizePanner = function() {
 BirdSongPlayer.prototype.randomizePlaybackRate = function() {
 	this.soundSource.playbackRate.value = 0.2 + Math.random();		
 }
+
+BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inStatusElement) {
+	var myself = this;
+
+	console.log('setBufferFromURL ' + inSoundDataURL);
+
+	var mp3Request = new XMLHttpRequest();
+
+	mp3Request.onload = function(e) {
+		inStatusElement.text('decoding');
+		console.log(mp3Request.response);
+
+	    audioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
+	    	// got data! update status
+	    	console.log('inside decodeAudioData');
+	    	console.log(decodedBuffer);
+
+			// start playing immediately in a loop	    	
+			myself.soundSource.buffer = decodedBuffer;
+			myself.soundSource.loop = true;
+			inStatusElement.text('playing ' + Math.round(decodedBuffer.duration) + 's');
+			myself.soundSource.start(0);
+		});
+	};
+
+	mp3Request.open("GET", inSoundDataURL, true);
+	mp3Request.responseType = 'arraybuffer';
+	inStatusElement.text('downloading');
+	mp3Request.send();
+}
+

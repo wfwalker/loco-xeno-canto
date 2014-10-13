@@ -24,41 +24,16 @@ gBirdSongPlayers[1] = new BirdSongPlayer(audioContext);
 gBirdSongPlayers[2] = new BirdSongPlayer(audioContext);
 gBirdSongPlayers[3] = new BirdSongPlayer(audioContext);
 
-function setBufferFromURL(inIndex, inSoundDataURL) {
-	console.log('setBufferFromURL ' + inIndex + ' ' + inSoundDataURL);
-
-	var mp3Request = new XMLHttpRequest();
-
-	mp3Request.onload = function(e) {
-		$('#status' + inIndex).text('decoding');
-		console.log(mp3Request.response);
-
-	    audioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
-	    	console.log('inside decodeAudioData');
-	    	console.log(decodedBuffer);
-			gBirdSongPlayers[inIndex].soundSource.buffer = decodedBuffer;
-			gBirdSongPlayers[inIndex].soundSource.loop = true;
-			$('#status' + inIndex).text('playing ' + Math.round(decodedBuffer.duration) + 's');
-			gBirdSongPlayers[inIndex].soundSource.start(0);
-		});
-	};
-
-	mp3Request.open("GET", inSoundDataURL, true);
-	mp3Request.responseType = 'arraybuffer';
-	$('#status' + inIndex).text('downloading');
-	mp3Request.send();
-}
-
 function chooseRandomRecording(soundsData, playerIndex) {
-	var randomRecordingID = Math.floor(Math.random() * soundsData.recordings.length);
-
-	var currentSound = soundsData.recordings[randomRecordingID];
-
-	if (currentSound == null) {
+	if (soundsData == null || soundsData.recordings.length == 0) {
 		$('#status' + playerIndex).text('retrying');
 		console.log('FAILED loading recording for player ' + playerIndex + ', retrying');
 		chooseBird(playerIndex);
 	}
+
+	var randomRecordingID = Math.floor(Math.random() * soundsData.recordings.length);
+
+	var currentSound = soundsData.recordings[randomRecordingID];
 
 	console.log(currentSound);
 	$('#label' + playerIndex).text(currentSound.en);
@@ -66,7 +41,7 @@ function chooseRandomRecording(soundsData, playerIndex) {
 	var soundURL = currentSound.file.replace('http://www.xeno-canto.org','/soundfile');
 	console.log(soundURL);
 
-	setBufferFromURL(playerIndex, soundURL);
+	gBirdSongPlayers[playerIndex].setBufferFromURL(soundURL, $('#status' + playerIndex))
 }
 
 function chooseBird(inPlayerIndex) {
