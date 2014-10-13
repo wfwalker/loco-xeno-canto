@@ -2,6 +2,9 @@
 
 // TODO: add ember for quiz?
 
+// TODO: http://www.tulane.edu/~rscheidt/rcc_calendar.html ?
+// TODO: http://freemusicarchive.org/api ?
+
 var gBirds = new PlaceTimeBirdSongs();
 
 	// GLOBAL initialize audio context and listener
@@ -50,9 +53,23 @@ $(document).ready(function(){
 		console.log('REVERSE PLAYBACK');
 
 		for (var i = 0; i < gBirdSongPlayers.length; i++) {
-			gBirdSongPlayers[0].reversePlayback();
+			gBirdSongPlayers[i].reversePlayback();
 		}
 	});
+
+	$('#recording0').click(function(e) {
+		gBirdSongPlayers[0].chooseRandomRecording($('#status0'), $('#label0'));
+	});
+	$('#recording1').click(function(e) {
+		gBirdSongPlayers[1].chooseRandomRecording($('#status1'), $('#label1'));
+	});
+	$('#recording2').click(function(e) {
+		gBirdSongPlayers[2].chooseRandomRecording($('#status2'), $('#label2'));
+	});
+	$('#recording3').click(function(e) {
+		gBirdSongPlayers[3].chooseRandomRecording($('#status3'), $('#label3'));
+	});
+
 
 	window.setInterval(function() {
 		for (var i = 0; i < 4; i++) {

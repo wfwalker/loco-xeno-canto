@@ -1,8 +1,12 @@
 // BirdSongPlayer
 function BirdSongPlayer(audioContext) {
 	this.soundSource = null;
-	this.gain = audioContext.createGain(); 
 
+	this.sighting = null;
+	this.sightingIndex = null;
+	this.soundsForSighting = null;
+
+	this.gain = audioContext.createGain(); 
 	this.gain.value = 0.99;
 
 	// see https://developer.mozilla.org/en-US/docs/Web/API/PannerNode
@@ -23,10 +27,12 @@ function BirdSongPlayer(audioContext) {
 	this.panner.connect(audioContext.destination);
 }
 
+// sets the X,Y,Z position of the Panner to random values between -1 and +1
 BirdSongPlayer.prototype.randomizePanner = function() {
 	this.panner.setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
 }
 
+// Sets the playback rate for the current sound to a random value between 0.1 and 1.1
 BirdSongPlayer.prototype.randomizePlaybackRate = function() {
 	this.soundSource.playbackRate.value = 0.1 + Math.random();		
 }
@@ -96,14 +102,14 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inStatusEle
 	mp3Request.send();
 }
 
-BirdSongPlayer.prototype.chooseRandomRecording = function(soundsData, inStatusElement, inLabelElement) {
-	if (soundsData == null || soundsData.recordings.length == 0) {
-		$('#status' + playerIndex).text('retrying');
+BirdSongPlayer.prototype.chooseRandomRecording = function(inStatusElement, inLabelElement) {
+	if (this.soundsForSighting == null || this.soundsForSighting.recordings.length == 0) {
+		inStatusElement.text('retrying');
 		console.log('FAILED loading recording for, retrying');
-		this.chooseSightingAndPlayRandomSound();
+		this.chooseSightingAndPlayRandomSound(inStatusElement, inLabelElement);
 	} else {
-		var randomRecordingID = Math.floor(Math.random() * soundsData.recordings.length);
-		var currentSound = soundsData.recordings[randomRecordingID];
+		var randomRecordingID = Math.floor(Math.random() * this.soundsForSighting.recordings.length);
+		var currentSound = this.soundsForSighting.recordings[randomRecordingID];
 
 		console.log(currentSound);
 		inLabelElement.text(currentSound.en);
@@ -117,20 +123,24 @@ BirdSongPlayer.prototype.chooseRandomRecording = function(soundsData, inStatusEl
 }
 
 BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(inStatusElement, inLabelElement) {
+	this.sightingIndex = gBirds.chooseRandomSighting();
+	this.sighting = gBirds.sightings[this.sightingIndex];
+
+	console.log('chooseSightingAndPlayRandomSound random sighting ' + this.sightingIndex);
+	console.log(this.sighting);
+
 	var myself = this;
-	var sighting = gBirds.chooseRandomSighting();
-	console.log('chooseSightingAndPlayRandomSound random sighting ' + sighting);
-	console.log(gBirds.sightings[sighting]);
 
 	// get sounds for this species if needed, and pick one at random
-	gBirds.getSoundsForSighting(sighting, function(soundsData) {
+	gBirds.getSoundsForSightingIndex(this.sightingIndex, function(soundsData) {
 		if (soundsData == null) {
 			console.log('NO SOUNDS');
 			inStatusElement.text('retrying');
 			myself.chooseSightingAndPlayRandomSound(inStatusElement);
 		} else {
-			inLabelElement.text(gBirds.sightings[sighting].comName);
-			myself.chooseRandomRecording(soundsData, inStatusElement, inLabelElement);
+			myself.soundsForSighting = soundsData;
+			inLabelElement.text(myself.sighting.comName);
+			myself.chooseRandomRecording(inStatusElement, inLabelElement);
 		}
 	});	
 }

@@ -5,6 +5,8 @@ function PlaceTimeBirdSongs() {
 	this.sounds = [];
 }
 
+// Use navigator.geolocation to find my location; invoke a callback when done.
+// use the provided default location when geolocation fails.
 // default location should be like { coords: { latitude: 37, longitude: -122 }
 PlaceTimeBirdSongs.prototype.setLocation = function(inDefaultLocation, callback) {
 	var myself = this;
@@ -50,7 +52,7 @@ PlaceTimeBirdSongs.prototype.getSightings = function(callback) {
 	});
 }
 
-PlaceTimeBirdSongs.prototype.getSoundsForSighting = function(inID, callback) {
+PlaceTimeBirdSongs.prototype.getSoundsForSightingIndex = function(inID, callback) {
 	if (this.sounds[inID]) {
 		callback(this.sounds[inID]);		
 	} else {
