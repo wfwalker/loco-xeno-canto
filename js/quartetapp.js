@@ -70,6 +70,18 @@ $(document).ready(function(){
 		gBirdSongPlayers[3].chooseRandomRecording($('#status3'), $('#label3'));
 	});
 
+	$('#toggle0').click(function(e) {
+		gBirdSongPlayers[0].toggleMute();
+	});
+	$('#toggle1').click(function(e) {
+		gBirdSongPlayers[1].toggleMute();
+	});
+	$('#toggle2').click(function(e) {
+		gBirdSongPlayers[2].toggleMute();
+	});
+	$('#toggle3').click(function(e) {
+		gBirdSongPlayers[3].toggleMute();
+	});
 
 	window.setInterval(function() {
 		for (var i = 0; i < 4; i++) {

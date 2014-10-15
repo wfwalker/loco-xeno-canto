@@ -7,7 +7,6 @@ function BirdSongPlayer(audioContext) {
 	this.soundsForSighting = null;
 
 	this.gain = audioContext.createGain(); 
-	this.gain.value = 0.99;
 
 	// see https://developer.mozilla.org/en-US/docs/Web/API/PannerNode
 	this.panner = audioContext.createPanner();
@@ -25,6 +24,17 @@ function BirdSongPlayer(audioContext) {
 
 	this.gain.connect(this.panner);
 	this.panner.connect(audioContext.destination);
+}
+
+// mutes or unmutes the sound by toggling the gain between 0 and 1
+BirdSongPlayer.prototype.toggleMute = function() {
+	if (this.gain.gain.value > 0) {
+		console.log('muting');
+		this.gain.gain.value = 0;
+	} else {
+		console.log('unmuting');
+		this.gain.gain.value = 1;
+	}
 }
 
 // sets the X,Y,Z position of the Panner to random values between -1 and +1
