@@ -109,7 +109,7 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inStatusEle
 
 	    gAudioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
 	    	myself.setSourceFromBuffer(decodedBuffer);
-			inStatusElement.text('playing ' + Math.round(decodedBuffer.duration) + 's');
+			inStatusElement.text(Math.round(decodedBuffer.duration) + 's from ' + myself.recording.loc);
 		});
 	};
 
