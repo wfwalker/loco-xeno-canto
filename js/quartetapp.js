@@ -76,19 +76,6 @@ $(document).ready(function(){
 		gBirdSongPlayers[3].chooseRandomRecording($('#sighting3'), $('#status3'), $('#label3'));
 	});
 
-	$('#toggle0').click(function(e) {
-		gBirdSongPlayers[0].toggleMute();
-	});
-	$('#toggle1').click(function(e) {
-		gBirdSongPlayers[1].toggleMute();
-	});
-	$('#toggle2').click(function(e) {
-		gBirdSongPlayers[2].toggleMute();
-	});
-	$('#toggle3').click(function(e) {
-		gBirdSongPlayers[3].toggleMute();
-	});
-
 	$('#nextSighting0').click(function(e) {
 		gBirdSongPlayers[0].chooseSightingAndPlayRandomSound($('#sighting0'), $('#status0'), $('#label0'));
 	});
@@ -101,7 +88,6 @@ $(document).ready(function(){
 	$('#nextSighting3').click(function(e) {
 		gBirdSongPlayers[3].chooseSightingAndPlayRandomSound($('#sighting3'), $('#status3'), $('#label3'));
 	});
-
 
 	window.setInterval(function() {
 		for (var i = 0; i < 4; i++) {

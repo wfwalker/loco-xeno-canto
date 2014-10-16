@@ -128,7 +128,6 @@ BirdSongPlayer.prototype.chooseRandomRecording = function(inSightingElement, inS
 		this.recording = this.soundsForSighting.recordings[this.recordingIndex];
 
 		console.log(this.recording);
-		inLabelElement.text(this.recording.en);
 
 		// rewrite URL's from xeno-canto JSON, route through my own server due to missing CORS
 		var soundURL = this.recording.file.replace('http://www.xeno-canto.org','/soundfile');
@@ -146,7 +145,9 @@ BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(inSightingE
 	console.log('chooseSightingAndPlayRandomSound random sighting ' + this.sightingIndex);
 	console.log(this.sighting);
 
+	inLabelElement.text(this.sighting.comName);
 	inSightingElement.text(this.sighting.locName);
+	inStatusElement.text('choosing');
 
 	var myself = this;
 
@@ -158,7 +159,6 @@ BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(inSightingE
 			myself.chooseSightingAndPlayRandomSound(inSightingElement, inStatusElement, inLabelElement);
 		} else {
 			myself.soundsForSighting = soundsData;
-			inLabelElement.text(myself.sighting.comName);
 			myself.chooseRandomRecording(inSightingElement, inStatusElement, inLabelElement);
 		}
 	});	
