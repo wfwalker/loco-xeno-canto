@@ -1,5 +1,10 @@
 // app.js
 
+// ‘Anything … may happen. A “mistake” is beside the point, for once anything happens it authentically is.’
+//   from:
+// ‘Composition: To Describe the Process of Composition Used in Music of Changes and Imaginary Landscape No. 4’
+// Silence, 1961
+
 // TODO: add ember for quiz?
 
 // TODO: http://www.tulane.edu/~rscheidt/rcc_calendar.html ?
@@ -24,9 +29,10 @@ gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext);
 
 $(document).ready(function(){ 
 	gBirds.setLocation({ coords: { latitude: 37, longitude: -122 }}, function(position) {
+		$('#position').text(position.coords.latitude + ', ' + position.coords.longitude);
 		gBirds.getSightings(function() {
 			for (var i = 0; i < gBirdSongPlayers.length; i++) {
-				gBirdSongPlayers[i].chooseSightingAndPlayRandomSound($('#status' + i), $('#label' + i));
+				gBirdSongPlayers[i].chooseSightingAndPlayRandomSound($('#sighting' + i), $('#status' + i), $('#label' + i));
 			}
 		});
 	});
@@ -58,16 +64,16 @@ $(document).ready(function(){
 	});
 
 	$('#recording0').click(function(e) {
-		gBirdSongPlayers[0].chooseRandomRecording($('#status0'), $('#label0'));
+		gBirdSongPlayers[0].chooseRandomRecording($('#sighting0'), $('#status0'), $('#label0'));
 	});
 	$('#recording1').click(function(e) {
-		gBirdSongPlayers[1].chooseRandomRecording($('#status1'), $('#label1'));
+		gBirdSongPlayers[1].chooseRandomRecording($('#sighting1'), $('#status1'), $('#label1'));
 	});
 	$('#recording2').click(function(e) {
-		gBirdSongPlayers[2].chooseRandomRecording($('#status2'), $('#label2'));
+		gBirdSongPlayers[2].chooseRandomRecording($('#sighting2'), $('#status2'), $('#label2'));
 	});
 	$('#recording3').click(function(e) {
-		gBirdSongPlayers[3].chooseRandomRecording($('#status3'), $('#label3'));
+		gBirdSongPlayers[3].chooseRandomRecording($('#sighting3'), $('#status3'), $('#label3'));
 	});
 
 	$('#toggle0').click(function(e) {
@@ -82,6 +88,20 @@ $(document).ready(function(){
 	$('#toggle3').click(function(e) {
 		gBirdSongPlayers[3].toggleMute();
 	});
+
+	$('#nextSighting0').click(function(e) {
+		gBirdSongPlayers[0].chooseSightingAndPlayRandomSound($('#sighting0'), $('#status0'), $('#label0'));
+	});
+	$('#nextSighting1').click(function(e) {
+		gBirdSongPlayers[1].chooseSightingAndPlayRandomSound($('#sighting1'), $('#status1'), $('#label1'));
+	});
+	$('#nextSighting2').click(function(e) {
+		gBirdSongPlayers[2].chooseSightingAndPlayRandomSound($('#sighting2'), $('#status2'), $('#label2'));
+	});
+	$('#nextSighting3').click(function(e) {
+		gBirdSongPlayers[3].chooseSightingAndPlayRandomSound($('#sighting3'), $('#status3'), $('#label3'));
+	});
+
 
 	window.setInterval(function() {
 		for (var i = 0; i < 4; i++) {

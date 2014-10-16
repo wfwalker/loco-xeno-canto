@@ -9,19 +9,18 @@
 		<div class='container'>
 			<div class='row'>
 				<div class='col-md-12'>
+					<h1>BirdVox QUARTET</h1>
 					<div class='panel panel-default'>
-						<div class='panel-heading' style='font-size: 18pt'>BirdVox</div>
+						<div class='panel-heading' style='font-size: 18pt'>eBird Sightings</div>
 
 						<div class='panel-body'>
-							this is a set of experiments using
-							<a href='https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/Using_geolocation'>geolocation</a>,
-							<a href='https://confluence.cornell.edu/display/CLOISAPI/eBird+API+1.1'>eBird API</a>, and
-							<a href='http://www.xeno-canto.org/article/153'>xeno-canto API</a>
+							<div id='position'>lat, long</div>
+							<div id='sightings'>bird sightings</div>
 						</div>	
 					</div>		
 
 					<div class='panel panel-default'>
-						<div class='panel-heading' style='font-size: 18pt'>Players - <span id='clock'>0s</span></div>
+						<div class='panel-heading' style='font-size: 18pt'>Controls <span style='float: right' id='clock'>0s</span></div>
 
 						<div class='panel-body'>
 							<div>
@@ -29,40 +28,71 @@
 								<button class='btn btn-primary' id='panners'>PANNERS</button>
 								<button class='btn btn-primary' id='reverse'>REVERSE</button>
 							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='col-md-6'>
+					<div class='panel panel-default'>
+						<div class='panel-heading' style='white-space: nowrap; overflow: hidden; text-overflow: ellipsis'>
+							<button class='btn btn-primary' id='nextSighting0'><span class='glyphicon glyphicon-step-forward'></span></button>
+							<span id='label0'>label0</span> seen @ <span id='sighting0'>location</span>
+						</div>
+						<div class='panel-body'>
+							<button class='btn btn-primary' id='toggle0'><span class='glyphicon glyphicon-volume-up'></span></button>
+							<button class='btn btn-primary' id='recording0'><span class='glyphicon glyphicon-step-forward'></span></button>
+							<span id='status0'>initializing</span>
+							@ <span id='playbackRate0'>1x</span>
+						</div>
+					</div>
+				</div>
 
-							<div>
-								<button class='btn btn-success' id='toggle0'>TOGGLE</button>
-								<button class='btn btn-success' id='recording0'>RECORDING</button>
-								<span id='status0'>initializing</span>
-								@ <span id='playbackRate0'>1x</span>
-								<span id='label0'>label0</span>
-							</div>
+				<div class='col-md-6'>
+					<div class='panel panel-default'>
+						<div class='panel-heading' style='white-space: nowrap; overflow: hidden; text-overflow: ellipsis'>
+							<button class='btn btn-primary' id='nextSighting1'><span class='glyphicon glyphicon-step-forward'></span></button>
+							<span id='label1'>label1</span> seen @ <span id='sighting1'>location</span>
+						</div>
+						<div class='panel-body'>
+							<button class='btn btn-primary' id='toggle1'><span class='glyphicon glyphicon-volume-up'></span></button>
+							<button class='btn btn-primary' id='recording1'><span class='glyphicon glyphicon-step-forward'></span></button>
+							<span id='status1'>initializing</span>
+							@ <span id='playbackRate1'>1x</span>
+						</div>
+					</div>
+				</div>
+			</div>
 
-							<div>
-								<button class='btn btn-success' id='toggle1'>TOGGLE</button>
-								<button class='btn btn-success' id='recording1'>RECORDING</button>
-								<span id='status1'>initializing</span>
-								@ <span id='playbackRate1'>1x</span>
-								<span id='label1'>label1</span>
-							</div>
+			<div class='row'>
+				<div class='col-md-6'>
+					<div class='panel panel-default'>
+						<div class='panel-heading' style='white-space: nowrap; overflow: hidden; text-overflow: ellipsis'>
+							<button class='btn btn-primary' id='nextSighting2'><span class='glyphicon glyphicon-step-forward'></span></button>
+							<span id='label2'>label2</span> seen @ <span id='sighting2'>location</span>
+						</div>
+						<div class='panel-body'>
+							<button class='btn btn-primary' id='toggle2'><span class='glyphicon glyphicon-volume-up'></span></button>
+							<button class='btn btn-primary' id='recording2'><span class='glyphicon glyphicon-step-forward'></span></button>
+							<span id='status2'>initializing</span>
+							@ <span id='playbackRate2'>1x</span>
+						</div>
+					</div>
+				</div>
 
-							<div>
-								<button class='btn btn-success' id='toggle2'>TOGGLE</button>
-								<button class='btn btn-success' id='recording2'>RECORDING</button>
-								<span id='status2'>initializing</span>
-								@ <span id='playbackRate2'>1x</span>
-								<span id='label2'>label2</span>
-							</div>
-
-							<div>
-								<button class='btn btn-success' id='toggle3'>TOGGLE</button>
-								<button class='btn btn-success' id='recording3'>RECORDING</button>
-								<span id='status3'>initializing</span>
-								@ <span id='playbackRate3'>1x</span>
-								<span id='label3'>label3</span>
-							</div>
-						</div>	
-					</div>				
+				<div class='col-md-6'>
+					<div class='panel panel-default'>
+						<div class='panel-heading' style='white-space: nowrap; overflow: hidden; text-overflow: ellipsis'>
+							<button class='btn btn-primary' id='nextSighting3'><span class='glyphicon glyphicon-step-forward'></span></button>
+							<span id='label3'>label3</span> seen @ <span id='sighting3'>location</span>
+						</div>
+						<div class='panel-body'>
+							<button class='btn btn-primary' id='toggle3'><span class='glyphicon glyphicon-volume-up'></span></button>
+							<button class='btn btn-primary' id='recording3'><span class='glyphicon glyphicon-step-forward'></span></button>
+							<span id='status3'>initializing</span>
+							@ <span id='playbackRate3'>1x</span>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
