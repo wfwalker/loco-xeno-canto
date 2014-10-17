@@ -7,7 +7,8 @@
     "express": "*",    
     "url": "*",    
     "request": "*",    
-    "http": "*"
+    "http": "*",
+    "body-parser": "*"
   },
   "author": "Bill Walker",
   "license": "MPL, v 2.0"

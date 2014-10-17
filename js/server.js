@@ -5,6 +5,7 @@ var url = require('url');
 var http = require('http');
 var https = require('https');
 var request = require('request');
+var bodyParser = require('body-parser');
 
 var app = express();
 
@@ -16,6 +17,9 @@ app.use("/", express.static('client', {
 app.use("/js", express.static('js', {
     maxage: 86400000
 }));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 // LAUNCH SERVER
 
@@ -31,6 +35,11 @@ app.param('latin_name', function(req, resp, next, id) {
     console.log('latin_name ' + latin_name);
     req.latin_name = latin_name;
     next();
+});
+
+app.post('/share', function (req, resp, next) {
+    console.log('POST SHARE');
+    console.log(req.body);
 });
 
 app.get('/sounds/:latin_name', function(req, resp, next) {

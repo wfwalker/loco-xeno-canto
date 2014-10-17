@@ -63,6 +63,18 @@ $(document).ready(function(){
 		}
 	});
 
+	$('#share').click(function(e) {
+		console.log('SHARE');
+
+		$.post(
+			"/share", 
+			JSON.stringify( gBirdSongPlayers[0] ), 
+			function(data, status) {
+				console.log('success sharing');
+			},
+			'json');		
+	});
+
 	$('#recording0').click(function(e) {
 		gBirdSongPlayers[0].chooseRandomRecording($('#sighting0'), $('#status0'), $('#label0'));
 	});
