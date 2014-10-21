@@ -1,5 +1,20 @@
+function getAverageVolume(array) {
+	var values = 0;
+	var average;
+
+	var length = array.length;
+
+	// get all the frequency amplitudes
+	for (var i = 0; i < length; i++) {
+		values += array[i];
+	}
+
+	average = values / length;
+	return average;
+}
+
 // BirdSongPlayer
-function BirdSongPlayer(audioContext) {
+function BirdSongPlayer(audioContext, inCanvasID) {
 	this.soundSource = null;
 
 	this.sighting = null;
@@ -26,7 +41,36 @@ function BirdSongPlayer(audioContext) {
 	this.panner.setVelocity(0, 0, 0);
 
 	this.gain.connect(this.panner);
+
+	var volumeMeterCanvas = document.getElementById(inCanvasID);
+	var graphicsContext = volumeMeterCanvas.getContext('2d');
+
+	// setup a analyzer
+	var analyser = audioContext.createAnalyser();
+	this.panner.connect(analyser);
 	this.panner.connect(audioContext.destination);
+
+	analyser.smoothingTimeConstant = 0.3;
+	analyser.fftSize = 64;
+
+	requestAnimationFrame(function vuMeter() {
+		// get the average, bincount is fftsize / 2
+		var array =  new Uint8Array(analyser.frequencyBinCount);
+		analyser.getByteFrequencyData(array);
+		var average = getAverageVolume(array);
+		average = Math.max(Math.min(average, 125), 5);
+
+		// clear the current state
+		graphicsContext.clearRect(0, 0, 130, 40);
+
+		// set the fill style
+		graphicsContext.fillStyle = 'rgb(0,0,0)'
+
+		// create the meters
+		graphicsContext.fillRect(1, 5, average, 15);
+
+		requestAnimationFrame(vuMeter);
+	});
 }
 
 // mutes or unmutes the sound by toggling the gain between 0 and 1
@@ -46,14 +90,17 @@ BirdSongPlayer.prototype.randomizePanner = function() {
 }
 
 // Sets the playback rate for the current sound to a random value between 0.1 and 1.1
-BirdSongPlayer.prototype.randomizePlaybackRate = function() {
+BirdSongPlayer.prototype.randomizePlaybackRate = function(inPlayerSelector) {
 	if (this.soundSource) {
-		this.soundSource.playbackRate.value = 0.1 + Math.random();		
+		this.soundSource.playbackRate.value = 0.1 + Math.random();	
+		$(inPlayerSelector).find('.playbackRate').text((Math.round(100 * this.soundSource.playbackRate.value) / 100.0) + "x");
 	} else {
 		console.log('cannot randomize, no sound source');
 	}
 }
 
+// Creates a new soundSource using the given buffer
+// preserves the old playback rate, if applicable
 BirdSongPlayer.prototype.setSourceFromBuffer = function(inBuffer) {
 	console.log('setSourceFromBuffer');
 	var oldPlaybackRateValue = 1;
@@ -71,9 +118,10 @@ BirdSongPlayer.prototype.setSourceFromBuffer = function(inBuffer) {
 	this.soundSource.playbackRate.value = oldPlaybackRateValue;
 	// start playing immediately in a loop	    	
 	this.soundSource.loop = true;
-	this.soundSource.start();	
+	this.soundSource.start(0);	
 }
 
+// Reverses the audio buffer so that the sound plays backwards
 BirdSongPlayer.prototype.reversePlayback = function() {
 	console.log('reversePlayback');
 
@@ -96,33 +144,33 @@ BirdSongPlayer.prototype.reversePlayback = function() {
 	console.log('DONE reversePlayback');
 }
 
-BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inStatusElement) {
-	var myself = this;
-
+BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inPlayerSelector) {
 	console.log('setBufferFromURL ' + inSoundDataURL);
 
 	var mp3Request = new XMLHttpRequest();
 
 	mp3Request.onload = function(e) {
-		inStatusElement.text('decoding');
+		$(inPlayerSelector).find('.status').text('decoding');
 		console.log(mp3Request.response);
 
 	    gAudioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
-	    	myself.setSourceFromBuffer(decodedBuffer);
-			inStatusElement.text(Math.round(decodedBuffer.duration) + 's from ' + myself.recording.loc);
-		});
-	};
+	    	this.setSourceFromBuffer(decodedBuffer);
+			$(inPlayerSelector).find('.status').text(Math.round(decodedBuffer.duration) + 's');
+			$(inPlayerSelector).find('.recordingLocation').text(this.recording.loc);
+			$(inPlayerSelector).find('.license').text(this.recording.lic);
+		}.bind(this));
+	}.bind(this);
 
 	mp3Request.open("GET", inSoundDataURL, true);
 	mp3Request.responseType = 'arraybuffer';
 	mp3Request.send();
 }
 
-BirdSongPlayer.prototype.chooseRandomRecording = function(inSightingElement, inStatusElement, inLabelElement) {
+BirdSongPlayer.prototype.chooseRandomRecording = function(inPlayerSelector) {
 	if (this.soundsForSighting == null || this.soundsForSighting.recordings.length == 0) {
-		inStatusElement.text('retrying');
+		$(inPlayerSelector).find('.status').text('retrying');
 		console.log('FAILED loading recording for, retrying');
-		this.chooseSightingAndPlayRandomSound(inSightingElement, inStatusElement, inLabelElement);
+		this.chooseSightingAndPlayRandomSound(inPlayerSelector);
 	} else {
 		this.recordingIndex = Math.floor(Math.random() * this.soundsForSighting.recordings.length);
 		this.recording = this.soundsForSighting.recordings[this.recordingIndex];
@@ -133,35 +181,33 @@ BirdSongPlayer.prototype.chooseRandomRecording = function(inSightingElement, inS
 		var soundURL = this.recording.file.replace('http://www.xeno-canto.org','/soundfile');
 		console.log(soundURL);
 
-		inStatusElement.text('downloading #' + this.recordingIndex);
-		this.setBufferFromURL(soundURL, inStatusElement)
+		$(inPlayerSelector).find('.status').text('downloading #' + this.recordingIndex);
+		this.setBufferFromURL(soundURL, inPlayerSelector);
 	}
 }
 
-BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(inSightingElement, inStatusElement, inLabelElement) {
+BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(inPlayerSelector) {
 	this.sightingIndex = gBirds.chooseRandomSighting();
 	this.sighting = gBirds.sightings[this.sightingIndex];
 
 	console.log('chooseSightingAndPlayRandomSound random sighting ' + this.sightingIndex);
 	console.log(this.sighting);
 
-	inLabelElement.text(this.sighting.comName);
-	inSightingElement.text(this.sighting.locName);
-	inStatusElement.text('choosing');
-
-	var myself = this;
+	$(inPlayerSelector).find('.speciesName').text(this.sighting.comName);
+	$(inPlayerSelector).find('.locationName').text(this.sighting.locName);
+	$(inPlayerSelector).find('.status').text('choosing');
 
 	// get sounds for this species if needed, and pick one at random
 	gBirds.getSoundsForSightingIndex(this.sightingIndex, function(soundsData) {
 		if (soundsData == null) {
 			console.log('NO SOUNDS');
-			inStatusElement.text('retrying');
-			myself.chooseSightingAndPlayRandomSound(inSightingElement, inStatusElement, inLabelElement);
+			$(inPlayerSelector).find('.status').text('retrying');
+			this.chooseSightingAndPlayRandomSound(inPlayerSelector);
 		} else {
-			myself.soundsForSighting = soundsData;
-			myself.chooseRandomRecording(inSightingElement, inStatusElement, inLabelElement);
+			this.soundsForSighting = soundsData;
+			this.chooseRandomRecording(inPlayerSelector);
 		}
-	});	
+	}.bind(this));	
 }
 
 

@@ -6,22 +6,14 @@
 	    <link rel="stylesheet" type="text/css" href="/app.css" />
 	</head>
 
-	<body style='padding-top: 10px'>	
+	<body style='padding-top: 10px'>
 		<div class='container'>
+			<a href="https://github.com/wfwalker/loco-xeno-canto">source code on github</a>	
 			<div class='row'>
 				<div class='col-md-12'>
 					<h1>les oiseaux de MEME plumage</h1>
 					<div class='panel panel-default'>
-						<div class='panel-heading' style='font-size: 18pt'>eBird Sightings</div>
-
-						<div class='panel-body'>
-							<div id='position'>lat, long</div>
-							<div id='sightings'>bird sightings</div>
-						</div>	
-					</div>		
-
-					<div class='panel panel-default'>
-						<div class='panel-heading' style='font-size: 18pt'>Controls <span style='float: right' id='clock'>0s</span></div>
+						<div class='panel-heading' style='font-size: 18pt'>four of <span id='sightings'>N</span> near <span id='position'>lat, long</span></div>
 
 						<div class='panel-body'>
 							<div>
@@ -36,29 +28,35 @@
 			</div>
 			<div class='row'>
 				<div class='col-md-6'>
-					<div class='panel panel-default'>
+					<div class='panel panel-default' id='player0'>
 						<div class='panel-heading panel-nowrap'>
-							<button class='btn btn-info' id='nextSighting0'><span class='glyphicon glyphicon-random'></span></button>
-							<span id='label0'>label0</span> seen @ <span id='sighting0'>location</span>
+							<button class='btn btn-info' id='nextSighting0' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
+							<span class='speciesName'>label0</span> seen @ <span class='locationName'>location</span>
 						</div>
 						<div class='panel-body panel-nowrap'>
-							<button class='btn btn-info' id='recording0'><span class='glyphicon glyphicon-random'></span></button>
-							<span id='status0'>initializing</span>
-							@ <span id='playbackRate0'>1x</span>
+							<button class='btn btn-info' id='recording0' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
+							<span class='status'>initializing</span>
+							@ <span class='playbackRate'>1x</span>
+							<div class='recordingLocation'>location</div>
+							<div class='license'>license</div>
+							<div><canvas id='volumeMeter0' height="40" width="130"></canvas></div>
 						</div>
 					</div>
 				</div>
 
 				<div class='col-md-6'>
-					<div class='panel panel-default'>
+					<div class='panel panel-default' id='player1'>
 						<div class='panel-heading panel-nowrap'>
-							<button class='btn btn-info' id='nextSighting1'><span class='glyphicon glyphicon-random'></span></button>
-							<span id='label1'>label1</span> seen @ <span id='sighting1'>location</span>
+							<button class='btn btn-info' id='nextSighting1' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
+							<span class='speciesName'>label1</span> seen @ <span class='locationName'>location</span>
 						</div>
 						<div class='panel-body panel-nowrap'>
-							<button class='btn btn-info' id='recording1'><span class='glyphicon glyphicon-random'></span></button>
-							<span id='status1'>initializing</span>
-							@ <span id='playbackRate1'>1x</span>
+							<button class='btn btn-info' id='recording1' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
+							<span class='status'>initializing</span>
+							@ <span class='playbackRate'>1x</span>
+							<div class='recordingLocation'>location</div>
+							<div class='license'>license</div>
+							<div><canvas id='volumeMeter1' height="40" width="130"></canvas></div>
 						</div>
 					</div>
 				</div>
@@ -66,29 +64,35 @@
 
 			<div class='row'>
 				<div class='col-md-6'>
-					<div class='panel panel-default'>
+					<div class='panel panel-default' id='player2'>
 						<div class='panel-heading panel-nowrap'>
-							<button class='btn btn-info' id='nextSighting2'><span class='glyphicon glyphicon-random'></span></button>
-							<span id='label2'>label2</span> seen @ <span id='sighting2'>location</span>
+							<button class='btn btn-info' id='nextSighting2' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
+							<span class='speciesName'>label2</span> seen @ <span class='locationName'>location</span>
 						</div>
 						<div class='panel-body panel-nowrap'>
-							<button class='btn btn-info' id='recording2'><span class='glyphicon glyphicon-random'></span></button>
-							<span id='status2'>initializing</span>
-							@ <span id='playbackRate2'>1x</span>
+							<button class='btn btn-info' id='recording2' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
+							<span class='status'>initializing</span>
+							@ <span class='playbackRate'>1x</span>
+							<div class='recordingLocation'>location</div>
+							<div class='license'>license</div>
+							<div><canvas id='volumeMeter2' height="40" width="130"></canvas></div>
 						</div>
 					</div>
 				</div>
 
 				<div class='col-md-6'>
-					<div class='panel panel-default'>
+					<div class='panel panel-default' id='player3'>
 						<div class='panel-heading panel-nowrap'>
-							<button class='btn btn-info' id='nextSighting3'><span class='glyphicon glyphicon-random'></span></button>
-							<span id='label3'>label3</span> seen @ <span id='sighting3'>location</span>
+							<button class='btn btn-info' id='nextSighting3' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
+							<span class='speciesName'>label3</span> seen @ <span class='locationName'>location</span>
 						</div>
 						<div class='panel-body panel-nowrap'>
-							<button class='btn btn-info' id='recording3'><span class='glyphicon glyphicon-random'></span></button>
-							<span id='status3'>initializing</span>
-							@ <span id='playbackRate3'>1x</span>
+							<button class='btn btn-info' id='recording3' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
+							<span class='status'>initializing</span>
+							@ <span class='playbackRate'>1x</span>
+							<div class='recordingLocation'>location</div>
+							<div class='license'>license</div>
+							<div><canvas id='volumeMeter3' height="40" width="130"></canvas></div>
 						</div>
 					</div>
 				</div>

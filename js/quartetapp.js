@@ -22,17 +22,17 @@ gListener.setOrientation(0,0,-1,0,1,0);
 
 // GLOBAL sound sources for bird song playback
 gBirdSongPlayers = [];
-gBirdSongPlayers[0] = new BirdSongPlayer(gAudioContext);
-gBirdSongPlayers[1] = new BirdSongPlayer(gAudioContext);
-gBirdSongPlayers[2] = new BirdSongPlayer(gAudioContext);
-gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext);
+gBirdSongPlayers[0] = new BirdSongPlayer(gAudioContext, 'volumeMeter0');
+gBirdSongPlayers[1] = new BirdSongPlayer(gAudioContext, 'volumeMeter1');
+gBirdSongPlayers[2] = new BirdSongPlayer(gAudioContext, 'volumeMeter2');
+gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext, 'volumeMeter3');
 
 $(document).ready(function(){ 
 	gBirds.setLocation({ coords: { latitude: 37, longitude: -122 }}, function(position) {
 		$('#position').text(position.coords.latitude + ', ' + position.coords.longitude);
 		gBirds.getSightings(function() {
 			for (var i = 0; i < gBirdSongPlayers.length; i++) {
-				gBirdSongPlayers[i].chooseSightingAndPlayRandomSound($('#sighting' + i), $('#status' + i), $('#label' + i));
+				gBirdSongPlayers[i].chooseSightingAndPlayRandomSound('#player' + i);
 			}
 		});
 	});
@@ -43,7 +43,7 @@ $(document).ready(function(){
 		console.log('RANDOMIZE PLAYBACK RATES');
 
 		for (var i = 0; i < gBirdSongPlayers.length; i++) {
-			gBirdSongPlayers[i].randomizePlaybackRate();
+			gBirdSongPlayers[i].randomizePlaybackRate('#player' + i);
 		}
 	});
 
@@ -51,7 +51,7 @@ $(document).ready(function(){
 		console.log('RANDOMIZE PANNERS');
 
 		for (var i = 0; i < gBirdSongPlayers.length; i++) {
-			gBirdSongPlayers[i].randomizePanner();
+			gBirdSongPlayers[i].randomizePanner('#player' + i);
 		}
 	});
 
@@ -59,7 +59,7 @@ $(document).ready(function(){
 		console.log('REVERSE PLAYBACK');
 
 		for (var i = 0; i < gBirdSongPlayers.length; i++) {
-			gBirdSongPlayers[i].reversePlayback();
+			gBirdSongPlayers[i].reversePlayback('#player' + i);
 		}
 	});
 
@@ -76,41 +76,30 @@ $(document).ready(function(){
 	});
 
 	$('#recording0').click(function(e) {
-		gBirdSongPlayers[0].chooseRandomRecording($('#sighting0'), $('#status0'), $('#label0'));
+		gBirdSongPlayers[0].chooseRandomRecording('#player0');
 	});
 	$('#recording1').click(function(e) {
-		gBirdSongPlayers[1].chooseRandomRecording($('#sighting1'), $('#status1'), $('#label1'));
+		gBirdSongPlayers[1].chooseRandomRecording('#player1');
 	});
 	$('#recording2').click(function(e) {
-		gBirdSongPlayers[2].chooseRandomRecording($('#sighting2'), $('#status2'), $('#label2'));
+		gBirdSongPlayers[2].chooseRandomRecording('#player2');
 	});
 	$('#recording3').click(function(e) {
-		gBirdSongPlayers[3].chooseRandomRecording($('#sighting3'), $('#status3'), $('#label3'));
+		gBirdSongPlayers[3].chooseRandomRecording('#player3');
 	});
 
 	$('#nextSighting0').click(function(e) {
-		gBirdSongPlayers[0].chooseSightingAndPlayRandomSound($('#sighting0'), $('#status0'), $('#label0'));
+		gBirdSongPlayers[0].chooseSightingAndPlayRandomSound('#player0');
 	});
 	$('#nextSighting1').click(function(e) {
-		gBirdSongPlayers[1].chooseSightingAndPlayRandomSound($('#sighting1'), $('#status1'), $('#label1'));
+		gBirdSongPlayers[1].chooseSightingAndPlayRandomSound('#player1');
 	});
 	$('#nextSighting2').click(function(e) {
-		gBirdSongPlayers[2].chooseSightingAndPlayRandomSound($('#sighting2'), $('#status2'), $('#label2'));
+		gBirdSongPlayers[2].chooseSightingAndPlayRandomSound('#player2');
 	});
 	$('#nextSighting3').click(function(e) {
-		gBirdSongPlayers[3].chooseSightingAndPlayRandomSound($('#sighting3'), $('#status3'), $('#label3'));
+		gBirdSongPlayers[3].chooseSightingAndPlayRandomSound('#player3');
 	});
-
-	window.setInterval(function() {
-		for (var i = 0; i < 4; i++) {
-			if (gBirdSongPlayers[i].soundSource) {
-				$('#playbackRate' + i).text((Math.round(100 * gBirdSongPlayers[i].soundSource.playbackRate.value) / 100.0) + "x");
-			}
-		}
-
-		$('#clock').text(Math.round(gAudioContext.currentTime) + 's');
-	}, 1000);
-
 });
 
 
