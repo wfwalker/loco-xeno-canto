@@ -40,6 +40,10 @@ PlaceTimeBirdSongs.prototype.getSightings = function(callback) {
 	console.log(urlString);
 
 	$.getJSON(urlString, function(data) {
+		if (data.length == 0) {
+			throw "No sightings found!";
+		}
+
 		$('#sightings').text(data.length + ' sightings');
 
 		for (var index in data) {

@@ -61,7 +61,8 @@ function BirdSongPlayer(audioContext, inCanvasID) {
 		average = Math.max(Math.min(average, 125), 5);
 
 		// clear the current state
-		graphicsContext.clearRect(0, 0, 130, 40);
+		graphicsContext.fillStyle = 'rgb(220,220,220)'
+		graphicsContext.fillRect(1, 5, 130, 15);
 
 		// set the fill style
 		graphicsContext.fillStyle = 'rgb(0,0,0)'
