@@ -158,7 +158,18 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inPlayerSel
 	    	this.setSourceFromBuffer(decodedBuffer);
 			$(inPlayerSelector).find('.status').text(Math.round(decodedBuffer.duration) + 's');
 			$(inPlayerSelector).find('.recordingLocation').text(this.recording.loc);
-			$(inPlayerSelector).find('.license').text(this.recording.lic);
+			$(inPlayerSelector).find('.recordist').text(this.recording.rec);
+
+			var licenseIcon = '';
+
+			if (this.recording.lic.indexOf('by-nc-nd') > 0) {
+				licenseIcon = 'http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png';
+			} else if (this.recording.lic.indexOf('by-nc-sa') > 0) {
+				licenseIcon = 'http://i.creativecommons.org/l/by-nc-sa/3.0/us/88x31.png';
+			}
+
+			$(inPlayerSelector).find('.license').attr('src', licenseIcon);
+
 		}.bind(this));
 	}.bind(this);
 
