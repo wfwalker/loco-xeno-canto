@@ -29,7 +29,8 @@ gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext, 'volumeMeter3');
 
 $(document).ready(function(){ 
 	gBirds.setLocation({ coords: { latitude: 37, longitude: -122 }}, function(position) {
-		$('#position').text(position.coords.latitude + ', ' + position.coords.longitude);
+		$('#position').text(Math.round(position.coords.latitude * 100) / 100.0 + ', ' + Math.round(position.coords.longitude * 100) / 100.0);
+
 		gBirds.getSightings(function() {
 			for (var i = 0; i < gBirdSongPlayers.length; i++) {
 				gBirdSongPlayers[i].chooseSightingAndPlayRandomSound('#player' + i);
