@@ -1,0 +1,6 @@
+{
+  "name": "Birds of a Feather",
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "landscape"
+}
