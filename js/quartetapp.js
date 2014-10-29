@@ -1,9 +1,135 @@
 // app.js
 
-// ‘Anything … may happen. A “mistake” is beside the point, for once anything happens it authentically is.’
-//   from:
-// ‘Composition: To Describe the Process of Composition Used in Music of Changes and Imaginary Landscape No. 4’
-// Silence, 1961
+var payment_providers = [
+	{
+		'type': 'mozilla/payments/pay/v1',
+		'uri': '/success.html?req=',
+	}
+];
+ 
+if (navigator.mozPay == null) {
+	var mozPay = function(arrayOfItems) {
+		var parsed = jwt.WebTokenParser.parse(arrayOfItems[0]);
+		console.log('parsed');
+		console.log(parsed);
+		var decoded = JSON.parse(jwt.base64urldecode(parsed.payloadSegment));
+		console.log('decoded');
+		console.log(decoded);
+		for (var k = 0; k < payment_providers.length; k++) {
+			if (payment_providers[k].type === decoded.typ) {
+				console.log('Redirecting...');
+				window.open(payment_providers[k].uri + arrayOfItems[0], '_blank');
+			} else {
+				console.log('not redirecting');
+			}
+		}
+	};
+ 
+	var mozPaymentProvider = {
+		mcc: 1,
+		mnc: 2,
+	};
+	 
+	navigator.mozPay = mozPay;
+	window.mozPaymentProvider = mozPaymentProvider;
+}
+
+function createPurchaseToken(productID) {
+	return {
+	    "iss": 'APPLICATION_KEY',
+	    "aud": "marketplace.firefox.com",
+	    "typ": "mozilla/payments/pay/v1",
+	    "iat": 1337357297,
+	    "exp": 1337360897,
+	    "request": {
+	      "id": "915c07fc-87df-46e5-9513-45cb6e504e39",
+	      "pricePoint": 1,
+	      "name": "Magical Unicorn",
+	      "description": "Adventure Game item",
+	      "icons": {
+	        "64": "https://yourapp.com/img/icon-64 .png",
+	        "128": "https://yourapp.com/img/icon-128.png"
+	      },
+	      "productData": "user_id=1234&my_session_id=XYZ",
+	      "postbackURL": "https://yourapp.com/payments/postback",
+	      "chargebackURL": "https://yourapp.com/payments/chargeback",
+	      "defaultLocale": "en",
+	      "locales": {
+	        "de": {
+	          "name": "Magisches Einhorn",
+	          "description": "Adventure Game Artikel"
+	        }
+	      }
+	    }
+	  }	
+}
+
+// Begin a purchase. Typically you would attach this to the click handler on a Buy button.
+// purchaseSomething("A nice unicorn");
+
+function purchaseSomething(productID) {
+	console.log('starting purchaseSomething ' + productID);
+
+	var fakeToken = createPurchaseToken(productID);
+
+	$.ajax({
+		type: 'POST',
+		url: '/signingtest',
+		dataType: 'json',
+		data: fakeToken, /* TODO: productID goes in here */
+		success: function(data) {
+			if (data) {
+				console.log('succeed');
+				console.log(data);
+
+			    // Pass the JSON Web Tokens to the payment provider
+			    var request = navigator.mozPay(data.jwts);
+
+			    // Set up the success/error handler for the payment window.
+			    request.onsuccess = function () {
+			      console.log('The user payment flow completed successfully');
+			      // Although the payment flow completed, you need to poll your server and wait 
+			      // for a verified payment result to be sure the payment went through.
+			      waitForPaymentResult(data.transactionID);
+			    };
+			    request.onerror = function () {
+			      console.log('Sorry, the payment flow had an error:', this.error.name);
+			    };
+			} else {
+				console.log('fail');
+				console.log(data);
+			}
+		}.bind(this),
+		error: function(xhr, status, error) {
+			console.log('fail');
+			console.log(error);
+		}
+	});		
+}
+
+function waitForPaymentResult(transactionID) {
+  var myXHR = new XMLHttpRequest();
+  myXHR.responseType = 'json';
+
+  // Prepare to check if a postback/chargeback has been received for transactionID.
+  myXHR.open('GET', '/payment_result/' + transactionID);
+
+  myXHR.addEventListener('load', function () {
+    // Retrieve the result, such as:
+    // {"result": "postback received"} or {"result": "still waiting"}
+    if (myXHR.response.result == 'postback received') {
+      // A postback notice was received and you verified the incoming JWT signature.
+      console.log('Success! The product has been purchased');
+    } else {
+      // No postback/chargeback has been sent to your server yet. Try again in 3 seconds.
+      window.setTimeout(function() { waitForPaymentResult(transactionID); }, 3000);
+    }
+  });
+
+  // Send the request to check the transactionID status.
+  myXHR.send();
+}
+
 
 // TODO: add ember for quiz?
 
@@ -100,6 +226,10 @@ $(document).ready(function(){
 	});
 	$('#nextSighting3').click(function(e) {
 		gBirdSongPlayers[3].chooseSightingAndPlayRandomSound('#player3');
+	});
+
+	$('#buy').click(function(e) {
+		purchaseSomething('my product ID');
 	});
 });
 

@@ -6,6 +6,7 @@ var http = require('http');
 var https = require('https');
 var request = require('request');
 var bodyParser = require('body-parser');
+var jwt = require('jsonwebtoken');
 
 var app = express();
 
@@ -58,6 +59,12 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
             console.log('cannot retrieve ' + inURL + ', ' + error);
         }
     });
+});
+
+app.post('/signingtest', function(req, resp, next) {
+    console.log(req.body);
+    var token = jwt.sign(req.body, 'shhhhh', { algorithm: 'HS256', expiresInMinutes: 120, audience: 'aaa', subject: 'bbb', issuer: 'ccc' });
+    resp.json({jwts: [token], transactionID: 23});
 });
 
 // we must proxy soundfiles, see 

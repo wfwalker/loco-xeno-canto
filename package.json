@@ -8,7 +8,8 @@
     "url": "*",    
     "request": "*",    
     "http": "*",
-    "body-parser": "*"
+    "body-parser": "*",
+    "jsonwebtoken": "*"
   },
   "author": "Bill Walker",
   "license": "MPL, v 2.0"
