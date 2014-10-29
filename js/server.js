@@ -10,6 +10,8 @@ var jwt = require('jsonwebtoken');
 
 var app = express();
 
+express.static.mime.define({'application/x-web-app-manifest+json': ['manifest']});
+
 // TODO: this will cache the index.html for a day, which is bad
 // TODO: but it caches the bootstrap.css for a day which is good.
 app.use("/", express.static('client', {
