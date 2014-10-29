@@ -1,0 +1,23 @@
+{
+  "version": "0.1",
+  "name": "LocoXenoCanto",
+  "description": "Audio Soundscape from Birdsongs",
+  "launch_path": "/quartet.html",
+  "icons": {
+    "64": "/bird-64.png",
+    "128": "/bird-128.png"
+  },
+  "developer": {
+    "name": "Bill Walker",
+    "url": "http://wfwalker.github.com/loco-xeno-canto/"
+  },
+  "installs_allowed_from": ["*"],
+  "locales": {
+  },
+  "default_locale": "en",
+  "permissions": {
+    "geolocation": {
+      "description": "Used to position the map to your current position"
+    }
+  }  
+}
