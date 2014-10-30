@@ -9,7 +9,7 @@
     "request": "*",    
     "http": "*",
     "body-parser": "*",
-    "jsonwebtoken": "*"
+    "mozpay": "*"
   },
   "author": "Bill Walker",
   "license": "MPL, v 2.0"

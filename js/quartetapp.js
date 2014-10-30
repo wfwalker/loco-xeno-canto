@@ -3,13 +3,13 @@
 var payment_providers = [
 	{
 		'type': 'mozilla/payments/pay/v1',
-		'uri': '/success.html?req=',
+		'uri': 'https://marketplace-dev.allizom.org/mozpay/?req=',
 	}
 ];
  
 if (navigator.mozPay == null) {
-	var mozPay = function(arrayOfItems) {
-		var parsed = jwt.WebTokenParser.parse(arrayOfItems[0]);
+	var mozPay = function(item) {
+		var parsed = jwt.WebTokenParser.parse(item);
 		console.log('parsed');
 		console.log(parsed);
 		var decoded = JSON.parse(jwt.base64urldecode(parsed.payloadSegment));
@@ -18,7 +18,7 @@ if (navigator.mozPay == null) {
 		for (var k = 0; k < payment_providers.length; k++) {
 			if (payment_providers[k].type === decoded.typ) {
 				console.log('Redirecting...');
-				window.open(payment_providers[k].uri + arrayOfItems[0], '_blank');
+				window.open(payment_providers[k].uri + item, '_blank');
 			} else {
 				console.log('not redirecting');
 			}
@@ -34,56 +34,24 @@ if (navigator.mozPay == null) {
 	window.mozPaymentProvider = mozPaymentProvider;
 }
 
-function createPurchaseToken(productID) {
-	return {
-	    "iss": 'APPLICATION_KEY',
-	    "aud": "marketplace.firefox.com",
-	    "typ": "mozilla/payments/pay/v1",
-	    "iat": 1337357297,
-	    "exp": 1337360897,
-	    "request": {
-	      "id": "915c07fc-87df-46e5-9513-45cb6e504e39",
-	      "pricePoint": 1,
-	      "name": "Magical Unicorn",
-	      "description": "Adventure Game item",
-	      "icons": {
-	        "64": "https://yourapp.com/img/icon-64 .png",
-	        "128": "https://yourapp.com/img/icon-128.png"
-	      },
-	      "productData": "user_id=1234&my_session_id=XYZ",
-	      "postbackURL": "https://yourapp.com/payments/postback",
-	      "chargebackURL": "https://yourapp.com/payments/chargeback",
-	      "defaultLocale": "en",
-	      "locales": {
-	        "de": {
-	          "name": "Magisches Einhorn",
-	          "description": "Adventure Game Artikel"
-	        }
-	      }
-	    }
-	  }	
-}
-
 // Begin a purchase. Typically you would attach this to the click handler on a Buy button.
 // purchaseSomething("A nice unicorn");
 
-function purchaseSomething(productID) {
-	console.log('starting purchaseSomething ' + productID);
-
-	var fakeToken = createPurchaseToken(productID);
+function purchaseSomething(inProductID) {
+	console.log('starting purchaseSomething ' + inProductID);
 
 	$.ajax({
 		type: 'POST',
-		url: '/signingtest',
+		url: '/createandsign',
 		dataType: 'json',
-		data: fakeToken, /* TODO: productID goes in here */
+		data: { name: inProductID, type: 'thing' }, /* TODO: productID goes in here */
 		success: function(data) {
 			if (data) {
 				console.log('succeed');
 				console.log(data);
 
 			    // Pass the JSON Web Tokens to the payment provider
-			    var request = navigator.mozPay(data.jwts);
+			    var request = navigator.mozPay(data.jwt);
 
 			    // Set up the success/error handler for the payment window.
 			    request.onsuccess = function () {
@@ -154,15 +122,15 @@ gBirdSongPlayers[2] = new BirdSongPlayer(gAudioContext, 'volumeMeter2');
 gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext, 'volumeMeter3');
 
 $(document).ready(function(){ 
-	gBirds.setLocation({ coords: { latitude: 37, longitude: -122 }}, function(position) {
-		$('#position').text(Math.round(position.coords.latitude * 100) / 100.0 + ', ' + Math.round(position.coords.longitude * 100) / 100.0);
+	// gBirds.setLocation({ coords: { latitude: 37, longitude: -122 }}, function(position) {
+	// 	$('#position').text(Math.round(position.coords.latitude * 100) / 100.0 + ', ' + Math.round(position.coords.longitude * 100) / 100.0);
 
-		gBirds.getSightings(function() {
-			for (var i = 0; i < gBirdSongPlayers.length; i++) {
-				gBirdSongPlayers[i].chooseSightingAndPlayRandomSound('#player' + i);
-			}
-		});
-	});
+	// 	gBirds.getSightings(function() {
+	// 		for (var i = 0; i < gBirdSongPlayers.length; i++) {
+	// 			gBirdSongPlayers[i].chooseSightingAndPlayRandomSound('#player' + i);
+	// 		}
+	// 	});
+	// });
 
 	// TODO: can we incorporate the vocoder demo?
 
