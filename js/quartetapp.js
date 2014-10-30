@@ -28,6 +28,12 @@ if (navigator.mozPay == null) {
 	var mozPaymentProvider = {
 		mcc: 1,
 		mnc: 2,
+		paymentSuccess: function() {
+			console.log('shim mozPaymentProvider.paymentSuccess');
+		},
+		paymentFailure: function() {
+			console.log('shim mozPaymentProvider.paymentFailure');
+		}
 	};
 	 
 	navigator.mozPay = mozPay;
