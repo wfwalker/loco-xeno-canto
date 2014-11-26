@@ -150,6 +150,16 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inPlayerSel
 
 	var mp3Request = new XMLHttpRequest();
 
+	mp3Request.onerror = function(e) {
+		console.log('ERROR downloading');
+		console.log(e);
+		$(inPlayerSelector).find('.status').text('error downloading');		
+	};
+
+	mp3Request.onprogress = function(e) {
+		$(inPlayerSelector).find('.status').text('downloading ' + Math.round(100 * e.loaded / e.total) + '%');
+	};
+
 	mp3Request.onload = function(e) {
 		$(inPlayerSelector).find('.status').text('decoding');
 		console.log(mp3Request.response);
