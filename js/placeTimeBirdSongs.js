@@ -37,6 +37,7 @@ PlaceTimeBirdSongs.prototype.getSightings = function(callback) {
 	var queryParams = { lat: this.position.coords.latitude, lng: this.position.coords.longitude, fmt: 'json' };
 	var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent?' + $.param(queryParams);
 
+	// TODO: no error handling, especially not for 503
 	console.log(urlString);
 
 	$.getJSON(urlString, function(data) {
@@ -51,7 +52,12 @@ PlaceTimeBirdSongs.prototype.getSightings = function(callback) {
 		}
 
 		callback();
-	}.bind(this));
+	}.bind(this))
+	.fail(function(e) {
+		console.log("failure to get sightings");
+		console.log(e);
+		$('#sightings').text('error while retrieving sightings');
+	});
 }
 
 PlaceTimeBirdSongs.prototype.getSoundsForSightingIndex = function(inID, callback) {
