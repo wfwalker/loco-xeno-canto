@@ -52,10 +52,14 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
                 resp.json(JSON.parse(body.trim()));
             }
             catch (e) {
-                console.log('cannot parse ' + inURL + ', ' + e);
+                console.log('cannot parse ' + urlString + ', ' + e);
+                // TODO: return 500?
+                resp.json([]);
             }
         } else {
-            console.log('cannot retrieve ' + inURL + ', ' + error);
+            console.log('cannot retrieve ' + urlString + ', ' + error);
+            // TODO: return 500?
+            resp.json([]);
         }
     });
 });
@@ -65,9 +69,15 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
 // https://www.npmjs.org/package/request
 
 app.use('/soundfile', function(req, resp, next) {
+    // TODO: wrapping the call to pipe() in try/catch does not catch this error:
+
+    // Error: getaddrinfo ENOTFOUND
+    //     at errnoException (dns.js:37:11)
+    //     at Object.onanswer [as oncomplete] (dns.js:124:16)
+
     var urlString = 'http://www.xeno-canto.org' + req.path;
     console.log('seeking sound file ' + urlString);
     req.pipe(request({ uri: urlString, strictSSL: false })).pipe(resp);
-    console.log('seeking sound file set up pipe');
+    console.log('seeking sound file set up pipe');        
 });
 
