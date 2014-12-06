@@ -151,8 +151,6 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inPlayerSel
 	var mp3Request = new XMLHttpRequest();
 
 	mp3Request.onerror = function(e) {
-		console.log('ERROR downloading');
-		console.log(e);
 		$(inPlayerSelector).find('.status').text('error downloading');		
 	};
 
@@ -215,7 +213,7 @@ BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(inPlayerSel
 	console.log('chooseSightingAndPlayRandomSound random sighting ' + this.sightingIndex);
 	console.log(this.sighting);
 
-	$(inPlayerSelector).find('.speciesName').text(this.sighting.comName);
+	$(inPlayerSelector).find('.speciesName').text(this.sightingIndex + '. ' + this.sighting.comName);
 	$(inPlayerSelector).find('.locationName').text(this.sighting.locName);
 	$(inPlayerSelector).find('.status').text('choosing');
 
