@@ -9,22 +9,21 @@
 
 	<body style='padding-top: 10px'>
 		<div class='container'>
-			<a href="https://github.com/wfwalker/loco-xeno-canto">source code on github</a>	
+			<a target='_blank' href="https://github.com/wfwalker/loco-xeno-canto">source code on github</a>	
 			<div class='row'>
 				<div class='col-md-12'>
-					<h1>les oiseaux de même plumage</h1>
-					<div class='panel panel-default'>
-						<div class='panel-heading' style='font-size: 18pt'>four of <span id='sightings'>N</span> near <span id='position'>lat, long</span></div>
-
-						<div class='panel-body'>
-							<div>
-								<button class='btn btn-info' id='playbackRates'><span class='glyphicon glyphicon-random'></span> Playback Rate</button>
-								<button class='btn btn-info' id='panners'><span class='glyphicon glyphicon-random'></span> Stereo Pan</button>
-								<button class='btn btn-info' id='reverse'>Reverse</button>
-								<button class='btn btn-info' id='share'>Share</button>
-							</div>
-						</div>
-					</div>
+					<h1>
+						les oiseaux de même plumage
+						<small><span id='sightings'>four of N</span> near <span id='position'>lat, long</span></small>
+					</h1>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='col-md-12' style='padding-bottom: 20px'>
+					<button class='btn btn-info' id='playbackRates'><span class='glyphicon glyphicon-random'></span> Playback Rate</button>
+					<button class='btn btn-info' id='panners'><span class='glyphicon glyphicon-random'></span> Stereo Pan</button>
+					<button class='btn btn-info' id='reverse'>Reverse</button>
+					<button class='btn btn-info' id='share'>Share</button>
 				</div>
 			</div>
 			<div class='row'>
@@ -36,7 +35,7 @@
 						</div>
 						<div class='panel-body panel-nowrap'>
 							<button class='btn btn-info' id='recording0' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
-							<div><canvas id='volumeMeter0' height="40" width="130"></canvas></div>
+							<div><canvas id='volumeMeter0' height="30" width="130"></canvas></div>
 							<span class='status'>initializing</span> @ <span class='playbackRate'>1x</span>
 							<div class='recordingLocation'>location</div>
 							<div class='recordist'>recordist</div>
@@ -53,7 +52,7 @@
 						</div>
 						<div class='panel-body panel-nowrap'>
 							<button class='btn btn-info' id='recording1' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
-							<div><canvas id='volumeMeter1' height="40" width="130"></canvas></div>
+							<div><canvas id='volumeMeter1' height="30" width="130"></canvas></div>
 							<span class='status'>initializing</span> @ <span class='playbackRate'>1x</span>
 							<div class='recordingLocation'>location</div>
 							<div class='recordist'>recordist</div>
@@ -72,7 +71,7 @@
 						</div>
 						<div class='panel-body panel-nowrap'>
 							<button class='btn btn-info' id='recording2' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
-							<div><canvas id='volumeMeter2' height="40" width="130"></canvas></div>
+							<div><canvas id='volumeMeter2' height="30" width="130"></canvas></div>
 							<span class='status'>initializing</span> @ <span class='playbackRate'>1x</span>
 							<div class='recordingLocation'>location</div>
 							<div class='recordist'>recordist</div>
@@ -89,7 +88,7 @@
 						</div>
 						<div class='panel-body panel-nowrap'>
 							<button class='btn btn-info' id='recording3' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
-							<div><canvas id='volumeMeter3' height="40" width="130"></canvas></div>
+							<div><canvas id='volumeMeter3' height="30" width="130"></canvas></div>
 							<span class='status'>initializing</span> @ <span class='playbackRate'>1x</span>
 							<div class='recordingLocation'>location</div>
 							<div class='recordist'>recordist</div>
