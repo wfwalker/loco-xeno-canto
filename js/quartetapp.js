@@ -75,10 +75,11 @@ $(document).ready(function(){
 
 	$('#share').click(function(e) {
 		console.log('SHARE');
+		resetLastActionTime();
 
 		$.post(
 			"/share", 
-			JSON.stringify( gBirdSongPlayers[0] ), 
+			JSON.stringify( gBirdSongPlayers ), 
 			function(data, status) {
 				console.log('success sharing');
 			},
@@ -120,12 +121,11 @@ $(document).ready(function(){
 	});
 
 	window.setInterval(function() {
-		console.log('is idle?');
 		// TODO: call "update last action" method from each button above or other event handler
 		// TODO: that function should set a global that holds the last active time
 		// TODO: here, compare that stashed time to current time
 		// TODO: if it exceeds threshold, do something and update last action
-		console.log('last action ' + gLastActionTime + ', currently ' + gAudioContext.currentTime);
+		// console.log('last action ' + gLastActionTime + ', currently ' + gAudioContext.currentTime);
 	}, 1000);
 });
 

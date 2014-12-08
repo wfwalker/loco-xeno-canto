@@ -16,7 +16,7 @@ PlaceTimeBirdSongs.prototype.setLocation = function(inDefaultLocation, callback)
 				callback(this.position);
 			}.bind(this),
 			function error() {
-				console.log('error');
+				console.log('error during geolocation');
 				this.position = inDefaultLocation;
 				callback(this.position);
 			}.bind(this),
@@ -35,7 +35,8 @@ PlaceTimeBirdSongs.prototype.chooseRandomSighting = function() {
 
 PlaceTimeBirdSongs.prototype.getSightings = function(callback) {
 	var queryParams = { lat: this.position.coords.latitude, lng: this.position.coords.longitude, fmt: 'json' };
-	var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent?' + $.param(queryParams);
+	// var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent?' + $.param(queryParams);
+	var urlString = '/ebird?' + $.param(queryParams);
 
 	// TODO: no error handling, especially not for 503
 	console.log(urlString);

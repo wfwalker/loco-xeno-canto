@@ -7,6 +7,7 @@
     "express": "*",    
     "url": "*",    
     "request": "*",    
+    "express-session": "*",    
     "http": "*",
     "body-parser": "*"
   },

@@ -7,7 +7,17 @@ var https = require('https');
 var request = require('request');
 var bodyParser = require('body-parser');
 
+var gRealData = true;
+
 var app = express();
+
+var session = require('express-session');
+
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true
+}));
 
 // TODO: this will cache the index.html for a day, which is bad
 // TODO: but it caches the bootstrap.css for a day which is good.
@@ -39,29 +49,46 @@ app.param('latin_name', function(req, resp, next, id) {
 
 app.post('/share', function (req, resp, next) {
     console.log('POST SHARE');
-    console.log(req.body);
+    console.log(req.session.id);
+    // console.log(req.body);
 });
 
 app.get('/sounds/:latin_name', function(req, resp, next) {
 	var urlString = 'http://www.xeno-canto.org/api/2/recordings?query=' + req.latin_name.replace(' ', '+');
 	console.log('seeking sound data ' + urlString);
 
-    request({ uri: urlString, strictSSL: false }, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            try {
-                resp.json(JSON.parse(body.trim()));
-            }
-            catch (e) {
-                console.log('cannot parse ' + urlString + ', ' + e);
+    if (gRealData) {
+        // req.pipe(request({ uri: urlString, strictSSL: false })).pipe(resp);
+        // console.log('seeking sound file set up pipe');        
+
+        request({ uri: urlString, strictSSL: false }, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                try {
+                    resp.json(JSON.parse(body.trim()));
+                }
+                catch (e) {
+                    console.log('cannot parse ' + urlString + ', ' + e);
+                    // TODO: return 500?
+                    resp.json([]);
+                }
+            } else {
+                console.log('cannot retrieve ' + urlString + ', ' + error);
                 // TODO: return 500?
                 resp.json([]);
             }
-        } else {
-            console.log('cannot retrieve ' + urlString + ', ' + error);
-            // TODO: return 500?
-            resp.json([]);
-        }
-    });
+        });
+    } else {
+        resp.json({
+            recordings: [
+                {
+                    file: 'bird2.mp3',
+                    lic: 'CC-something',
+                    rec: 'recordist1',
+                    loc: 'loc1'
+                }
+            ]
+        });
+    }
 });
 
 // we must proxy soundfiles, see 
@@ -77,7 +104,38 @@ app.use('/soundfile', function(req, resp, next) {
 
     var urlString = 'http://www.xeno-canto.org' + req.path;
     console.log('seeking sound file ' + urlString);
+
     req.pipe(request({ uri: urlString, strictSSL: false })).pipe(resp);
     console.log('seeking sound file set up pipe');        
 });
+
+app.use('/ebird', function(req, resp, next) {
+    console.log(req.query);
+    var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent';
+    console.log('seeking ebird sightings ' + urlString);
+
+    if (gRealData) {
+        req.pipe(request({ uri: urlString, strictSSL: false, qs: req.query })).pipe(resp);
+        console.log('seeking ebird sightings set up pipe');        
+    } else {
+        resp.json([{
+            sciName: 'sciName1',
+            comName: 'comName1',
+            locName: 'locName1'
+        }, {
+            sciName: 'sciName2',
+            comName: 'comName2',
+            locName: 'locName2'
+        }, {
+            sciName: 'sciName3',
+            comName: 'comName3',
+            locName: 'locName3'
+        }, {
+            sciName: 'sciName4',
+            comName: 'comName4',
+            locName: 'locName4'
+        }]);
+    }
+});
+
 
