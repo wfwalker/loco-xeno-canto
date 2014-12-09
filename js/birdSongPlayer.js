@@ -74,17 +74,6 @@ function BirdSongPlayer(audioContext, inCanvasID) {
 	});
 }
 
-// mutes or unmutes the sound by toggling the gain between 0 and 1
-BirdSongPlayer.prototype.toggleMute = function() {
-	if (this.gain.gain.value > 0) {
-		console.log('muting');
-		this.gain.gain.value = 0;
-	} else {
-		console.log('unmuting');
-		this.gain.gain.value = 1;
-	}
-}
-
 // sets the X,Y,Z position of the Panner to random values between -1 and +1
 BirdSongPlayer.prototype.randomizePanner = function() {
 	this.panner.setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
@@ -93,8 +82,10 @@ BirdSongPlayer.prototype.randomizePanner = function() {
 // Sets the playback rate for the current sound to a random value between 0.1 and 1.1
 BirdSongPlayer.prototype.randomizePlaybackRate = function(inPlayerSelector) {
 	if (this.soundSource) {
-		this.soundSource.playbackRate.value = 0.1 + Math.random();	
-		$(inPlayerSelector).find('.playbackRate').text((Math.round(100 * this.soundSource.playbackRate.value) / 100.0) + "x");
+		var newRate = 0.1 + Math.random();
+		this.soundSource.playbackRate.cancelScheduledValues(gAudioContext.currentTime);
+		this.soundSource.playbackRate.linearRampToValueAtTime(newRate, gAudioContext.currentTime + 3);
+		$(inPlayerSelector).find('.playbackRate').text((Math.round(100 * newRate) / 100.0) + "x");
 	} else {
 		console.log('cannot randomize, no sound source');
 	}
@@ -103,7 +94,6 @@ BirdSongPlayer.prototype.randomizePlaybackRate = function(inPlayerSelector) {
 // Creates a new soundSource using the given buffer
 // preserves the old playback rate, if applicable
 BirdSongPlayer.prototype.setSourceFromBuffer = function(inBuffer) {
-	console.log('setSourceFromBuffer');
 	var oldPlaybackRateValue = 1;
 
 	if (this.soundSource) {
@@ -116,9 +106,10 @@ BirdSongPlayer.prototype.setSourceFromBuffer = function(inBuffer) {
 	this.soundSource.connect(this.gain);
 	this.soundSource.buffer = inBuffer;
 	// restore old playback rate value
-	this.soundSource.playbackRate.value = oldPlaybackRateValue;
+	this.soundSource.playbackRate.setValueAtTime(oldPlaybackRateValue, gAudioContext.currentTime);
 
 	// set gain to zero and then ramp up. 
+	this.gain.gain.cancelScheduledValues(gAudioContext.currentTime);
 	this.gain.gain.setValueAtTime(0.0, gAudioContext.currentTime);
 	this.gain.gain.linearRampToValueAtTime(0.99, gAudioContext.currentTime + 10);
 
@@ -132,10 +123,8 @@ BirdSongPlayer.prototype.reversePlayback = function() {
 	console.log('reversePlayback');
 
 	var oldData = this.soundSource.buffer.getChannelData(0);
-	console.log(oldData);
 	var normalData = Array.prototype.slice.call( oldData );
 	Array.prototype.reverse.call(normalData);	
-	console.log(normalData);
 
 	var newBuffer = gAudioContext.createBuffer(1, this.soundSource.buffer.length, this.soundSource.buffer.sampleRate);
 	var newData = newBuffer.getChannelData(0);
@@ -146,7 +135,6 @@ BirdSongPlayer.prototype.reversePlayback = function() {
 
 	this.setSourceFromBuffer(newBuffer);
 
-	console.log(this.soundSource.buffer.getChannelData(0));
 	console.log('DONE reversePlayback');
 }
 
@@ -165,7 +153,6 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inPlayerSel
 
 	mp3Request.onload = function(e) {
 		$(inPlayerSelector).find('.status').text('decoding');
-		console.log(mp3Request.response);
 
 	    gAudioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
 	    	this.setSourceFromBuffer(decodedBuffer);
@@ -200,11 +187,8 @@ BirdSongPlayer.prototype.chooseRandomRecording = function(inPlayerSelector) {
 		this.recordingIndex = Math.floor(Math.random() * this.soundsForSighting.recordings.length);
 		this.recording = this.soundsForSighting.recordings[this.recordingIndex];
 
-		console.log(this.recording);
-
 		// rewrite URL's from xeno-canto JSON, route through my own server due to missing CORS
 		var soundURL = this.recording.file.replace('http://www.xeno-canto.org','/soundfile');
-		console.log(soundURL);
 
 		$(inPlayerSelector).find('.status').text('downloading #' + this.recordingIndex);
 		this.setBufferFromURL(soundURL, inPlayerSelector);
