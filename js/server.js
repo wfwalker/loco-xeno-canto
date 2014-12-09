@@ -6,8 +6,12 @@ var http = require('http');
 var https = require('https');
 var request = require('request');
 var bodyParser = require('body-parser');
+var args = require('system').args;
 
-var gRealData = true;
+var gCommandLineArgs = args.slice(2);
+
+var gRealData = (gCommandLineArgs.indexOf('-test') < 0);
+console.log('real data ' + gRealData);
 
 var app = express();
 
@@ -81,7 +85,7 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
         resp.json({
             recordings: [
                 {
-                    file: 'bird2.mp3',
+                    file: 'saw440.mp3',
                     lic: 'CC-something',
                     rec: 'recordist1',
                     loc: 'loc1'

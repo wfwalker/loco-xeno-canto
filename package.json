@@ -9,6 +9,7 @@
     "request": "*",    
     "express-session": "*",    
     "http": "*",
+    "system": "*",
     "body-parser": "*"
   },
   "author": "Bill Walker",
