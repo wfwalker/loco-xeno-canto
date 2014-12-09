@@ -117,7 +117,12 @@ BirdSongPlayer.prototype.setSourceFromBuffer = function(inBuffer) {
 	this.soundSource.buffer = inBuffer;
 	// restore old playback rate value
 	this.soundSource.playbackRate.value = oldPlaybackRateValue;
-	// start playing immediately in a loop	    	
+
+	// set gain to zero and then ramp up. 
+	this.gain.gain.setValueAtTime(0.0, gAudioContext.currentTime);
+	this.gain.gain.linearRampToValueAtTime(0.99, gAudioContext.currentTime + 10);
+
+	// start playing immediately in a loop	 
 	this.soundSource.loop = true;
 	this.soundSource.start(0);	
 }
