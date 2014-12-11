@@ -32,6 +32,7 @@ app.use("/js", express.static('js', {
     maxage: 86400000
 }));
 
+app.use(bodyParser({limit: '50mb'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -54,7 +55,7 @@ app.param('latin_name', function(req, resp, next, id) {
 app.post('/share', function (req, resp, next) {
     console.log('POST SHARE');
     console.log(req.session.id);
-    // console.log(req.body);
+    console.log(req.body);
 });
 
 app.get('/sounds/:latin_name', function(req, resp, next) {
