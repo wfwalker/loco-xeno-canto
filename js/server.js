@@ -63,25 +63,8 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
 	console.log('seeking sound data ' + urlString);
 
     if (gRealData) {
-        // req.pipe(request({ uri: urlString, strictSSL: false })).pipe(resp);
-        // console.log('seeking sound file set up pipe');        
-
-        request({ uri: urlString, strictSSL: false }, function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                try {
-                    resp.json(JSON.parse(body.trim()));
-                }
-                catch (e) {
-                    console.log('cannot parse ' + urlString + ', ' + e);
-                    // TODO: return 500?
-                    resp.json([]);
-                }
-            } else {
-                console.log('cannot retrieve ' + urlString + ', ' + error);
-                // TODO: return 500?
-                resp.json([]);
-            }
-        });
+        req.pipe(request({ uri: urlString, strictSSL: false })).pipe(resp);
+        console.log('seeking sound data set up pipe');        
     } else {
         resp.json({
             recordings: [
