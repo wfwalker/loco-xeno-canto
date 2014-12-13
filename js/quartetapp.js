@@ -79,9 +79,23 @@ $(document).ready(function(){
 
 		$.post(
 			"/share", 
-			JSON.stringify( gBirdSongPlayers ), 
+			{
+				recordings: [
+					gBirdSongPlayers[0].recording,
+					gBirdSongPlayers[1].recording,
+					gBirdSongPlayers[2].recording,
+					gBirdSongPlayers[3].recording
+				],
+				sightings: [
+					gBirdSongPlayers[0].sighting,
+					gBirdSongPlayers[1].sighting,
+					gBirdSongPlayers[2].sighting,
+					gBirdSongPlayers[3].sighting
+				]
+			},
 			function(data, status) {
 				console.log('success sharing');
+				console.log(data);
 			},
 			'json');		
 	});
