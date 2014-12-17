@@ -10,6 +10,8 @@ var args = require('system').args;
 
 var gCommandLineArgs = args.slice(2);
 
+var gSavedQuartets = {};
+
 var gRealData = (gCommandLineArgs.indexOf('-test') < 0);
 console.log('real data ' + gRealData);
 
@@ -52,12 +54,30 @@ app.param('latin_name', function(req, resp, next, id) {
     next();
 });
 
+app.param('saved_session_id', function(req, resp, next, id) {
+    var saved_session_id = req.param('saved_session_id')
+    console.log('saved_session_id ' + saved_session_id);
+    req.saved_session_id = saved_session_id;
+    next();
+});
+
 app.post('/share', function (req, resp, next) {
     console.log('POST SHARE');
     console.log(req.session.id);
     resp.json([req.session.id]);
+    gSavedQuartets[req.session.id] = req.body;
+
     console.log(req.body.sightings);
     console.log(req.body.recordings);
+});
+
+app.get('/saved/:saved_session_id', function(req, resp, next) {
+    // respond with the saved data previously uploaded
+    if (gSavedQuartets[req.saved_session_id]) {
+        resp.json(gSavedQuartets[req.saved_session_id]);
+    } else {
+        resp.json({});
+    }
 });
 
 app.get('/sounds/:latin_name', function(req, resp, next) {
