@@ -84,7 +84,12 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
 	console.log('seeking sound data ' + urlString);
 
     if (gRealData) {
-        req.pipe(request({ uri: urlString, strictSSL: false })).pipe(resp);
+        req.pipe(request({
+            uri: urlString,
+            strictSSL: false
+        }, function(error, body, response) {
+            console.log('error piping recording list ' + error);
+        })).pipe(resp);
         console.log('seeking sound data set up pipe');        
     } else {
         resp.json({
@@ -114,7 +119,13 @@ app.use('/soundfile', function(req, resp, next) {
     var urlString = 'http://www.xeno-canto.org' + req.path;
     console.log('seeking sound file ' + urlString);
 
-    req.pipe(request({ uri: urlString, strictSSL: false })).pipe(resp);
+    req.pipe(request({
+        uri: urlString,
+        strictSSL: false
+    }, function(error, response, body) {
+        console.log('error piping soundfile ' + error);
+    })).pipe(resp);
+
     console.log('seeking sound file set up pipe');        
 });
 
@@ -124,7 +135,13 @@ app.use('/ebird', function(req, resp, next) {
     console.log('seeking ebird sightings ' + urlString);
 
     if (gRealData) {
-        req.pipe(request({ uri: urlString, strictSSL: false, qs: req.query })).pipe(resp);
+        req.pipe(request({
+            uri: urlString,
+            strictSSL: false,
+            qs: req.query
+        }, function(error, response, body) {
+            console.log('error piping ebird recent sightings')
+        })).pipe(resp);
         console.log('seeking ebird sightings set up pipe');        
     } else {
         resp.json([{
