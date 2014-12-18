@@ -34,15 +34,39 @@ function resetLastActionTime() {
 }
 
 $(document).ready(function(){ 
-	gBirds.setLocation({ coords: { latitude: 37, longitude: -122 }}, function(position) {
-		$('#position').text(Math.round(position.coords.latitude * 100) / 100.0 + ', ' + Math.round(position.coords.longitude * 100) / 100.0);
+	// does the initial url have a saved session?
+	if (window.location.href.split('#')[1]) {
+		console.log('document ready! ' + window.location.href.split('#')[1]);
 
-		gBirds.getSightings(function() {
-			for (var i = 0; i < gBirdSongPlayers.length; i++) {
-				gBirdSongPlayers[i].chooseSightingAndPlayRandomSound('#player' + i);
-			}
+		// restore from session
+		$.getJSON('/saved/' + window.location.href.split('#')[1], function(data) {
+			console.log('saved session data');
+			console.log(data);
+			gBirdSongPlayers[0].initializeFromSavedSession(data.sightings[0], data.recordings[0], '#player0');
+			gBirdSongPlayers[1].initializeFromSavedSession(data.sightings[1], data.recordings[1], '#player1');
+			gBirdSongPlayers[2].initializeFromSavedSession(data.sightings[2], data.recordings[2], '#player2');
+			gBirdSongPlayers[3].initializeFromSavedSession(data.sightings[3], data.recordings[3], '#player3');
+		}.bind(this))
+		.fail(function(e) {
+			console.log("failure to get saved session");
+			console.log(e);
+			$('#sightings').text('error while retrieving saved session');
 		});
-	});
+
+	} else {
+		console.log('document ready without saved session!');
+
+		gBirds.setLocation({ coords: { latitude: 37, longitude: -122 }}, function(position) {
+			$('#position').text(Math.round(position.coords.latitude * 100) / 100.0 + ', ' + Math.round(position.coords.longitude * 100) / 100.0);
+
+			gBirds.getSightings(function() {
+				for (var i = 0; i < gBirdSongPlayers.length; i++) {
+					gBirdSongPlayers[i].chooseSightingAndPlayRandomSound('#player' + i);
+				}
+			});
+		});
+	}
+
 
 	// TODO: can we incorporate the vocoder demo?
 

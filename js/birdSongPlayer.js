@@ -195,6 +195,14 @@ BirdSongPlayer.prototype.chooseRandomRecording = function(inPlayerSelector) {
 	}
 }
 
+BirdSongPlayer.prototype.initializeFromSavedSession = function(inSighting, inRecording, inPlayerSelector) {
+	this.sightingIndex = 0;
+	this.sighting = inSighting;
+	this.soundsForSighting = {};
+	this.soundsForSighting.recordings = [inRecording];
+	this.chooseRandomRecording(inPlayerSelector);
+}
+
 BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(inPlayerSelector) {
 	this.sightingIndex = gBirds.chooseRandomSighting();
 	this.sighting = gBirds.sightings[this.sightingIndex];
