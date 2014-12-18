@@ -101,6 +101,8 @@ $(document).ready(function(){
 		console.log('SHARE');
 		resetLastActionTime();
 
+		// TODO: put up alert asking user to type description?
+
 		var savedState = {};
 		savedState.savedPlayer = [
 				gBirdSongPlayers[0].saveData(),
@@ -115,6 +117,7 @@ $(document).ready(function(){
 			function(data, status) {
 				console.log('success sharing');
 				console.log(data);
+				// TODO: put up floating alert with URL to copy
 			},
 			'json');		
 	});

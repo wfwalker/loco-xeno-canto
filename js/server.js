@@ -34,7 +34,7 @@ app.use("/js", express.static('js', {
     maxage: 86400000
 }));
 
-app.use(bodyParser({limit: '100mb'}));
+app.use(bodyParser({limit: '10mb'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -46,6 +46,8 @@ var mHost = process.env.VCAP_APP_HOST || "127.0.0.1";
 app.listen(myPort);
 
 console.log("running " + mHost + " " + myPort);
+
+// Routing Parameters
 
 app.param('latin_name', function(req, resp, next, id) {
     var latin_name = req.param('latin_name')
@@ -78,6 +80,8 @@ app.get('/saved/:saved_session_id', function(req, resp, next) {
         resp.json({});
     }
 });
+
+// Routes
 
 app.get('/sounds/:latin_name', function(req, resp, next) {
 	var urlString = 'http://www.xeno-canto.org/api/2/recordings?query=' + req.latin_name.replace(' ', '+');
@@ -129,6 +133,8 @@ app.use('/soundfile', function(req, resp, next) {
     console.log('seeking sound file set up pipe');        
 });
 
+// proxy eBird sightings as well, so we can provide fake data instead for testing and offline development
+
 app.use('/ebird', function(req, resp, next) {
     console.log(req.query);
     var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent';
@@ -140,7 +146,8 @@ app.use('/ebird', function(req, resp, next) {
             strictSSL: false,
             qs: req.query
         }, function(error, response, body) {
-            console.log('error piping ebird recent sightings')
+            console.log('error piping ebird recent sightings');
+            // TODO: close response
         })).pipe(resp);
         console.log('seeking ebird sightings set up pipe');        
     } else {
