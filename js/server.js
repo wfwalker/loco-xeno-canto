@@ -67,8 +67,7 @@ app.post('/share', function (req, resp, next) {
     resp.json([req.session.id]);
     gSavedQuartets[req.session.id] = req.body;
 
-    console.log(req.body.sightings);
-    console.log(req.body.recordings);
+    console.log(req.body);
 });
 
 app.get('/saved/:saved_session_id', function(req, resp, next) {

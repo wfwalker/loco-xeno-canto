@@ -195,12 +195,25 @@ BirdSongPlayer.prototype.chooseRandomRecording = function(inPlayerSelector) {
 	}
 }
 
-BirdSongPlayer.prototype.initializeFromSavedSession = function(inSighting, inRecording, inPlayerSelector) {
+BirdSongPlayer.prototype.initializeFromSavedSession = function(inSavedData, inPlayerSelector) {
+	console.log('restoring ' + inPlayerSelector);
+	console.lo9g(inSavedData);
 	this.sightingIndex = 0;
-	this.sighting = inSighting;
+	this.sighting = inSavedData.sighting;
+
+	$(inPlayerSelector).find('.speciesName').text(this.sightingIndex + '. ' + this.sighting.comName);
+	$(inPlayerSelector).find('.locationName').text(this.sighting.locName);
+
 	this.soundsForSighting = {};
-	this.soundsForSighting.recordings = [inRecording];
+	this.soundsForSighting.recordings = [inSavedData.recording];
 	this.chooseRandomRecording(inPlayerSelector);
+}
+
+BirdSongPlayer.prototype.saveData = function() {
+	return {
+		recording: this.recording,
+		sighting: this.sighting
+	};
 }
 
 BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(inPlayerSelector) {

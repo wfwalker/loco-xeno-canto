@@ -40,12 +40,12 @@ $(document).ready(function(){
 
 		// restore from session
 		$.getJSON('/saved/' + window.location.href.split('#')[1], function(data) {
-			console.log('saved session data');
+			console.log('retrieved saved session data');
 			console.log(data);
-			gBirdSongPlayers[0].initializeFromSavedSession(data.sightings[0], data.recordings[0], '#player0');
-			gBirdSongPlayers[1].initializeFromSavedSession(data.sightings[1], data.recordings[1], '#player1');
-			gBirdSongPlayers[2].initializeFromSavedSession(data.sightings[2], data.recordings[2], '#player2');
-			gBirdSongPlayers[3].initializeFromSavedSession(data.sightings[3], data.recordings[3], '#player3');
+			gBirdSongPlayers[0].initializeFromSavedSession(data.savedPlayer[0], '#player0');
+			gBirdSongPlayers[1].initializeFromSavedSession(data.savedPlayer[1], '#player1');
+			gBirdSongPlayers[2].initializeFromSavedSession(data.savedPlayer[2], '#player2');
+			gBirdSongPlayers[3].initializeFromSavedSession(data.savedPlayer[3], '#player3');
 		}.bind(this))
 		.fail(function(e) {
 			console.log("failure to get saved session");
@@ -101,22 +101,17 @@ $(document).ready(function(){
 		console.log('SHARE');
 		resetLastActionTime();
 
+		var savedState = {};
+		savedState.savedPlayer = [
+				gBirdSongPlayers[0].saveData(),
+				gBirdSongPlayers[1].saveData(),
+				gBirdSongPlayers[2].saveData(),
+				gBirdSongPlayers[3].saveData()
+			]
+
 		$.post(
 			"/share", 
-			{
-				recordings: [
-					gBirdSongPlayers[0].recording,
-					gBirdSongPlayers[1].recording,
-					gBirdSongPlayers[2].recording,
-					gBirdSongPlayers[3].recording
-				],
-				sightings: [
-					gBirdSongPlayers[0].sighting,
-					gBirdSongPlayers[1].sighting,
-					gBirdSongPlayers[2].sighting,
-					gBirdSongPlayers[3].sighting
-				]
-			},
+			savedState,
 			function(data, status) {
 				console.log('success sharing');
 				console.log(data);
