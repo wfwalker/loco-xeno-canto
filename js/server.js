@@ -85,16 +85,20 @@ app.get('/saved/:saved_session_id', function(req, resp, next) {
 
 app.get('/sounds/:latin_name', function(req, resp, next) {
 	var urlString = 'http://www.xeno-canto.org/api/2/recordings?query=' + req.latin_name.replace(' ', '+');
-	console.log('seeking sound data ' + urlString);
+	console.log('seeking recording list ' + urlString);
 
     if (gRealData) {
         req.pipe(request({
             uri: urlString,
             strictSSL: false
-        }, function(error, body, response) {
-            console.log('error piping recording list ' + error);
+        }, function(error, response, body) {
+            if (!error && response.statusCode == 200) {
+                console.log('retrieved recording list OK');
+            } else {
+                console.log('error retrieving recording list ' + response.statusCode);
+            }
         })).pipe(resp);
-        console.log('seeking sound data set up pipe');        
+        console.log('seeking recording list, set up pipe');    
     } else {
         resp.json({
             recordings: [
@@ -127,7 +131,11 @@ app.use('/soundfile', function(req, resp, next) {
         uri: urlString,
         strictSSL: false
     }, function(error, response, body) {
-        console.log('error piping soundfile ' + error);
+        if (!error && response.statusCode == 200) {
+            console.log('retrieved soundfile OK');
+        } else {
+            console.log('error retrieving soundfile ' + response.statusCode);
+        }
     })).pipe(resp);
 
     console.log('seeking sound file set up pipe');        
