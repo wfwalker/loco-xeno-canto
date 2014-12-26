@@ -3,15 +3,16 @@
   "version": "0.0.1",
   "description": "sounds of your local birds",
   "main": "server.js",
-  "dependencies": {
-    "express": "*",    
-    "url": "*",    
-    "request": "*",    
-    "express-session": "*",    
-    "http": "*",
-    "system": "*",
-    "body-parser": "*"
+  "scripts": {
+    "start": "node js/server.js"
   },
+  "dependencies": {
+    "body-parser": "^1.10.0",
+    "express": "^4.10.6",
+    "express-session": "^1.9.3",
+    "request": "^2.51.0"
+  },
+  "repository": "https://github.com/wfwalker/loco-xeno-canto.git",
   "author": "Bill Walker",
   "license": "MPL, v 2.0"
 }
