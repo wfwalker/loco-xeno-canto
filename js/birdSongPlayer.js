@@ -45,6 +45,7 @@ function BirdSongPlayer(audioContext, inCanvasID) {
 
 	var volumeMeterCanvas = document.getElementById(inCanvasID);
 	var graphicsContext = volumeMeterCanvas.getContext('2d');
+	var volumeHistory = new Array(260).fill(0);
 
 	// setup a analyzer
 	var analyser = audioContext.createAnalyser();
@@ -59,17 +60,28 @@ function BirdSongPlayer(audioContext, inCanvasID) {
 		var array =  new Uint8Array(analyser.frequencyBinCount);
 		analyser.getByteFrequencyData(array);
 		var average = getAverageVolume(array);
-		average = Math.max(Math.min(average, 125), 5);
+		average = Math.max(Math.min(average, 128), 0);
+
+		volumeHistory.push(average);
+		volumeHistory.shift();
 
 		// clear the current state
-		graphicsContext.fillStyle = 'rgb(220,220,220)'
-		graphicsContext.fillRect(1, 5, 130, 15);
+		graphicsContext.fillStyle = 'rgb(256,256,256)'
+		graphicsContext.fillRect(0, 0, 260, 130);
 
 		// set the fill style
-		graphicsContext.fillStyle = 'rgb(0,0,0)'
+		graphicsContext.fillStyle = 'rgb(100,100,100)'
 
-		// create the meters
-		graphicsContext.fillRect(1, 5, average, 15);
+		// create the graph
+
+		for (var i = 0; i < 259; i++) {
+			graphicsContext.fillRect(i, 128 - volumeHistory[i], 1, volumeHistory[i]);
+		}
+
+		// set the fill style for the last line #5BC0DE
+		graphicsContext.fillStyle = 'rgb(256,0,0)'
+		graphicsContext.fillRect(258, 128 - volumeHistory[259], 2, volumeHistory[259]);
+
 
 		requestAnimationFrame(vuMeter);
 	});
@@ -201,7 +213,7 @@ BirdSongPlayer.prototype.initializeFromSavedSession = function(inSavedData, inPl
 	this.sightingIndex = 0;
 	this.sighting = inSavedData.sighting;
 
-	$(inPlayerSelector).find('.speciesName').text(this.sightingIndex + '. ' + this.sighting.comName);
+	$(inPlayerSelector).find('.speciesName').text(this.sighting.comName);
 	$(inPlayerSelector).find('.locationName').text(this.sighting.locName);
 
 	this.playbackRate = parseFloat(inSavedData.playbackRate);
@@ -226,7 +238,8 @@ BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(inPlayerSel
 	console.log('chooseSightingAndPlayRandomSound random sighting ' + this.sightingIndex);
 	console.log(this.sighting);
 
-	$(inPlayerSelector).find('.speciesName').text(this.sightingIndex + '. ' + this.sighting.comName);
+	// TODO: duplicated from initialized from saved setting
+	$(inPlayerSelector).find('.speciesName').text(this.sighting.comName);
 	$(inPlayerSelector).find('.locationName').text(this.sighting.locName);
 	$(inPlayerSelector).find('.status').text('choosing');
 
@@ -237,6 +250,7 @@ BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(inPlayerSel
 			$(inPlayerSelector).find('.status').text('retrying');
 			this.chooseSightingAndPlayRandomSound(inPlayerSelector);
 		} else {
+			console.log('got recording list');
 			this.soundsForSighting = soundsData;
 			this.chooseRandomRecording(inPlayerSelector);
 		}

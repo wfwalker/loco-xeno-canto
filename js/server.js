@@ -118,12 +118,6 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
 // https://www.npmjs.org/package/request
 
 app.use('/soundfile', function(req, resp, next) {
-    // TODO: wrapping the call to pipe() in try/catch does not catch this error:
-
-    // Error: getaddrinfo ENOTFOUND
-    //     at errnoException (dns.js:37:11)
-    //     at Object.onanswer [as oncomplete] (dns.js:124:16)
-
     var urlString = 'http://www.xeno-canto.org' + req.path;
     console.log('seeking sound file ' + urlString);
 

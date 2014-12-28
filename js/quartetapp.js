@@ -56,8 +56,8 @@ $(document).ready(function(){
 	} else {
 		console.log('document ready without saved session!');
 
-		gBirds.setLocation({ coords: { latitude: 37, longitude: -122 }}, function(position) {
-			$('#position').text(Math.round(position.coords.latitude * 100) / 100.0 + ', ' + Math.round(position.coords.longitude * 100) / 100.0);
+		gBirds.setLocation({ coords: { latitude: 48.856667, longitude: 2.350987 }}, function(position) {
+			$('#position').text(Math.round(position.coords.latitude * 100) / 100.0 + '°, ' + Math.round(position.coords.longitude * 100) / 100.0 + '°');
 
 			gBirds.getSightings(function() {
 				for (var i = 0; i < gBirdSongPlayers.length; i++) {

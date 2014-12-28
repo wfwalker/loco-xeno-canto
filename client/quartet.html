@@ -18,6 +18,19 @@
 					</h1>
 				</div>
 			</div>
+
+			<!-- TODO: graphical pictures of birds -->
+			<!-- TODO: audio envelope of sound -->
+			<!-- TODO: bootstrap panel colors don't mesh with my made-up colors -->
+			<!-- TODO: shorten title to just OISEAUX DE MEME -->
+			<!-- TODO: right justified shuffle buttons seem disconnected from what they control -->
+			<!-- TODO: needs about box -->
+			<!-- TODO: mixing board ? -->
+			<!-- TODO: graphical download progress indicator -->
+			<!-- TODO: omit playback rate until playback starts -->
+
+			<!-- TODO: Performers take the stage -->
+
 			<div class='row'>
 				<div class='col-md-12' style='padding-bottom: 20px'>
 					<button class='btn btn-info' style='margin-bottom: 5px' id='playbackRates'><span class='glyphicon glyphicon-random'></span> Playback Rate</button>
@@ -31,12 +44,15 @@
 					<div class='panel panel-default' id='player0'>
 						<div class='panel-heading panel-nowrap'>
 							<button class='btn btn-info' id='nextSighting0' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
-							<span class='speciesName'>label0</span> seen @ <span class='locationName'>location</span>
+							<h4>
+								<span class='speciesName'>label0</span>
+								<small> @ <span class='locationName'>location</span></small>
+							</h4>
 						</div>
 						<div class='panel-body panel-nowrap'>
 							<button class='btn btn-info' id='recording0' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
-							<div><canvas id='volumeMeter0' height="30" width="130"></canvas></div>
-							<span class='status'>initializing</span> @ <span class='playbackRate'>1x</span>
+							<div><canvas id='volumeMeter0' height="130" width="260"></canvas></div>
+							<span class='status'>initializing</span> <span class='playbackRate'>1x</span>
 							<div class='recordingLocation'>location</div>
 							<div class='recordist'>recordist</div>
 							<img class='license' src='/cc-placeholder.png'></img>
@@ -48,12 +64,15 @@
 					<div class='panel panel-default' id='player1'>
 						<div class='panel-heading panel-nowrap'>
 							<button class='btn btn-info' id='nextSighting1' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
-							<span class='speciesName'>label1</span> seen @ <span class='locationName'>location</span>
+							<h4>
+								<span class='speciesName'>label1</span>
+								<small> @ <span class='locationName'>location</span></small>
+							</h4>
 						</div>
 						<div class='panel-body panel-nowrap'>
 							<button class='btn btn-info' id='recording1' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
-							<div><canvas id='volumeMeter1' height="30" width="130"></canvas></div>
-							<span class='status'>initializing</span> @ <span class='playbackRate'>1x</span>
+							<div><canvas id='volumeMeter1' height="130" width="260"></canvas></div>
+							<span class='status'>initializing</span> <span class='playbackRate'>1x</span>
 							<div class='recordingLocation'>location</div>
 							<div class='recordist'>recordist</div>
 							<img class='license' src='/cc-placeholder.png'></img>
@@ -67,12 +86,15 @@
 					<div class='panel panel-default' id='player2'>
 						<div class='panel-heading panel-nowrap'>
 							<button class='btn btn-info' id='nextSighting2' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
-							<span class='speciesName'>label2</span> seen @ <span class='locationName'>location</span>
+							<h4>
+								<span class='speciesName'>label2</span>
+								<small>@ <span class='locationName'>location</span></small>
+							</h4>
 						</div>
 						<div class='panel-body panel-nowrap'>
 							<button class='btn btn-info' id='recording2' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
-							<div><canvas id='volumeMeter2' height="30" width="130"></canvas></div>
-							<span class='status'>initializing</span> @ <span class='playbackRate'>1x</span>
+							<div><canvas id='volumeMeter2' height="130" width="260"></canvas></div>
+							<span class='status'>initializing</span> <span class='playbackRate'>1x</span>
 							<div class='recordingLocation'>location</div>
 							<div class='recordist'>recordist</div>
 							<img class='license' src='/cc-placeholder.png'></img>
@@ -84,12 +106,15 @@
 					<div class='panel panel-default' id='player3'>
 						<div class='panel-heading panel-nowrap'>
 							<button class='btn btn-info' id='nextSighting3' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
-							<span class='speciesName'>label3</span> seen @ <span class='locationName'>location</span>
+							<h4>
+								<span class='speciesName'>label3</span>
+								<small>@ <span class='locationName'>location</span></small>
+							</h4>
 						</div>
 						<div class='panel-body panel-nowrap'>
 							<button class='btn btn-info' id='recording3' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
-							<div><canvas id='volumeMeter3' height="30" width="130"></canvas></div>
-							<span class='status'>initializing</span> @ <span class='playbackRate'>1x</span>
+							<div><canvas id='volumeMeter3' height="130" width="260"></canvas></div>
+							<span class='status'>initializing</span> <span class='playbackRate'>1x</span>
 							<div class='recordingLocation'>location</div>
 							<div class='recordist'>recordist</div>
 							<img class='license' src='/cc-placeholder.png'></img>
