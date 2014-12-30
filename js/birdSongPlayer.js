@@ -14,7 +14,7 @@ function getAverageVolume(array) {
 }
 
 // BirdSongPlayer
-function BirdSongPlayer(audioContext, inCanvasID) {
+var BirdSongPlayer = function (audioContext, inCanvasID) {
 	this.soundSource = null;
 	this.playbackRate = 1.0;
 
@@ -45,7 +45,7 @@ function BirdSongPlayer(audioContext, inCanvasID) {
 
 	var volumeMeterCanvas = document.getElementById(inCanvasID);
 	var graphicsContext = volumeMeterCanvas.getContext('2d');
-	var volumeHistory = new Array(260).fill(0);
+	var volumeHistory = new Array(260);
 
 	// setup a analyzer
 	var analyser = audioContext.createAnalyser();
