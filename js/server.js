@@ -7,10 +7,11 @@ var https = require('https');
 var request = require('request');
 var bodyParser = require('body-parser');
 var args = require('system').args;
+var redis = require("redis")
+
+var gRedisClient = redis.createClient();
 
 var gCommandLineArgs = args.slice(2);
-
-var gSavedQuartets = {};
 
 var gRealData = (gCommandLineArgs.indexOf('-test') < 0);
 console.log('real data ' + gRealData);
@@ -63,25 +64,30 @@ app.param('saved_session_id', function(req, resp, next, id) {
     next();
 });
 
+// Routes
+
 app.post('/share', function (req, resp, next) {
     console.log('POST SHARE');
     console.log(req.session.id);
     resp.json([req.session.id]);
-    gSavedQuartets[req.session.id] = req.body;
+
+    gRedisClient.set(req.session.id, JSON.stringify(req.body), function(reply) {
+        console.log('saved session for ' + req.session.id);
+        console.log(reply);
+    });
 
     console.log(req.body);
 });
 
 app.get('/saved/:saved_session_id', function(req, resp, next) {
     // respond with the saved data previously uploaded
-    if (gSavedQuartets[req.saved_session_id]) {
-        resp.json(gSavedQuartets[req.saved_session_id]);
-    } else {
-        resp.json({});
-    }
+    
+    gRedisClient.get(req.saved_session_id, function(err, reply) {
+        console.log('retrieved session for ' + req.saved_session_id);
+        console.log(reply);
+        resp.send(reply);
+    });
 });
-
-// Routes
 
 app.get('/sounds/:latin_name', function(req, resp, next) {
 	var urlString = 'http://www.xeno-canto.org/api/2/recordings?query=' + req.latin_name.replace(' ', '+');
