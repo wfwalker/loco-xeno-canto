@@ -102,24 +102,40 @@ $(document).ready(function(){
 		resetLastActionTime();
 
 		// TODO: put up alert asking user to type description?
+		$('#saveSession').modal()
 
-		var savedState = {};
-		savedState.savedPlayer = [
-				gBirdSongPlayers[0].saveData(),
-				gBirdSongPlayers[1].saveData(),
-				gBirdSongPlayers[2].saveData(),
-				gBirdSongPlayers[3].saveData()
-			]
+		$('#saveSession').on('hidden.bs.modal', function (e) {
+			console.log('DONE MODAL');
+		})
 
-		$.post(
-			"/share", 
-			savedState,
-			function(data, status) {
-				console.log('success sharing');
-				console.log(data);
-				// TODO: put up floating alert with URL to copy
-			},
-			'json');		
+		$('#doShare').click(function () {
+			console.log('CLICKED DOSHARE');
+
+			var savedState = {};
+
+			savedState.description = $('#shareDescription').val();
+
+			savedState.savedPlayer = [
+					gBirdSongPlayers[0].saveData(),
+					gBirdSongPlayers[1].saveData(),
+					gBirdSongPlayers[2].saveData(),
+					gBirdSongPlayers[3].saveData()
+				]
+
+			$.post(
+				"/share", 
+				savedState,
+				function(data, status) {
+					console.log('success sharing');
+					console.log(data);
+					// TODO: put up floating alert with URL to copy
+					$('#shareURL').attr('href', '#' + data[0]);
+					$('#shareURL').text(savedState.description);
+				},
+				'json');		
+
+		});
+
 	});
 
 	$('#recording0').click(function(e) {

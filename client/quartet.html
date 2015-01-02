@@ -10,7 +10,37 @@
 	<body style='padding-top: 10px'>
 		<div class='container'>
 			<a target='_blank' href="https://github.com/wfwalker/loco-xeno-canto">source code on github</a>	
+
 			<div class='row'>
+
+			<div class="modal fade" id='saveSession'>
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						    <h4 class="modal-title">Share these birds</h4>
+						</div>
+						<div class="modal-body">
+
+							<form>
+								<div class="form-group">
+								    <label for="exampleInputEmail1">Description</label>
+								    <input type="email" class="form-control" id="shareDescription" placeholder="Enter description">
+								</div>
+							</form>
+
+							<p>Share this URL with your friends:</p>
+							<div><a target='_blank' id='shareURL' href='#'>This Session</a></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-primary" id='doShare'>Share</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+
+
 				<div class='col-md-12'>
 					<h1>
 						oiseaux de même
@@ -20,9 +50,7 @@
 			</div>
 
 			<!-- TODO: graphical pictures of birds -->
-			<!-- TODO: audio envelope of sound -->
 			<!-- TODO: bootstrap panel colors don't mesh with my made-up colors -->
-			<!-- TODO: shorten title to just OISEAUX DE MEME -->
 			<!-- TODO: right justified shuffle buttons seem disconnected from what they control -->
 			<!-- TODO: needs about box -->
 			<!-- TODO: mixing board ? -->
