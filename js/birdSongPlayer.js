@@ -65,21 +65,19 @@ var BirdSongPlayer = function (audioContext, inCanvasID) {
 		volumeHistory.push(average);
 		volumeHistory.shift();
 
-		// clear the current state
+		// draw the rightmost line in black right before shifting
+		graphicsContext.fillStyle = 'rgb(0,0,0)'
+		graphicsContext.fillRect(258, 128 - volumeHistory[258], 2, volumeHistory[258]);
+
+		// shift the drawing over one pixel
+		graphicsContext.drawImage(volumeMeterCanvas, -1, 0);
+
+		// clear the rightmost column state
 		graphicsContext.fillStyle = 'rgb(256,256,256)'
-		graphicsContext.fillRect(0, 0, 260, 130);
+		graphicsContext.fillRect(259, 0, 1, 130);
 
-		// set the fill style
-		graphicsContext.fillStyle = 'rgb(100,100,100)'
-
-		// create the graph
-
-		for (var i = 0; i < 259; i++) {
-			graphicsContext.fillRect(i, 128 - volumeHistory[i], 1, volumeHistory[i]);
-		}
-
-		// set the fill style for the last line #5BC0DE
-		graphicsContext.fillStyle = 'rgb(256,0,0)'
+		// set the fill style for the last line (matches bootstrap button)
+		graphicsContext.fillStyle = '#5BC0DE'
 		graphicsContext.fillRect(258, 128 - volumeHistory[259], 2, volumeHistory[259]);
 
 
