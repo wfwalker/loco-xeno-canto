@@ -40,7 +40,15 @@
 				<div class='col-md-12'>
 					<h1>
 						oiseaux de même
-						<small><span id='sightings'>four of N</span> near <span id='position'>lat, long</span></small>
+						<small>
+							<span id='sightings'>N sightings</span> near
+							<select id='placeChooser'>
+								<option selected id='position'>my location</option>
+								<option data-lat='48.856667' data-long='2.350987'>Paris</option>
+								<option data-lat='10.71783' data-long='-61.298336'>Asa Wright Nature Center</option>
+								<option data-lat='38.9407' data-long='-74.9619'>Cape May Bird Observatory</option>
+							</select>
+						</small>
 					</h1>
 				</div>
 			</div>

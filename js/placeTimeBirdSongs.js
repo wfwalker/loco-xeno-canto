@@ -13,6 +13,8 @@ PlaceTimeBirdSongs.prototype.setLocation = function(inDefaultLocation, callback)
 		navigator.geolocation.getCurrentPosition(
 			function success(inPosition) {
 				this.position = inPosition;
+				$('#position').attr('data-lat', inPosition.coords.latitude);
+				$('#position').attr('data-long', inPosition.coords.longitude);
 				callback(this.position);
 			}.bind(this),
 			function error() {
@@ -38,8 +40,12 @@ PlaceTimeBirdSongs.prototype.getSightings = function(callback) {
 	// var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent?' + $.param(queryParams);
 	var urlString = '/ebird?' + $.param(queryParams);
 
-	// TODO: no error handling, especially not for 503
+	// Re-initialize list of sightings, so this method is more or less idempotent
+	this.sightings = [];
+
 	console.log(urlString);
+	$('#sightings').text('N sightings');
+
 
 	$.getJSON(urlString, function(data) {
 		if (data.length == 0) {
@@ -57,6 +63,7 @@ PlaceTimeBirdSongs.prototype.getSightings = function(callback) {
 	.fail(function(e) {
 		console.log("failure to get sightings");
 		console.log(e);
+		// TODO: retry?
 		$('#sightings').text('error while retrieving sightings');
 	});
 }
@@ -77,11 +84,13 @@ PlaceTimeBirdSongs.prototype.getSoundsForSightingIndex = function(inID, callback
 					this.sounds[inID] = data;
 					callback(this.sounds[inID]); 
 				} else {
+					// TODO: retry?
 					console.log('xeno canto fail');
 					callback(null);
 				}
 			}.bind(this),
 			error: function(xhr, status, error) {
+				// TODO: retry?
 				console.log('xeno canto fail');
 				callback(null);
 			}

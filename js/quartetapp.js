@@ -67,6 +67,27 @@ $(document).ready(function(){
 		});
 	}
 
+	// ALSO set location when the guy chooses a location from the menu
+
+	$( "#placeChooser" ).change(function(e) {
+		var newLocation = {};
+
+		$("select option:selected").each(function() {
+			newLocation.coords = {
+				latitude: parseFloat($(this).attr('data-lat')),
+				longitude: parseFloat($(this).attr('data-long'))
+			};
+		});		
+
+		console.log(newLocation);
+		gBirds.position = newLocation;
+		gBirds.getSightings(function() {
+			for (var i = 0; i < gBirdSongPlayers.length; i++) {
+				gBirdSongPlayers[i].chooseSightingAndPlayRandomSound('#player' + i);
+			}
+		});			
+	});
+
 
 	// TODO: can we incorporate the vocoder demo?
 
