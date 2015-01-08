@@ -125,6 +125,7 @@ BirdSongPlayer.prototype.setSourceFromBuffer = function(inBuffer) {
 	// start playing immediately in a loop	 
 	this.soundSource.loop = true;
 	this.soundSource.start(0);	
+	$('#setupStatus').text('Playing soundscape based on');
 }
 
 // Reverses the audio buffer so that the sound plays backwards
@@ -189,6 +190,8 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inPlayerSel
 }
 
 BirdSongPlayer.prototype.chooseRandomRecording = function(inPlayerSelector) {
+	$('#setupStatus').text('Retrieving bird recordings based on');
+
 	if (this.soundsForSighting == null || this.soundsForSighting.recordings.length == 0) {
 		$(inPlayerSelector).find('.status').text('retrying');
 		console.log('FAILED loading recording for, retrying');

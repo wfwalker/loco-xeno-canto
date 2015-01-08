@@ -55,7 +55,8 @@ $(document).ready(function(){
 
 	} else {
 		console.log('document ready without saved session!');
-		$('#createSession').modal('show');
+
+		$('#createSession').collapse('show');
 
 		$('#setupStatus').text('Finding your location');
 
@@ -63,8 +64,7 @@ $(document).ready(function(){
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(
 				function success(inPosition) {
-					// TODO add a new popup menu item at this point
-					$('#placeChooser').append($('<option selected />').attr('data-lat', inPosition.coords.latitude).attr('data-long', inPosition.coords.longitude).text(Math.round(inPosition.coords.latitude * 100) / 100.0 + '°, ' + Math.round(inPosition.coords.longitude * 100) / 100.0 + '°'));
+					$('#placeChooser').append($('<option selected />').attr('data-lat', inPosition.coords.latitude).attr('data-long', inPosition.coords.longitude).text('Your location (' + Math.round(inPosition.coords.latitude * 100) / 100.0 + '°, ' + Math.round(inPosition.coords.longitude * 100) / 100.0 + '°)'));
 					$('#setupStatus').text('Found your location');
 				}.bind(this),
 				function error() {
@@ -105,15 +105,12 @@ $(document).ready(function(){
 
 			$('#setupStatus').text('Retrieving bird sightings');
 
-
 			gBirds.getSightings(function() {
-				$('#setupStatus').text('Choosing birds');
+				$('#setupStatus').text('Choosing birds based on');
 
 				for (var i = 0; i < gBirdSongPlayers.length; i++) {
 					gBirdSongPlayers[i].chooseSightingAndPlayRandomSound('#player' + i);
 				}
-
-				$('#createSession').modal('hide');
 			});
 		});
 	}
@@ -150,7 +147,7 @@ $(document).ready(function(){
 		resetLastActionTime();
 
 		// TODO: put up alert asking user to type description?
-		$('#saveSession').modal()
+		$('#saveSession').modal();
 
 		$('#saveSession').on('hidden.bs.modal', function (e) {
 			console.log('DONE MODAL');

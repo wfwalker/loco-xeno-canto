@@ -27,7 +27,7 @@ PlaceTimeBirdSongs.prototype.getSightings = function(callback) {
 	this.sightings = [];
 
 	console.log(urlString);
-	$('#sightings').text('N sightings');
+	$('#sightings').text('');
 
 	$.getJSON(urlString, function(data) {
 		if (data.length == 0) {
