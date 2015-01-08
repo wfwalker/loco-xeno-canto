@@ -79,6 +79,20 @@ app.post('/share', function (req, resp, next) {
     console.log(req.body);
 });
 
+app.get('/saved', function(req, resp, next) {
+    var listOfSavedSessions = [];
+
+    gRedisClient.keys('*', function (err, keys) {
+        if (err) return console.log(err);
+
+        for(var i = 0, len = keys.length; i < len; i++) {
+            listOfSavedSessions.push(keys[i]);
+        }
+
+        resp.json(listOfSavedSessions);
+    });
+});
+
 app.get('/saved/:saved_session_id', function(req, resp, next) {
     // respond with the saved data previously uploaded
     
