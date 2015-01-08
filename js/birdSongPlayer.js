@@ -171,6 +171,7 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inPlayerSel
 			$(inPlayerSelector).find('.recordingLocation').text(this.recording.loc);
 			$(inPlayerSelector).find('.recordist').text(this.recording.rec);
 			$(inPlayerSelector).find('.playbackRate').text((Math.round(100 * this.playbackRate) / 100.0) + "x");
+			$(inPlayerSelector).find('.recordingButton').button('reset');
 
 			var licenseIcon = '';
 
@@ -192,6 +193,7 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inPlayerSel
 
 BirdSongPlayer.prototype.chooseRandomRecording = function(inPlayerSelector) {
 	$('#setupStatus').text('Retrieving bird recordings based on');
+	$(inPlayerSelector).find('.recordingButton').button('loading');
 
 	if (this.soundsForSighting == null || this.soundsForSighting.recordings.length == 0) {
 		$(inPlayerSelector).find('.status').text('retrying');

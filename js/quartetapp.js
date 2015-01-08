@@ -203,10 +203,6 @@ $(document).ready(function(){
 		// TODO: put up alert asking user to type description?
 		$('#saveSession').modal();
 
-		$('#saveSession').on('hidden.bs.modal', function (e) {
-			console.log('DONE MODAL');
-		})
-
 		$('#doShare').click(function () {
 			console.log('CLICKED DOSHARE');
 
