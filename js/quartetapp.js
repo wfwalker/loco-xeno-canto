@@ -130,9 +130,11 @@ $(document).ready(function(){
 			gBirds.days = newTime;	
 
 			$('#setupStatus').text('Retrieving bird sightings');
+			$('#goSoundscape').button('loading');
 
 			gBirds.getSightings(function() {
 				$('#setupStatus').text('Choosing birds based on');
+				$('#goSoundscape').button('reset');
 
 				for (var i = 0; i < gBirdSongPlayers.length; i++) {
 					gBirdSongPlayers[i].chooseSightingAndPlayRandomSound('#player' + i);
