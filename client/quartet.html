@@ -10,15 +10,57 @@
 	<body style='padding-top: 10px'>
 		<div class='container'>
 			<div class='row'>
+				<div class="modal fade" id='createSession'>
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							    <h4 class="modal-title">Create a soundscape</h4>
+							</div>
+							<div class="modal-body">
+
+								<form>
+									<div class="form-group">
+									    <label>Place</label>
+										<select id='placeChooser'>
+											<option selected id='position'>my location</option>
+											<option data-lat='48.856667' data-long='2.350987'>Paris</option>
+											<option data-lat='10.71783' data-long='-61.298336'>Asa Wright Nature Center</option>
+											<option data-lat='38.9407' data-long='-74.9619'>Cape May Bird Observatory</option>
+										</select>
+
+										<label>Radius</label>
+										<select id='distanceChooser'>
+											<option data-distance='15.0'>15km</option>
+											<option selected data-distance='30.0'>30km</option>
+										</select>
+
+										<label>Time</label>
+										<select id='timeChooser'>
+											<option data-time='7.0'>7 days</option>
+											<option data-time='14.0'>14 days</option>
+											<option selected data-time='28.0'>28 days</option>
+										</select>
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" id='goSoundscape'>Go</button>
+							</div>
+						</div><!-- /.modal-content -->
+					</div><!-- /.modal-dialog -->
+				</div><!-- /.modal -->
+
+
 				<div class="modal fade" id='saveSession'>
-					<div class="modal-dialog">
+					<div class="modal-dialog modal-lg">
 						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 							    <h4 class="modal-title">Share these birds</h4>
 							</div>
-							<div class="modal-body">
 
+							<div class="modal-body">
 								<form>
 									<div class="form-group">
 									    <label for="exampleInputEmail1">Description</label>
@@ -29,6 +71,7 @@
 								<p>Share this URL with your friends:</p>
 								<div><a target='_blank' id='shareURL' href='#'>This Session</a></div>
 							</div>
+
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 								<button type="button" class="btn btn-primary" id='doShare'>Share</button>
@@ -40,15 +83,8 @@
 				<div class='col-md-12'>
 					<h1>
 						oiseaux de même
-						<small>
-							<span id='sightings'>N sightings</span> near
-							<select id='placeChooser'>
-								<option selected id='position'>my location</option>
-								<option data-lat='48.856667' data-long='2.350987'>Paris</option>
-								<option data-lat='10.71783' data-long='-61.298336'>Asa Wright Nature Center</option>
-								<option data-lat='38.9407' data-long='-74.9619'>Cape May Bird Observatory</option>
-							</select>
-						</small>
+						<br />
+						<small><span id='sightings'></span></small>
 					</h1>
 				</div>
 			</div>

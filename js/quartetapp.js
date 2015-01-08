@@ -56,40 +56,62 @@ $(document).ready(function(){
 	} else {
 		console.log('document ready without saved session!');
 
-		gBirds.setLocation({ coords: { latitude: 48.856667, longitude: 2.350987 }}, function(position) {
-			$('#position').text(Math.round(position.coords.latitude * 100) / 100.0 + '°, ' + Math.round(position.coords.longitude * 100) / 100.0 + '°');
+		// try to geolocate
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(
+				function success(inPosition) {
+					this.position = inPosition;
+					$('#position').attr('data-lat', inPosition.coords.latitude);
+					$('#position').attr('data-long', inPosition.coords.longitude);
+					$('#position').text(Math.round(inPosition.coords.latitude * 100) / 100.0 + '°, ' + Math.round(inPosition.coords.longitude * 100) / 100.0 + '°');
+					$('#createSession').modal('show');
+				}.bind(this),
+				function error() {
+					console.log('error during geolocation');
+					$('#createSession').modal('show');
+				}.bind(this),
+				{
+				});
+		} else {
+			console.log('geolocation not supported');
+			$('#createSession').modal('show');
+		}
+
+		$('#goSoundscape').click(function () {
+			// TODO: actually pay attention to menu values here
+
+			var newLocation = {};
+	 		$("select#placeChooser option:selected").each(function() {
+				newLocation.coords = {
+					latitude: parseFloat($(this).attr('data-lat')),
+					longitude: parseFloat($(this).attr('data-long'))
+				};
+			});		
+
+			var newDistance = {};
+	 		$("select#distanceChooser option:selected").each(function() {
+				newDistance = parseFloat($(this).attr('data-distance'));
+			});		
+
+			var newTime = {};
+	 		$("select#timeChooser option:selected").each(function() {
+				newTime = parseFloat($(this).attr('data-time'));
+			});		
+
+			console.log(newLocation, newDistance, newTime);
+			gBirds.position = newLocation;		
+			gBirds.distance = newDistance;
+			gBirds.days = newTime;	
 
 			gBirds.getSightings(function() {
 				for (var i = 0; i < gBirdSongPlayers.length; i++) {
 					gBirdSongPlayers[i].chooseSightingAndPlayRandomSound('#player' + i);
 				}
 			});
+
+			$('#createSession').modal('hide');
 		});
 	}
-
-	// ALSO set location when the guy chooses a location from the menu
-
-	$( "#placeChooser" ).change(function(e) {
-		var newLocation = {};
-
-		$("select option:selected").each(function() {
-			newLocation.coords = {
-				latitude: parseFloat($(this).attr('data-lat')),
-				longitude: parseFloat($(this).attr('data-long'))
-			};
-		});		
-
-		console.log(newLocation);
-		gBirds.position = newLocation;
-		gBirds.getSightings(function() {
-			for (var i = 0; i < gBirdSongPlayers.length; i++) {
-				gBirdSongPlayers[i].chooseSightingAndPlayRandomSound('#player' + i);
-			}
-		});			
-	});
-
-
-	// TODO: can we incorporate the vocoder demo?
 
 	$('#playbackRates').click(function(e) {
 		console.log('RANDOMIZE PLAYBACK RATES');

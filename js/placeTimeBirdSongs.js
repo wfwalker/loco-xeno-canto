@@ -3,32 +3,8 @@ function PlaceTimeBirdSongs() {
 	this.position = null;
 	this.sightings = [];
 	this.sounds = [];
-}
-
-// Use navigator.geolocation to find my location; invoke a callback when done.
-// use the provided default location when geolocation fails.
-// default location should be like { coords: { latitude: 37, longitude: -122 }
-PlaceTimeBirdSongs.prototype.setLocation = function(inDefaultLocation, callback) {
-	if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(
-			function success(inPosition) {
-				this.position = inPosition;
-				$('#position').attr('data-lat', inPosition.coords.latitude);
-				$('#position').attr('data-long', inPosition.coords.longitude);
-				callback(this.position);
-			}.bind(this),
-			function error() {
-				console.log('error during geolocation');
-				this.position = inDefaultLocation;
-				callback(this.position);
-			}.bind(this),
-			{
-			});
-	} else {
-		console.log('browser does not support geolocation');
-		this.position = inDefaultLocation;
-		callback(this.position);
-	}
+	this.distance = 15;
+	this.days = 7;
 }
 
 PlaceTimeBirdSongs.prototype.chooseRandomSighting = function() {
@@ -36,8 +12,15 @@ PlaceTimeBirdSongs.prototype.chooseRandomSighting = function() {
 }
 
 PlaceTimeBirdSongs.prototype.getSightings = function(callback) {
-	var queryParams = { lat: this.position.coords.latitude, lng: this.position.coords.longitude, fmt: 'json' };
-	// var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent?' + $.param(queryParams);
+	// initialize query parameters and sightings query URL
+	var queryParams = {
+		lat: this.position.coords.latitude,
+		lng: this.position.coords.longitude,
+		fmt: 'json',
+		dist: this.distance,
+		back: this.days
+	};
+
 	var urlString = '/ebird?' + $.param(queryParams);
 
 	// Re-initialize list of sightings, so this method is more or less idempotent
@@ -45,7 +28,6 @@ PlaceTimeBirdSongs.prototype.getSightings = function(callback) {
 
 	console.log(urlString);
 	$('#sightings').text('N sightings');
-
 
 	$.getJSON(urlString, function(data) {
 		if (data.length == 0) {
