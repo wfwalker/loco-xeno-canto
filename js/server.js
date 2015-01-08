@@ -25,7 +25,7 @@ var gRedisClient = redis.createClient();
 var gCommandLineArgs = args.slice(2);
 
 var gRealData = (gCommandLineArgs.indexOf('-test') < 0);
-logger.info('real data ' + gRealData);
+logger.info('use real sighting and recording data: ' + gRealData);
 
 // set up server
 var app = express();
@@ -63,14 +63,14 @@ logger.info("running " + mHost + " " + myPort);
 
 app.param('latin_name', function(req, resp, next, id) {
     var latin_name = req.param('latin_name')
-    logger.info('latin_name ' + latin_name);
+    logger.debug('latin_name ' + latin_name);
     req.latin_name = latin_name;
     next();
 });
 
 app.param('saved_session_id', function(req, resp, next, id) {
     var saved_session_id = req.param('saved_session_id')
-    logger.info('saved_session_id ' + saved_session_id);
+    logger.debug('saved_session_id ' + saved_session_id);
     req.saved_session_id = saved_session_id;
     next();
 });
@@ -78,23 +78,22 @@ app.param('saved_session_id', function(req, resp, next, id) {
 // Routes
 
 app.post('/share', function (req, resp, next) {
-    logger.info('POST SHARE');
-    logger.info(req.session.id);
+    logger.info('receiving shared session: ' + req.session.id);
     resp.json([req.session.id]);
 
     gRedisClient.set(req.session.id, JSON.stringify(req.body), function(reply) {
         logger.info('saved session for ' + req.session.id);
-        logger.info(reply);
+        logger.debug(reply);
     });
 
-    logger.info(req.body);
+    logger.debug(req.body);
 });
 
 app.get('/saved', function(req, resp, next) {
     var listOfSavedSessions = [];
 
     gRedisClient.keys('*', function (err, keys) {
-        if (err) return logger.info(err);
+        if (err) return logger.error(err);
 
         for(var i = 0, len = keys.length; i < len; i++) {
             listOfSavedSessions.push(keys[i]);
@@ -109,7 +108,7 @@ app.get('/saved/:saved_session_id', function(req, resp, next) {
     
     gRedisClient.get(req.saved_session_id, function(err, reply) {
         logger.info('retrieved session for ' + req.saved_session_id);
-        logger.info(reply);
+        logger.debug(reply);
         resp.send(reply);
     });
 });
@@ -124,12 +123,12 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
             strictSSL: false
         }, function(error, response, body) {
             if (!error && response.statusCode == 200) {
-                logger.info('retrieved recording list OK');
+                logger.debug('retrieved recording list OK');
             } else {
-                logger.info('error retrieving recording list ' + response.statusCode);
+                logger.debug('error retrieving recording list ' + response.statusCode);
             }
         })).pipe(resp);
-        logger.info('seeking recording list, set up pipe');    
+        logger.debug('seeking recording list, set up pipe');    
     } else {
         resp.json({
             recordings: [
@@ -157,21 +156,21 @@ app.use('/soundfile', function(req, resp, next) {
         strictSSL: false
     }, function(error, response, body) {
         if (!error && response.statusCode == 200) {
-            logger.info('retrieved soundfile OK');
+            logger.debug('retrieved soundfile OK');
         } else {
-            logger.info('error retrieving soundfile ' + response.statusCode);
+            logger.error('error retrieving soundfile ' + response.statusCode);
         }
     })).pipe(resp);
 
-    logger.info('seeking sound file set up pipe');        
+    logger.debug('seeking sound file set up pipe');        
 });
 
 // proxy eBird sightings as well, so we can provide fake data instead for testing and offline development
 
 app.use('/ebird', function(req, resp, next) {
-    logger.info(req.query);
+    logger.debug(req.query);
     var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent';
-    logger.info('seeking ebird sightings ' + urlString);
+    logger.info('seeking ebird sightings', req.query);
 
     if (gRealData) {
         req.pipe(request({
@@ -179,10 +178,13 @@ app.use('/ebird', function(req, resp, next) {
             strictSSL: false,
             qs: req.query
         }, function(error, response, body) {
-            logger.info('error piping ebird recent sightings');
-            // TODO: close response
+            if (!error && response.statusCode == 200) {
+                logger.debug('piping recording list OK');
+            } else {
+                logger.error('error piping ebird recent sightings' + response.statusCode);
+            }
         })).pipe(resp);
-        logger.info('seeking ebird sightings set up pipe');        
+        logger.debug('seeking ebird sightings set up pipe');        
     } else {
         resp.json([{
             sciName: 'sciName1',
