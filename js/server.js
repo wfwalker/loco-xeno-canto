@@ -7,17 +7,28 @@ var https = require('https');
 var request = require('request');
 var bodyParser = require('body-parser');
 var args = require('system').args;
-var redis = require("redis")
 
+// set up logging
+var winston = require('winston');
+var logger = new (winston.Logger)({
+    transports: [
+        new (winston.transports.Console)(),
+        new (winston.transports.File)({ filename: 'oiseaux.log' })
+    ]
+});
+
+// connect to database
+var redis = require("redis");
 var gRedisClient = redis.createClient();
 
+// parse commandline arguments
 var gCommandLineArgs = args.slice(2);
 
 var gRealData = (gCommandLineArgs.indexOf('-test') < 0);
-console.log('real data ' + gRealData);
+logger.info('real data ' + gRealData);
 
+// set up server
 var app = express();
-
 var session = require('express-session');
 
 app.use(session({
@@ -46,20 +57,20 @@ var mHost = process.env.VCAP_APP_HOST || "127.0.0.1";
 
 app.listen(myPort);
 
-console.log("running " + mHost + " " + myPort);
+logger.info("running " + mHost + " " + myPort);
 
 // Routing Parameters
 
 app.param('latin_name', function(req, resp, next, id) {
     var latin_name = req.param('latin_name')
-    console.log('latin_name ' + latin_name);
+    logger.info('latin_name ' + latin_name);
     req.latin_name = latin_name;
     next();
 });
 
 app.param('saved_session_id', function(req, resp, next, id) {
     var saved_session_id = req.param('saved_session_id')
-    console.log('saved_session_id ' + saved_session_id);
+    logger.info('saved_session_id ' + saved_session_id);
     req.saved_session_id = saved_session_id;
     next();
 });
@@ -67,23 +78,23 @@ app.param('saved_session_id', function(req, resp, next, id) {
 // Routes
 
 app.post('/share', function (req, resp, next) {
-    console.log('POST SHARE');
-    console.log(req.session.id);
+    logger.info('POST SHARE');
+    logger.info(req.session.id);
     resp.json([req.session.id]);
 
     gRedisClient.set(req.session.id, JSON.stringify(req.body), function(reply) {
-        console.log('saved session for ' + req.session.id);
-        console.log(reply);
+        logger.info('saved session for ' + req.session.id);
+        logger.info(reply);
     });
 
-    console.log(req.body);
+    logger.info(req.body);
 });
 
 app.get('/saved', function(req, resp, next) {
     var listOfSavedSessions = [];
 
     gRedisClient.keys('*', function (err, keys) {
-        if (err) return console.log(err);
+        if (err) return logger.info(err);
 
         for(var i = 0, len = keys.length; i < len; i++) {
             listOfSavedSessions.push(keys[i]);
@@ -97,15 +108,15 @@ app.get('/saved/:saved_session_id', function(req, resp, next) {
     // respond with the saved data previously uploaded
     
     gRedisClient.get(req.saved_session_id, function(err, reply) {
-        console.log('retrieved session for ' + req.saved_session_id);
-        console.log(reply);
+        logger.info('retrieved session for ' + req.saved_session_id);
+        logger.info(reply);
         resp.send(reply);
     });
 });
 
 app.get('/sounds/:latin_name', function(req, resp, next) {
 	var urlString = 'http://www.xeno-canto.org/api/2/recordings?query=' + req.latin_name.replace(' ', '+');
-	console.log('seeking recording list ' + urlString);
+	logger.info('seeking recording list ' + urlString);
 
     if (gRealData) {
         req.pipe(request({
@@ -113,12 +124,12 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
             strictSSL: false
         }, function(error, response, body) {
             if (!error && response.statusCode == 200) {
-                console.log('retrieved recording list OK');
+                logger.info('retrieved recording list OK');
             } else {
-                console.log('error retrieving recording list ' + response.statusCode);
+                logger.info('error retrieving recording list ' + response.statusCode);
             }
         })).pipe(resp);
-        console.log('seeking recording list, set up pipe');    
+        logger.info('seeking recording list, set up pipe');    
     } else {
         resp.json({
             recordings: [
@@ -139,28 +150,28 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
 
 app.use('/soundfile', function(req, resp, next) {
     var urlString = 'http://www.xeno-canto.org' + req.path;
-    console.log('seeking sound file ' + urlString);
+    logger.info('seeking sound file ' + urlString);
 
     req.pipe(request({
         uri: urlString,
         strictSSL: false
     }, function(error, response, body) {
         if (!error && response.statusCode == 200) {
-            console.log('retrieved soundfile OK');
+            logger.info('retrieved soundfile OK');
         } else {
-            console.log('error retrieving soundfile ' + response.statusCode);
+            logger.info('error retrieving soundfile ' + response.statusCode);
         }
     })).pipe(resp);
 
-    console.log('seeking sound file set up pipe');        
+    logger.info('seeking sound file set up pipe');        
 });
 
 // proxy eBird sightings as well, so we can provide fake data instead for testing and offline development
 
 app.use('/ebird', function(req, resp, next) {
-    console.log(req.query);
+    logger.info(req.query);
     var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent';
-    console.log('seeking ebird sightings ' + urlString);
+    logger.info('seeking ebird sightings ' + urlString);
 
     if (gRealData) {
         req.pipe(request({
@@ -168,10 +179,10 @@ app.use('/ebird', function(req, resp, next) {
             strictSSL: false,
             qs: req.query
         }, function(error, response, body) {
-            console.log('error piping ebird recent sightings');
+            logger.info('error piping ebird recent sightings');
             // TODO: close response
         })).pipe(resp);
-        console.log('seeking ebird sightings set up pipe');        
+        logger.info('seeking ebird sightings set up pipe');        
     } else {
         resp.json([{
             sciName: 'sciName1',
