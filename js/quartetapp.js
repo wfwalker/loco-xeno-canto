@@ -56,15 +56,38 @@ $(document).ready(function(){
 	} else {
 		console.log('document ready without saved session!');
 
-		$('#createSession').collapse('show');
+		// go get the list of saved sessions
+		$.ajax({
+			url: '/saved',
+			dataType: 'json',
+			success: function(data) {
+				if (data) {
+					console.log('got saved sessions');
+					console.log(data);
 
+					// for (var index in data) {
+					// 	$('#savedSessions').append($('<div>' + data[index] + '</div>'));
+					// }
+				} else {
+					// TODO: retry?
+					console.log('cannot retrieve saved sessions');
+				}
+			}.bind(this),
+			error: function(xhr, status, error) {
+				// TODO: retry?
+				console.log('cannot retrieve saved sessions');
+			}
+		});		
+
+		// show the session creator and start trying to geolocate
+		$('#createSession').collapse('show');
 		$('#setupStatus').text('Finding your location');
 
 		// try to geolocate
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(
 				function success(inPosition) {
-					$('#placeChooser').append($('<option selected />').attr('data-lat', inPosition.coords.latitude).attr('data-long', inPosition.coords.longitude).text('Your location (' + Math.round(inPosition.coords.latitude * 100) / 100.0 + '°, ' + Math.round(inPosition.coords.longitude * 100) / 100.0 + '°)'));
+					$('#placeChooser').append($('<option selected />').attr('data-lat', inPosition.coords.latitude).attr('data-long', inPosition.coords.longitude).text('your location (' + Math.round(inPosition.coords.latitude * 100) / 100.0 + '°, ' + Math.round(inPosition.coords.longitude * 100) / 100.0 + '°)'));
 					$('#setupStatus').text('Found your location');
 				}.bind(this),
 				function error() {
@@ -82,11 +105,13 @@ $(document).ready(function(){
 			// TODO: actually pay attention to menu values here
 
 			var newLocation = {};
+			var newDescription = '';
 	 		$("select#placeChooser option:selected").each(function() {
 				newLocation.coords = {
 					latitude: parseFloat($(this).attr('data-lat')),
 					longitude: parseFloat($(this).attr('data-long'))
 				};
+				newDescription = $(this).text();
 			});		
 
 			var newDistance = {};
@@ -99,6 +124,7 @@ $(document).ready(function(){
 				newTime = parseFloat($(this).attr('data-time'));
 			});		
 
+	 		gBirds.description = newDescription;
 			gBirds.position = newLocation;		
 			gBirds.distance = newDistance;
 			gBirds.days = newTime;	
@@ -115,32 +141,58 @@ $(document).ready(function(){
 		});
 	}
 
-	$('#playbackRates').click(function(e) {
-		console.log('RANDOMIZE PLAYBACK RATES');
+	$('#rate0').click(function(e) {
+		gBirdSongPlayers[0].randomizePlaybackRate('#player0');
+		// TODO: store lastActionTime within each player!
 		resetLastActionTime();
-
-		for (var i = 0; i < gBirdSongPlayers.length; i++) {
-			gBirdSongPlayers[i].randomizePlaybackRate('#player' + i);
-		}
+	});
+	$('#rate1').click(function(e) {
+		gBirdSongPlayers[1].randomizePlaybackRate('#player1');
+		resetLastActionTime();
+	});
+	$('#rate2').click(function(e) {
+		gBirdSongPlayers[2].randomizePlaybackRate('#player2');
+		resetLastActionTime();
+	});
+	$('#rate3').click(function(e) {
+		gBirdSongPlayers[3].randomizePlaybackRate('#player3');
+		resetLastActionTime();
 	});
 
-	$('#panners').click(function(e) {
-		console.log('RANDOMIZE PANNERS');
+	$('#pan0').click(function(e) {
+		gBirdSongPlayers[0].randomizePanner('#player0');
 		resetLastActionTime();
-
-		for (var i = 0; i < gBirdSongPlayers.length; i++) {
-			gBirdSongPlayers[i].randomizePanner('#player' + i);
-		}
+	});
+	$('#pan1').click(function(e) {
+		gBirdSongPlayers[1].randomizePanner('#player1');
+		resetLastActionTime();
+	});
+	$('#pan2').click(function(e) {
+		gBirdSongPlayers[2].randomizePanner('#player2');
+		resetLastActionTime();
+	});
+	$('#pan3').click(function(e) {
+		gBirdSongPlayers[3].randomizePanner('#player3');
+		resetLastActionTime();
 	});
 
-	$('#reverse').click(function(e) {
-		console.log('REVERSE PLAYBACK');
+	$('#reverse0').click(function(e) {
+		gBirdSongPlayers[0].reversePlayback('#player0');
 		resetLastActionTime();
-
-		for (var i = 0; i < gBirdSongPlayers.length; i++) {
-			gBirdSongPlayers[i].reversePlayback('#player' + i);
-		}
 	});
+	$('#reverse1').click(function(e) {
+		gBirdSongPlayers[1].reversePlayback('#player1');
+		resetLastActionTime();
+	});
+	$('#reverse2').click(function(e) {
+		gBirdSongPlayers[2].reversePlayback('#player2');
+		resetLastActionTime();
+	});
+	$('#reverse3').click(function(e) {
+		gBirdSongPlayers[3].reversePlayback('#player3');
+		resetLastActionTime();
+	});
+
 
 	$('#share').click(function(e) {
 		console.log('SHARE');

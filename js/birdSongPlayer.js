@@ -87,6 +87,7 @@ var BirdSongPlayer = function (audioContext, inCanvasID) {
 
 // sets the X,Y,Z position of the Panner to random values between -1 and +1
 BirdSongPlayer.prototype.randomizePanner = function() {
+	console.log('randomize pan');
 	this.panner.setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
 }
 

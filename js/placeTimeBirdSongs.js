@@ -1,6 +1,7 @@
 // PlaceTimeBirdSongs
 function PlaceTimeBirdSongs() {
 	this.position = null;
+	this.description = '';
 	this.sightings = [];
 	this.sounds = [];
 	this.distance = 15;
@@ -34,7 +35,7 @@ PlaceTimeBirdSongs.prototype.getSightings = function(callback) {
 			throw "No sightings found!";
 		}
 
-		$('#sightings').text(data.length + ' sightings');
+		$('#sightings').text(data.length + ' sightings from ' + this.description);
 
 		for (var index in data) {
 			this.sightings.push(data[index]);

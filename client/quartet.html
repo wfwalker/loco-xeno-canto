@@ -43,14 +43,15 @@
 					<h1>
 						oiseaux de même
 					</h1>
+					<p>Brian Belet and Bill Walker</p>
+
+					<div id='savedSessions'></div>
 				</div>
 			</div>
 
 			<div class='row'>
 				<div class="col-md-12 collapse" id="createSession">
-					<div class="">
-					    <h2><small><span id='setupStatus'></span> <span id='sightings'></span></small></h2>
-					</div>
+					<div class='margin-bottom: 10px'>&nbsp;</div>
 
 					<form class='form-inline'>
 						<button type="button" class="btn btn-primary" id='goSoundscape'>Find sightings</button>
@@ -79,15 +80,15 @@
 							</select>
 						</div>
 					</form>
-					<div class="">
-					    <h2><small></small></h2>
+
+					<div class='lead'>
+					    <span id='setupStatus'></span> <span id='sightings'></span>
 					</div>
 				</div>
 			</div>
 
 			<!-- TODO: graphical pictures of birds -->
 			<!-- TODO: bootstrap panel colors don't mesh with my made-up colors -->
-			<!-- TODO: right justified shuffle buttons seem disconnected from what they control -->
 			<!-- TODO: needs about box -->
 			<!-- TODO: mixing board ? -->
 			<!-- TODO: graphical download progress indicator -->
@@ -96,34 +97,27 @@
 			<!-- TODO: Performers take the stage -->
 
 			<div class='row'>
-				<div class='col-md-12' style='padding-bottom: 20px'>
-					<button class='btn btn-info' style='margin-bottom: 5px' id='playbackRates'><span class='glyphicon glyphicon-random'></span> Playback Rate</button>
-					<button class='btn btn-info' style='margin-bottom: 5px' id='panners'><span class='glyphicon glyphicon-random'></span> Stereo Pan</button>
-					<button class='btn btn-info' style='margin-bottom: 5px' id='reverse'>Reverse</button>
-					<button class='btn btn-success' style='margin-bottom: 5px' id='share'><span class='glyphicon glyphicon-cloud-upload'></span> Share</button>
-				</div>
-			</div>
-			<div class='row'>
 				<div class='col-md-6'>
 					<div class='panel panel-default' id='player0'>
 						<div class='panel-heading panel-nowrap'>
-							<button class='h4 btn btn-primary' id='nextSighting0' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
 							<h4>
-								<span class='glyphicon glyphicon-search'></span>
-								<span class='speciesName'>label0</span>
+								<button class='btn btn-primary btn-sm' id='nextSighting0'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
+								<span class='speciesName'>Bird</span>
 								<small> @ <span class='locationName'>location</span></small>
 							</h4>
 						</div>
 						<div class='panel-body panel-nowrap'>
 							<div><canvas style='width: 100%; height: 50px' id='volumeMeter0' height="130" width="260"></canvas></div>
-							<button class='h4 btn btn-info' id='recording0' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
 							<h4>
-								<span class='glyphicon glyphicon-volume-up'></span>
-								<span class='status'>initializing</span> <span class='playbackRate'>1x</span>
+								<button class='btn btn-info btn-sm' id='recording0'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
+								<button class='btn btn-info btn-sm' id='rate0'>Rate</button>
+								<button class='btn btn-info btn-sm' id='pan0'>Pan</button>
+								<button class='btn btn-info btn-sm' id='reverse0'>Reverse</button>
+								<span class='status'></span> <span class='playbackRate'>1x</span>
 							</h4>
-							<div class='recordingLocation'>location</div>
-							<div class='recordist'>recordist</div>
-							<img class='license' src='/cc-placeholder.png'></img>
+							<img class='license' src='/cc-placeholder.png' height='20px'></img>
+							Recorded by <span class='recordist'>recordist</span>
+							at <span class='recordingLocation'>location</span>
 						</div>
 					</div>
 				</div>
@@ -131,23 +125,24 @@
 				<div class='col-md-6'>
 					<div class='panel panel-default' id='player1'>
 						<div class='panel-heading panel-nowrap'>
-							<button class='h4 btn btn-primary' id='nextSighting1' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
 							<h4>
-								<span class='glyphicon glyphicon-search'></span>
-								<span class='speciesName'>label1</span>
+								<button class='btn btn-primary' id='nextSighting1'><span class='glyphicon glyphicon-random'></span></button>
+								<span class='speciesName'>Bird</span>
 								<small> @ <span class='locationName'>location</span></small>
 							</h4>
 						</div>
 						<div class='panel-body panel-nowrap'>
 							<div><canvas style='width: 100%; height: 50px' id='volumeMeter1' height="130" width="260"></canvas></div>
-							<button class='h4 btn btn-info' id='recording1' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
 							<h4>
-								<span class='glyphicon glyphicon-volume-up'></span>
-								<span class='status'>initializing</span> <span class='playbackRate'>1x</span>
+								<button class='btn btn-info btn-sm' id='recording1'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
+								<button class='btn btn-info btn-sm' id='rate1'>Rate</button>
+								<button class='btn btn-info btn-sm' id='pan1'>Pan</button>
+								<button class='btn btn-info btn-sm' id='reverse1'>Reverse</button>
+								<span class='status'></span> <span class='playbackRate'>1x</span>
 							</h4>
-							<div class='recordingLocation'>location</div>
-							<div class='recordist'>recordist</div>
-							<img class='license' src='/cc-placeholder.png'></img>
+							<img class='license' src='/cc-placeholder.png' height='20px'></img>
+							Recorded by <span class='recordist'>recordist</span>
+							at <span class='recordingLocation'>location</span>
 						</div>
 					</div>
 				</div>
@@ -157,23 +152,24 @@
 				<div class='col-md-6'>
 					<div class='panel panel-default' id='player2'>
 						<div class='panel-heading panel-nowrap'>
-							<button class='h4 btn btn-primary' id='nextSighting2' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
 							<h4>
-								<span class='glyphicon glyphicon-search'></span>
-								<span class='speciesName'>label2</span>
+								<button class='btn btn-primary' id='nextSighting2'><span class='glyphicon glyphicon-random'></span></button>
+								<span class='speciesName'>Bird</span>
 								<small>@ <span class='locationName'>location</span></small>
 							</h4>
 						</div>
 						<div class='panel-body panel-nowrap'>
 							<div><canvas style='width: 100%; height: 50px' id='volumeMeter2' height="130" width="260"></canvas></div>
-							<button class='h4 btn btn-info' id='recording2' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
 							<h4>
-								<span class='glyphicon glyphicon-volume-up'></span>
-								<span class='status'>initializing</span> <span class='playbackRate'>1x</span>
+								<button class='btn btn-info btn-sm' id='recording2'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
+								<button class='btn btn-info btn-sm' id='rate2'>Rate</button>
+								<button class='btn btn-info btn-sm' id='pan2'>Pan</button>
+								<button class='btn btn-info btn-sm' id='reverse2'>Reverse</button>
+								<span class='status'></span> <span class='playbackRate'>1x</span>
 							</h4>
-							<div class='recordingLocation'>location</div>
-							<div class='recordist'>recordist</div>
-							<img class='license' src='/cc-placeholder.png'></img>
+							<img class='license' src='/cc-placeholder.png' height='20px'></img>
+							Recorded by <span class='recordist'>recordist</span>
+							at <span class='recordingLocation'>location</span>
 						</div>
 					</div>
 				</div>
@@ -181,33 +177,39 @@
 				<div class='col-md-6'>
 					<div class='panel panel-default' id='player3'>
 						<div class='panel-heading panel-nowrap'>
-							<button class='h4 btn btn-primary' id='nextSighting3' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
 							<h4>
-								<span class='glyphicon glyphicon-search'></span>
-								<span class='speciesName'>label3</span>
+								<button class='btn btn-primary' id='nextSighting3'><span class='glyphicon glyphicon-random'></span></button>
+								<span class='speciesName'>Bird</span>
 								<small>@ <span class='locationName'>location</span></small>
 							</h4>
 						</div>
 						<div class='panel-body panel-nowrap'>
 							<div><canvas style='width: 100%; height: 50px' id='volumeMeter3' height="130" width="260"></canvas></div>
-							<button class='h4 btn btn-info' id='recording3' style='float: right'><span class='glyphicon glyphicon-random'></span></button>
 							<h4>
-								<span class='glyphicon glyphicon-volume-up'></span>
-								<span class='status'>initializing</span> <span class='playbackRate'>1x</span>
+								<button class='btn btn-info btn-sm' id='recording3'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
+								<button class='btn btn-info btn-sm' id='rate3'>Rate</button>
+								<button class='btn btn-info btn-sm' id='pan3'>Pan</button>
+								<button class='btn btn-info btn-sm' id='reverse3'>Reverse</button>
+								<span class='status'></span> <span class='playbackRate'>1x</span>
 							</h4>
-							<div class='recordingLocation'>location</div>
-							<div class='recordist'>recordist</div>
-							<img class='license' src='/cc-placeholder.png'></img>
+							<img class='license' src='/cc-placeholder.png' height='20px'></img>
+							Recorded by <span class='recordist'>recordist</span>
+							at <span class='recordingLocation'>location</span>
 						</div>
 					</div>
 				</div>
 			</div>
 
+			<div class='row'>
+				<div class='col-md-12' style='padding-bottom: 20px'>
+					<a class='btn btn-default btn-sm' target='_blank' href="https://github.com/wfwalker/loco-xeno-canto">source code on github</a>	
+					<button class='btn btn-success btn-sm' id='share'><span class='glyphicon glyphicon-cloud-upload'></span> Share</button>
 
-			<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://birdwalker.com:9090/quartet.html">Tweet</a>
-			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>		
+					<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://birdwalker.com:9090/quartet.html">Tweet</a>
+					<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>		
 
-			<a target='_blank' href="https://github.com/wfwalker/loco-xeno-canto">source code on github</a>	
+				</div>
+			</div>
 		</div>
 
 		<script src="js/jquery.min.js" type="text/javascript"></script>	
