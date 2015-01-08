@@ -55,26 +55,27 @@ $(document).ready(function(){
 
 	} else {
 		console.log('document ready without saved session!');
+		$('#createSession').modal('show');
+
+		$('#setupStatus').text('Finding your location');
 
 		// try to geolocate
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(
 				function success(inPosition) {
-					this.position = inPosition;
-					$('#position').attr('data-lat', inPosition.coords.latitude);
-					$('#position').attr('data-long', inPosition.coords.longitude);
-					$('#position').text(Math.round(inPosition.coords.latitude * 100) / 100.0 + '°, ' + Math.round(inPosition.coords.longitude * 100) / 100.0 + '°');
-					$('#createSession').modal('show');
+					// TODO add a new popup menu item at this point
+					$('#placeChooser').append($('<option selected />').attr('data-lat', inPosition.coords.latitude).attr('data-long', inPosition.coords.longitude).text(Math.round(inPosition.coords.latitude * 100) / 100.0 + '°, ' + Math.round(inPosition.coords.longitude * 100) / 100.0 + '°'));
+					$('#setupStatus').text('Found your location');
 				}.bind(this),
 				function error() {
 					console.log('error during geolocation');
-					$('#createSession').modal('show');
+					$('#setupStatus').text('Could not find your location');
 				}.bind(this),
 				{
 				});
 		} else {
-			console.log('geolocation not supported');
-			$('#createSession').modal('show');
+			console.log('browser does not support geolocation');
+			$('#setupStatus').text('Cannot find your location');
 		}
 
 		$('#goSoundscape').click(function () {
@@ -98,18 +99,22 @@ $(document).ready(function(){
 				newTime = parseFloat($(this).attr('data-time'));
 			});		
 
-			console.log(newLocation, newDistance, newTime);
 			gBirds.position = newLocation;		
 			gBirds.distance = newDistance;
 			gBirds.days = newTime;	
 
+			$('#setupStatus').text('Retrieving bird sightings');
+
+
 			gBirds.getSightings(function() {
+				$('#setupStatus').text('Choosing birds');
+
 				for (var i = 0; i < gBirdSongPlayers.length; i++) {
 					gBirdSongPlayers[i].chooseSightingAndPlayRandomSound('#player' + i);
 				}
-			});
 
-			$('#createSession').modal('hide');
+				$('#createSession').modal('hide');
+			});
 		});
 	}
 
