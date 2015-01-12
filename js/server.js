@@ -16,6 +16,11 @@ var logger = new (winston.Logger)({
     ]
 });
 
+// Increase maximum outgoing HTTP connections
+// See: http://nodejs.org/api/http.html#http_class_http_agent
+http.globalAgent.maxSockets = 500;
+
+
 // connect to database
 var redis = require("redis");
 var gRedisClient = redis.createClient();
