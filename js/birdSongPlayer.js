@@ -46,7 +46,7 @@ var BirdSongPlayer = function (audioContext, inPlayerSelector, inCanvasID) {
 
 	this.gain.connect(this.panner);
 
-	var volumeMeterCanvas = document.getElementById(inCanvasID);
+	var volumeMeterCanvas = $(this.playerSelector).find('canvas')[0];
 	var graphicsContext = volumeMeterCanvas.getContext('2d');
 	var volumeHistory = new Array(260);
 
