@@ -24,14 +24,10 @@ gListener.setOrientation(0,0,-1,0,1,0);
 
 // GLOBAL sound sources for bird song playback
 gBirdSongPlayers = [];
-gBirdSongPlayers[0] = new BirdSongPlayer(gAudioContext, 'volumeMeter0');
-gBirdSongPlayers[1] = new BirdSongPlayer(gAudioContext, 'volumeMeter1');
-gBirdSongPlayers[2] = new BirdSongPlayer(gAudioContext, 'volumeMeter2');
-gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext, 'volumeMeter3');
-
-function resetLastActionTime() {
-	gLastActionTime = gAudioContext.currentTime;
-}
+gBirdSongPlayers[0] = new BirdSongPlayer(gAudioContext, '#player0', 'volumeMeter0');
+gBirdSongPlayers[1] = new BirdSongPlayer(gAudioContext, '#player1', 'volumeMeter1');
+gBirdSongPlayers[2] = new BirdSongPlayer(gAudioContext, '#player2', 'volumeMeter2');
+gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext, '#player3', 'volumeMeter3');
 
 $(document).ready(function(){ 
 	// does the initial url have a saved session?
@@ -146,59 +142,46 @@ $(document).ready(function(){
 	$('#rate0').click(function(e) {
 		gBirdSongPlayers[0].randomizePlaybackRate('#player0');
 		// TODO: store lastActionTime within each player!
-		resetLastActionTime();
 	});
 	$('#rate1').click(function(e) {
 		gBirdSongPlayers[1].randomizePlaybackRate('#player1');
-		resetLastActionTime();
 	});
 	$('#rate2').click(function(e) {
 		gBirdSongPlayers[2].randomizePlaybackRate('#player2');
-		resetLastActionTime();
 	});
 	$('#rate3').click(function(e) {
 		gBirdSongPlayers[3].randomizePlaybackRate('#player3');
-		resetLastActionTime();
 	});
 
 	$('#pan0').click(function(e) {
 		gBirdSongPlayers[0].randomizePanner('#player0');
-		resetLastActionTime();
 	});
 	$('#pan1').click(function(e) {
 		gBirdSongPlayers[1].randomizePanner('#player1');
-		resetLastActionTime();
 	});
 	$('#pan2').click(function(e) {
 		gBirdSongPlayers[2].randomizePanner('#player2');
-		resetLastActionTime();
 	});
 	$('#pan3').click(function(e) {
 		gBirdSongPlayers[3].randomizePanner('#player3');
-		resetLastActionTime();
 	});
 
 	$('#reverse0').click(function(e) {
 		gBirdSongPlayers[0].reversePlayback('#player0');
-		resetLastActionTime();
 	});
 	$('#reverse1').click(function(e) {
 		gBirdSongPlayers[1].reversePlayback('#player1');
-		resetLastActionTime();
 	});
 	$('#reverse2').click(function(e) {
 		gBirdSongPlayers[2].reversePlayback('#player2');
-		resetLastActionTime();
 	});
 	$('#reverse3').click(function(e) {
 		gBirdSongPlayers[3].reversePlayback('#player3');
-		resetLastActionTime();
 	});
 
 
 	$('#share').click(function(e) {
 		console.log('SHARE');
-		resetLastActionTime();
 
 		// TODO: put up alert asking user to type description?
 		$('#saveSession').modal();
@@ -235,36 +218,28 @@ $(document).ready(function(){
 
 	$('#recording0').click(function(e) {
 		gBirdSongPlayers[0].chooseRandomRecording('#player0');
-		resetLastActionTime();
 	});
 	$('#recording1').click(function(e) {
 		gBirdSongPlayers[1].chooseRandomRecording('#player1');
-		resetLastActionTime();
 	});
 	$('#recording2').click(function(e) {
 		gBirdSongPlayers[2].chooseRandomRecording('#player2');
-		resetLastActionTime();
 	});
 	$('#recording3').click(function(e) {
 		gBirdSongPlayers[3].chooseRandomRecording('#player3');
-		resetLastActionTime();
 	});
 
 	$('#nextSighting0').click(function(e) {
 		gBirdSongPlayers[0].chooseSightingAndPlayRandomSound('#player0');
-		resetLastActionTime();
 	});
 	$('#nextSighting1').click(function(e) {
 		gBirdSongPlayers[1].chooseSightingAndPlayRandomSound('#player1');
-		resetLastActionTime();
 	});
 	$('#nextSighting2').click(function(e) {
 		gBirdSongPlayers[2].chooseSightingAndPlayRandomSound('#player2');
-		resetLastActionTime();
 	});
 	$('#nextSighting3').click(function(e) {
 		gBirdSongPlayers[3].chooseSightingAndPlayRandomSound('#player3');
-		resetLastActionTime();
 	});
 
 	window.setInterval(function() {
@@ -272,7 +247,10 @@ $(document).ready(function(){
 		// TODO: that function should set a global that holds the last active time
 		// TODO: here, compare that stashed time to current time
 		// TODO: if it exceeds threshold, do something and update last action
-		// console.log('last action ' + gLastActionTime + ', currently ' + gAudioContext.currentTime);
+		// console.log('last action ' + gBirdSongPlayers[0].lastActionTime + ', currently ' + gAudioContext.currentTime);
+		// console.log('last action ' + gBirdSongPlayers[1].lastActionTime + ', currently ' + gAudioContext.currentTime);
+		// console.log('last action ' + gBirdSongPlayers[2].lastActionTime + ', currently ' + gAudioContext.currentTime);
+		// console.log('last action ' + gBirdSongPlayers[3].lastActionTime + ', currently ' + gAudioContext.currentTime);
 	}, 1000);
 });
 

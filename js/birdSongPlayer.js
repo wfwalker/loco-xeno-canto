@@ -14,7 +14,7 @@ function getAverageVolume(array) {
 }
 
 // BirdSongPlayer
-var BirdSongPlayer = function (audioContext, inCanvasID) {
+var BirdSongPlayer = function (audioContext, inPlayerSelector, inCanvasID) {
 	this.soundSource = null;
 	this.playbackRate = 1.0;
 
@@ -24,6 +24,8 @@ var BirdSongPlayer = function (audioContext, inCanvasID) {
 
 	this.recordingIndex = null;
 	this.recording = null;
+
+	this.lastActionTime = audioContext.currentTime;
 
 	this.gain = audioContext.createGain(); 
 
@@ -85,14 +87,22 @@ var BirdSongPlayer = function (audioContext, inCanvasID) {
 	});
 }
 
+// reset the last action time
+BirdSongPlayer.prototype.resetLastActionTime = function() {
+	this.lastActionTime = gAudioContext.currentTime;
+}
+
 // sets the X,Y,Z position of the Panner to random values between -1 and +1
 BirdSongPlayer.prototype.randomizePanner = function() {
-	console.log('randomize pan');
+	this.resetLastActionTime();
+
 	this.panner.setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
 }
 
 // Sets the playback rate for the current sound to a random value between 0.1 and 1.1
 BirdSongPlayer.prototype.randomizePlaybackRate = function(inPlayerSelector) {
+	this.resetLastActionTime();
+
 	if (this.soundSource) {
 		this.playbackRate = 0.1 + Math.random();
 		this.soundSource.playbackRate.cancelScheduledValues(gAudioContext.currentTime);
@@ -132,6 +142,7 @@ BirdSongPlayer.prototype.setSourceFromBuffer = function(inBuffer) {
 // Reverses the audio buffer so that the sound plays backwards
 BirdSongPlayer.prototype.reversePlayback = function() {
 	console.log('reversePlayback');
+	this.resetLastActionTime();
 
 	var oldData = this.soundSource.buffer.getChannelData(0);
 	var normalData = Array.prototype.slice.call( oldData );
@@ -192,6 +203,8 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inPlayerSel
 }
 
 BirdSongPlayer.prototype.chooseRandomRecording = function(inPlayerSelector) {
+	this.resetLastActionTime();
+
 	$('#setupStatus').text('Retrieving bird recordings based on');
 	$(inPlayerSelector).find('.recordingButton').button('loading');
 
@@ -236,6 +249,7 @@ BirdSongPlayer.prototype.saveData = function() {
 }
 
 BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(inPlayerSelector) {
+	this.resetLastActionTime();
 	this.sightingIndex = gBirds.chooseRandomSighting();
 	this.sighting = gBirds.sightings[this.sightingIndex];
 
