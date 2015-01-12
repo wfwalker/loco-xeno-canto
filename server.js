@@ -43,10 +43,7 @@ app.use(session({
 
 // TODO: this will cache the index.html for a day, which is bad
 // TODO: but it caches the bootstrap.css for a day which is good.
-app.use("/", express.static('client', {
-    maxage: 86400000
-}));
-app.use("/js", express.static('js', {
+app.use("/", express.static('static', {
     maxage: 86400000
 }));
 
