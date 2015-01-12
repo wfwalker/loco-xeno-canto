@@ -26,3 +26,6 @@ node_modules
 
 # Mac OS X stuff
 .DS_Store
+
+oiseaux.log
+npm-debug.log

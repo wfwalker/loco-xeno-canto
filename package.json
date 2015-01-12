@@ -4,7 +4,7 @@
   "description": "sounds of your local birds",
   "main": "server.js",
   "scripts": {
-    "start": "node js/server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "body-parser": "^1.10.0",

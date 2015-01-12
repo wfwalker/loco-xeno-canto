@@ -3,10 +3,8 @@
 var express = require('express');
 var url = require('url');
 var http = require('http');
-var https = require('https');
 var request = require('request');
 var bodyParser = require('body-parser');
-var args = require('system').args;
 
 // set up logging
 var winston = require('winston');
@@ -17,12 +15,17 @@ var logger = new (winston.Logger)({
     ]
 });
 
+// Increase maximum outgoing HTTP connections
+// See: http://nodejs.org/api/http.html#http_class_http_agent
+http.globalAgent.maxSockets = 500;
+
+
 // connect to database
 var redis = require("redis");
 var gRedisClient = redis.createClient();
 
 // parse commandline arguments
-var gCommandLineArgs = args.slice(2);
+var gCommandLineArgs = process.argv.slice(2);
 
 var gRealData = (gCommandLineArgs.indexOf('-test') < 0);
 logger.info('use real sighting and recording data: ' + gRealData);
@@ -39,10 +42,7 @@ app.use(session({
 
 // TODO: this will cache the index.html for a day, which is bad
 // TODO: but it caches the bootstrap.css for a day which is good.
-app.use("/", express.static('client', {
-    maxage: 86400000
-}));
-app.use("/js", express.static('js', {
+app.use("/", express.static('static', {
     maxage: 86400000
 }));
 
