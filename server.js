@@ -3,7 +3,6 @@
 var express = require('express');
 var url = require('url');
 var http = require('http');
-var https = require('https');
 var request = require('request');
 var bodyParser = require('body-parser');
 
