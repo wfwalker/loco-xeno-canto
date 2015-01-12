@@ -175,7 +175,7 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 	}.bind(this);
 
 	mp3Request.onload = function(e) {
-		$(this.playerSelector).find('.status').text('decoding');
+		$(this.playerSelector).find('.status').text('...');
 
 	    gAudioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
 	    	this.setSourceFromBuffer(decodedBuffer);
@@ -224,7 +224,7 @@ BirdSongPlayer.prototype.chooseRandomRecording = function() {
 		// rewrite URL's from xeno-canto JSON, route through my own server due to missing CORS
 		var soundURL = this.recording.file.replace('http://www.xeno-canto.org','/soundfile');
 
-		$(this.playerSelector).find('.status').text('downloading #' + this.recordingIndex);
+		$(this.playerSelector).find('.status').text('...');
 		this.setBufferFromURL(soundURL);
 	}
 }
@@ -266,7 +266,7 @@ BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function() {
 	// TODO: duplicated from initialized from saved setting
 	$(this.playerSelector).find('.speciesName').text(this.sighting.comName);
 	$(this.playerSelector).find('.locationName').text(this.sighting.locName);
-	$(this.playerSelector).find('.status').text('choosing');
+	$(this.playerSelector).find('.status').text('...');
 
 	// get sounds for this species if needed, and pick one at random
 	gBirds.getSoundsForSightingIndex(this.sightingIndex, function(soundsData) {
