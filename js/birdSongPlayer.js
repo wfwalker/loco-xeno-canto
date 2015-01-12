@@ -83,7 +83,6 @@ var BirdSongPlayer = function (audioContext, inPlayerSelector, inCanvasID) {
 		graphicsContext.fillStyle = '#5BC0DE'
 		graphicsContext.fillRect(258, 128 - volumeHistory[259], 2, volumeHistory[259]);
 
-
 		requestAnimationFrame(vuMeter);
 	});
 }
@@ -159,7 +158,6 @@ BirdSongPlayer.prototype.reversePlayback = function() {
 	}	
 
 	this.setSourceFromBuffer(newBuffer);
-
 	console.log('DONE reversePlayback');
 }
 
@@ -173,7 +171,7 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 	}.bind(this);
 
 	mp3Request.onprogress = function(e) {
-		$(this.playerSelector).find('.status').text('downloading ' + Math.round(100 * e.loaded / e.total) + '%');
+		$(this.playerSelector).find('.status').text(Math.round(100 * e.loaded / e.total) + '%');
 	}.bind(this);
 
 	mp3Request.onload = function(e) {
@@ -186,13 +184,16 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 			$(this.playerSelector).find('.recordist').text(this.recording.rec);
 			$(this.playerSelector).find('.playbackRate').text((Math.round(100 * this.playbackRate) / 100.0) + "x");
 			$(this.playerSelector).find('.nextRecording').button('reset');
+			$(this.playerSelector).find('button').prop('disabled', false);
 
-			var licenseIcon = '';
+			var licenseIcon = 'http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png';
 
 			if (this.recording.lic.indexOf('by-nc-nd') > 0) {
 				licenseIcon = 'http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png';
 			} else if (this.recording.lic.indexOf('by-nc-sa') > 0) {
 				licenseIcon = 'http://i.creativecommons.org/l/by-nc-sa/3.0/us/88x31.png';
+			} else {
+				console.log('LICENSE NOT RECOGNIZED ' + this.recording.lic);
 			}
 
 			$(this.playerSelector).find('.license').attr('src', licenseIcon);
@@ -206,6 +207,7 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 }
 
 BirdSongPlayer.prototype.chooseRandomRecording = function() {
+	$(this.playerSelector).find('button').prop('disabled', true);
 	this.resetLastActionTime();
 
 	$('#setupStatus').text('Retrieving bird recordings based on');
@@ -252,6 +254,8 @@ BirdSongPlayer.prototype.saveData = function() {
 }
 
 BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function() {
+	$(this.playerSelector).find('.nextSighting').button('loading');
+	$(this.playerSelector).find('button').prop('disabled', true);
 	this.resetLastActionTime();
 	this.sightingIndex = gBirds.chooseRandomSighting();
 	this.sighting = gBirds.sightings[this.sightingIndex];
@@ -273,6 +277,7 @@ BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function() {
 		} else {
 			console.log('got recording list');
 			this.soundsForSighting = soundsData;
+			$(this.playerSelector).find('.nextSighting').button('reset');
 			this.chooseRandomRecording(this.playerSelector);
 		}
 	}.bind(this));
@@ -300,5 +305,7 @@ BirdSongPlayer.prototype.initializeControls = function() {
 	$(this.playerSelector).find('.rate').click(function(e) {
 		player.randomizePlaybackRate();
 	});
+
+	$(this.playerSelector).find('button').prop('disabled', true);
 }
 
