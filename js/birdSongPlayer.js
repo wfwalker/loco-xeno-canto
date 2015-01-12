@@ -185,6 +185,7 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 			$(this.playerSelector).find('.playbackRate').text((Math.round(100 * this.playbackRate) / 100.0) + "x");
 			$(this.playerSelector).find('.nextRecording').button('reset');
 			$(this.playerSelector).find('button').prop('disabled', false);
+			$(this.playerSelector).find('.panel-body').collapse('show');
 
 			var licenseIcon = 'http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png';
 
@@ -256,6 +257,7 @@ BirdSongPlayer.prototype.saveData = function() {
 BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function() {
 	$(this.playerSelector).find('.nextSighting').button('loading');
 	$(this.playerSelector).find('button').prop('disabled', true);
+
 	this.resetLastActionTime();
 	this.sightingIndex = gBirds.chooseRandomSighting();
 	this.sighting = gBirds.sightings[this.sightingIndex];
