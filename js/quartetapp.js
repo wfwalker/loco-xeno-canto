@@ -133,50 +133,50 @@ $(document).ready(function(){
 				$('#goSoundscape').button('reset');
 
 				for (var i = 0; i < gBirdSongPlayers.length; i++) {
-					gBirdSongPlayers[i].chooseSightingAndPlayRandomSound('#player' + i);
+					gBirdSongPlayers[i].chooseSightingAndPlayRandomSound();
 				}
 			});
 		});
 	}
 
 	$('#rate0').click(function(e) {
-		gBirdSongPlayers[0].randomizePlaybackRate('#player0');
+		gBirdSongPlayers[0].randomizePlaybackRate();
 		// TODO: store lastActionTime within each player!
 	});
 	$('#rate1').click(function(e) {
-		gBirdSongPlayers[1].randomizePlaybackRate('#player1');
+		gBirdSongPlayers[1].randomizePlaybackRate();
 	});
 	$('#rate2').click(function(e) {
-		gBirdSongPlayers[2].randomizePlaybackRate('#player2');
+		gBirdSongPlayers[2].randomizePlaybackRate();
 	});
 	$('#rate3').click(function(e) {
-		gBirdSongPlayers[3].randomizePlaybackRate('#player3');
+		gBirdSongPlayers[3].randomizePlaybackRate();
 	});
 
 	$('#pan0').click(function(e) {
-		gBirdSongPlayers[0].randomizePanner('#player0');
+		gBirdSongPlayers[0].randomizePanner();
 	});
 	$('#pan1').click(function(e) {
-		gBirdSongPlayers[1].randomizePanner('#player1');
+		gBirdSongPlayers[1].randomizePanner();
 	});
 	$('#pan2').click(function(e) {
-		gBirdSongPlayers[2].randomizePanner('#player2');
+		gBirdSongPlayers[2].randomizePanner();
 	});
 	$('#pan3').click(function(e) {
-		gBirdSongPlayers[3].randomizePanner('#player3');
+		gBirdSongPlayers[3].randomizePanner();
 	});
 
 	$('#reverse0').click(function(e) {
-		gBirdSongPlayers[0].reversePlayback('#player0');
+		gBirdSongPlayers[0].reversePlayback();
 	});
 	$('#reverse1').click(function(e) {
-		gBirdSongPlayers[1].reversePlayback('#player1');
+		gBirdSongPlayers[1].reversePlayback();
 	});
 	$('#reverse2').click(function(e) {
-		gBirdSongPlayers[2].reversePlayback('#player2');
+		gBirdSongPlayers[2].reversePlayback();
 	});
 	$('#reverse3').click(function(e) {
-		gBirdSongPlayers[3].reversePlayback('#player3');
+		gBirdSongPlayers[3].reversePlayback();
 	});
 
 
@@ -217,29 +217,29 @@ $(document).ready(function(){
 	});
 
 	$('#recording0').click(function(e) {
-		gBirdSongPlayers[0].chooseRandomRecording('#player0');
+		gBirdSongPlayers[0].chooseRandomRecording();
 	});
 	$('#recording1').click(function(e) {
-		gBirdSongPlayers[1].chooseRandomRecording('#player1');
+		gBirdSongPlayers[1].chooseRandomRecording();
 	});
 	$('#recording2').click(function(e) {
-		gBirdSongPlayers[2].chooseRandomRecording('#player2');
+		gBirdSongPlayers[2].chooseRandomRecording();
 	});
 	$('#recording3').click(function(e) {
-		gBirdSongPlayers[3].chooseRandomRecording('#player3');
+		gBirdSongPlayers[3].chooseRandomRecording();
 	});
 
 	$('#nextSighting0').click(function(e) {
-		gBirdSongPlayers[0].chooseSightingAndPlayRandomSound('#player0');
+		gBirdSongPlayers[0].chooseSightingAndPlayRandomSound();
 	});
 	$('#nextSighting1').click(function(e) {
-		gBirdSongPlayers[1].chooseSightingAndPlayRandomSound('#player1');
+		gBirdSongPlayers[1].chooseSightingAndPlayRandomSound();
 	});
 	$('#nextSighting2').click(function(e) {
-		gBirdSongPlayers[2].chooseSightingAndPlayRandomSound('#player2');
+		gBirdSongPlayers[2].chooseSightingAndPlayRandomSound();
 	});
 	$('#nextSighting3').click(function(e) {
-		gBirdSongPlayers[3].chooseSightingAndPlayRandomSound('#player3');
+		gBirdSongPlayers[3].chooseSightingAndPlayRandomSound();
 	});
 
 	window.setInterval(function() {

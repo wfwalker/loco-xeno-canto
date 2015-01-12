@@ -15,6 +15,7 @@ function getAverageVolume(array) {
 
 // BirdSongPlayer
 var BirdSongPlayer = function (audioContext, inPlayerSelector, inCanvasID) {
+	this.playerSelector = inPlayerSelector;
 	this.soundSource = null;
 	this.playbackRate = 1.0;
 
@@ -100,14 +101,14 @@ BirdSongPlayer.prototype.randomizePanner = function() {
 }
 
 // Sets the playback rate for the current sound to a random value between 0.1 and 1.1
-BirdSongPlayer.prototype.randomizePlaybackRate = function(inPlayerSelector) {
+BirdSongPlayer.prototype.randomizePlaybackRate = function() {
 	this.resetLastActionTime();
 
 	if (this.soundSource) {
 		this.playbackRate = 0.1 + Math.random();
 		this.soundSource.playbackRate.cancelScheduledValues(gAudioContext.currentTime);
 		this.soundSource.playbackRate.linearRampToValueAtTime(this.playbackRate, gAudioContext.currentTime + 3);
-		$(inPlayerSelector).find('.playbackRate').text((Math.round(100 * this.playbackRate) / 100.0) + "x");
+		$(this.playerSelector).find('.playbackRate').text((Math.round(100 * this.playbackRate) / 100.0) + "x");
 	} else {
 		console.log('cannot randomize, no sound source');
 	}
@@ -160,29 +161,29 @@ BirdSongPlayer.prototype.reversePlayback = function() {
 	console.log('DONE reversePlayback');
 }
 
-BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inPlayerSelector) {
+BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 	console.log('setBufferFromURL ' + inSoundDataURL);
 
 	var mp3Request = new XMLHttpRequest();
 
 	mp3Request.onerror = function(e) {
-		$(inPlayerSelector).find('.status').text('error downloading');		
+		$(this.playerSelector).find('.status').text('error downloading');		
 	};
 
 	mp3Request.onprogress = function(e) {
-		$(inPlayerSelector).find('.status').text('downloading ' + Math.round(100 * e.loaded / e.total) + '%');
+		$(this.playerSelector).find('.status').text('downloading ' + Math.round(100 * e.loaded / e.total) + '%');
 	};
 
 	mp3Request.onload = function(e) {
-		$(inPlayerSelector).find('.status').text('decoding');
+		$(this.playerSelector).find('.status').text('decoding');
 
 	    gAudioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
 	    	this.setSourceFromBuffer(decodedBuffer);
-			$(inPlayerSelector).find('.status').text(Math.round(decodedBuffer.duration) + 's');
-			$(inPlayerSelector).find('.recordingLocation').text(this.recording.loc);
-			$(inPlayerSelector).find('.recordist').text(this.recording.rec);
-			$(inPlayerSelector).find('.playbackRate').text((Math.round(100 * this.playbackRate) / 100.0) + "x");
-			$(inPlayerSelector).find('.recordingButton').button('reset');
+			$(this.playerSelector).find('.status').text(Math.round(decodedBuffer.duration) + 's');
+			$(this.playerSelector).find('.recordingLocation').text(this.recording.loc);
+			$(this.playerSelector).find('.recordist').text(this.recording.rec);
+			$(this.playerSelector).find('.playbackRate').text((Math.round(100 * this.playbackRate) / 100.0) + "x");
+			$(this.playerSelector).find('.recordingButton').button('reset');
 
 			var licenseIcon = '';
 
@@ -192,7 +193,7 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inPlayerSel
 				licenseIcon = 'http://i.creativecommons.org/l/by-nc-sa/3.0/us/88x31.png';
 			}
 
-			$(inPlayerSelector).find('.license').attr('src', licenseIcon);
+			$(this.playerSelector).find('.license').attr('src', licenseIcon);
 
 		}.bind(this));
 	}.bind(this);
@@ -202,16 +203,16 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL, inPlayerSel
 	mp3Request.send();
 }
 
-BirdSongPlayer.prototype.chooseRandomRecording = function(inPlayerSelector) {
+BirdSongPlayer.prototype.chooseRandomRecording = function() {
 	this.resetLastActionTime();
 
 	$('#setupStatus').text('Retrieving bird recordings based on');
-	$(inPlayerSelector).find('.recordingButton').button('loading');
+	$(this.playerSelector).find('.recordingButton').button('loading');
 
 	if (this.soundsForSighting == null || this.soundsForSighting.recordings.length == 0) {
-		$(inPlayerSelector).find('.status').text('retrying');
+		$(this.playerSelector).find('.status').text('retrying');
 		console.log('FAILED loading recording for, retrying');
-		this.chooseSightingAndPlayRandomSound(inPlayerSelector);
+		this.chooseSightingAndPlayRandomSound(this.playerSelector);
 	} else {
 		this.recordingIndex = Math.floor(Math.random() * this.soundsForSighting.recordings.length);
 		this.recording = this.soundsForSighting.recordings[this.recordingIndex];
@@ -219,25 +220,25 @@ BirdSongPlayer.prototype.chooseRandomRecording = function(inPlayerSelector) {
 		// rewrite URL's from xeno-canto JSON, route through my own server due to missing CORS
 		var soundURL = this.recording.file.replace('http://www.xeno-canto.org','/soundfile');
 
-		$(inPlayerSelector).find('.status').text('downloading #' + this.recordingIndex);
-		this.setBufferFromURL(soundURL, inPlayerSelector);
+		$(this.playerSelector).find('.status').text('downloading #' + this.recordingIndex);
+		this.setBufferFromURL(soundURL);
 	}
 }
 
-BirdSongPlayer.prototype.initializeFromSavedSession = function(inSavedData, inPlayerSelector) {
-	console.log('restoring ' + inPlayerSelector);
+BirdSongPlayer.prototype.initializeFromSavedSession = function(inSavedData) {
+	console.log('restoring ' + this.playerSelector);
 	console.lo9g(inSavedData);
 	this.sightingIndex = 0;
 	this.sighting = inSavedData.sighting;
 
-	$(inPlayerSelector).find('.speciesName').text(this.sighting.comName);
-	$(inPlayerSelector).find('.locationName').text(this.sighting.locName);
+	$(this.playerSelector).find('.speciesName').text(this.sighting.comName);
+	$(this.playerSelector).find('.locationName').text(this.sighting.locName);
 
 	this.playbackRate = parseFloat(inSavedData.playbackRate);
 	console.log('restored playbackRate ' + this.playbackRate);
 	this.soundsForSighting = {};
 	this.soundsForSighting.recordings = [inSavedData.recording];
-	this.chooseRandomRecording(inPlayerSelector);
+	this.chooseRandomRecording(this.playerSelector);
 }
 
 BirdSongPlayer.prototype.saveData = function() {
@@ -248,7 +249,7 @@ BirdSongPlayer.prototype.saveData = function() {
 	};
 }
 
-BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(inPlayerSelector) {
+BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function() {
 	this.resetLastActionTime();
 	this.sightingIndex = gBirds.chooseRandomSighting();
 	this.sighting = gBirds.sightings[this.sightingIndex];
@@ -257,20 +258,20 @@ BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(inPlayerSel
 	console.log(this.sighting);
 
 	// TODO: duplicated from initialized from saved setting
-	$(inPlayerSelector).find('.speciesName').text(this.sighting.comName);
-	$(inPlayerSelector).find('.locationName').text(this.sighting.locName);
-	$(inPlayerSelector).find('.status').text('choosing');
+	$(this.playerSelector).find('.speciesName').text(this.sighting.comName);
+	$(this.playerSelector).find('.locationName').text(this.sighting.locName);
+	$(this.playerSelector).find('.status').text('choosing');
 
 	// get sounds for this species if needed, and pick one at random
 	gBirds.getSoundsForSightingIndex(this.sightingIndex, function(soundsData) {
 		if (soundsData == null) {
 			console.log('NO SOUNDS');
-			$(inPlayerSelector).find('.status').text('retrying');
-			this.chooseSightingAndPlayRandomSound(inPlayerSelector);
+			$(this.playerSelector).find('.status').text('retrying');
+			this.chooseSightingAndPlayRandomSound(this.playerSelector);
 		} else {
 			console.log('got recording list');
 			this.soundsForSighting = soundsData;
-			this.chooseRandomRecording(inPlayerSelector);
+			this.chooseRandomRecording(this.playerSelector);
 		}
 	}.bind(this));	
 }
