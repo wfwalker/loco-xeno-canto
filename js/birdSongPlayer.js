@@ -97,7 +97,9 @@ BirdSongPlayer.prototype.resetLastActionTime = function() {
 BirdSongPlayer.prototype.randomizePanner = function() {
 	this.resetLastActionTime();
 
-	this.panner.setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
+	var xPosition = 2 * Math.random() - 1;
+	$(this.playerSelector).find('.panPosition').text(Math.round(100 * xPosition) / 100.0);	
+	this.panner.setPosition(xPosition, 2 * Math.random() - 1, 2 * Math.random() - 1);
 }
 
 // Sets the playback rate for the current sound to a random value between 0.1 and 1.1
@@ -168,11 +170,11 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 
 	mp3Request.onerror = function(e) {
 		$(this.playerSelector).find('.status').text('error downloading');		
-	};
+	}.bind(this);
 
 	mp3Request.onprogress = function(e) {
 		$(this.playerSelector).find('.status').text('downloading ' + Math.round(100 * e.loaded / e.total) + '%');
-	};
+	}.bind(this);
 
 	mp3Request.onload = function(e) {
 		$(this.playerSelector).find('.status').text('decoding');
@@ -183,7 +185,7 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 			$(this.playerSelector).find('.recordingLocation').text(this.recording.loc);
 			$(this.playerSelector).find('.recordist').text(this.recording.rec);
 			$(this.playerSelector).find('.playbackRate').text((Math.round(100 * this.playbackRate) / 100.0) + "x");
-			$(this.playerSelector).find('.recordingButton').button('reset');
+			$(this.playerSelector).find('.nextRecording').button('reset');
 
 			var licenseIcon = '';
 
@@ -207,7 +209,7 @@ BirdSongPlayer.prototype.chooseRandomRecording = function() {
 	this.resetLastActionTime();
 
 	$('#setupStatus').text('Retrieving bird recordings based on');
-	$(this.playerSelector).find('.recordingButton').button('loading');
+	$(this.playerSelector).find('.nextRecording').button('loading');
 
 	if (this.soundsForSighting == null || this.soundsForSighting.recordings.length == 0) {
 		$(this.playerSelector).find('.status').text('retrying');
@@ -273,7 +275,30 @@ BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function() {
 			this.soundsForSighting = soundsData;
 			this.chooseRandomRecording(this.playerSelector);
 		}
-	}.bind(this));	
+	}.bind(this));
 }
 
+BirdSongPlayer.prototype.initializeControls = function() {
+	var player = this;
+
+	$(this.playerSelector).find('.nextSighting').click(function(e) {
+		player.chooseSightingAndPlayRandomSound();
+	});
+
+	$(this.playerSelector).find('.nextRecording').click(function(e) {
+		player.chooseRandomRecording();
+	});
+
+	$(this.playerSelector).find('.reverse').click(function(e) {
+		player.reversePlayback();
+	});
+
+	$(this.playerSelector).find('.pan').click(function(e) {
+		player.randomizePanner();
+	});
+
+	$(this.playerSelector).find('.rate').click(function(e) {
+		player.randomizePlaybackRate();
+	});
+}
 

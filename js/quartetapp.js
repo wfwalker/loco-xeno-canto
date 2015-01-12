@@ -22,14 +22,14 @@ gListener.dopplerFactor = 1;
 gListener.speedOfSound = 343.3;
 gListener.setOrientation(0,0,-1,0,1,0);
 
-// GLOBAL sound sources for bird song playback
-gBirdSongPlayers = [];
-gBirdSongPlayers[0] = new BirdSongPlayer(gAudioContext, '#player0', 'volumeMeter0');
-gBirdSongPlayers[1] = new BirdSongPlayer(gAudioContext, '#player1', 'volumeMeter1');
-gBirdSongPlayers[2] = new BirdSongPlayer(gAudioContext, '#player2', 'volumeMeter2');
-gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext, '#player3', 'volumeMeter3');
-
 $(document).ready(function(){ 
+	// GLOBAL sound sources for bird song playback
+	gBirdSongPlayers = [];
+	gBirdSongPlayers[0] = new BirdSongPlayer(gAudioContext, '#player0', 'volumeMeter0');
+	gBirdSongPlayers[1] = new BirdSongPlayer(gAudioContext, '#player1', 'volumeMeter1');
+	gBirdSongPlayers[2] = new BirdSongPlayer(gAudioContext, '#player2', 'volumeMeter2');
+	gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext, '#player3', 'volumeMeter3');
+
 	// does the initial url have a saved session?
 	if (window.location.href.split('#')[1]) {
 		console.log('document ready! ' + window.location.href.split('#')[1]);
@@ -139,47 +139,6 @@ $(document).ready(function(){
 		});
 	}
 
-	$('#rate0').click(function(e) {
-		gBirdSongPlayers[0].randomizePlaybackRate();
-		// TODO: store lastActionTime within each player!
-	});
-	$('#rate1').click(function(e) {
-		gBirdSongPlayers[1].randomizePlaybackRate();
-	});
-	$('#rate2').click(function(e) {
-		gBirdSongPlayers[2].randomizePlaybackRate();
-	});
-	$('#rate3').click(function(e) {
-		gBirdSongPlayers[3].randomizePlaybackRate();
-	});
-
-	$('#pan0').click(function(e) {
-		gBirdSongPlayers[0].randomizePanner();
-	});
-	$('#pan1').click(function(e) {
-		gBirdSongPlayers[1].randomizePanner();
-	});
-	$('#pan2').click(function(e) {
-		gBirdSongPlayers[2].randomizePanner();
-	});
-	$('#pan3').click(function(e) {
-		gBirdSongPlayers[3].randomizePanner();
-	});
-
-	$('#reverse0').click(function(e) {
-		gBirdSongPlayers[0].reversePlayback();
-	});
-	$('#reverse1').click(function(e) {
-		gBirdSongPlayers[1].reversePlayback();
-	});
-	$('#reverse2').click(function(e) {
-		gBirdSongPlayers[2].reversePlayback();
-	});
-	$('#reverse3').click(function(e) {
-		gBirdSongPlayers[3].reversePlayback();
-	});
-
-
 	$('#share').click(function(e) {
 		console.log('SHARE');
 
@@ -211,36 +170,13 @@ $(document).ready(function(){
 					$('#shareURL').text(savedState.description);
 				},
 				'json');		
-
 		});
-
 	});
 
-	$('#recording0').click(function(e) {
-		gBirdSongPlayers[0].chooseRandomRecording();
-	});
-	$('#recording1').click(function(e) {
-		gBirdSongPlayers[1].chooseRandomRecording();
-	});
-	$('#recording2').click(function(e) {
-		gBirdSongPlayers[2].chooseRandomRecording();
-	});
-	$('#recording3').click(function(e) {
-		gBirdSongPlayers[3].chooseRandomRecording();
-	});
-
-	$('#nextSighting0').click(function(e) {
-		gBirdSongPlayers[0].chooseSightingAndPlayRandomSound();
-	});
-	$('#nextSighting1').click(function(e) {
-		gBirdSongPlayers[1].chooseSightingAndPlayRandomSound();
-	});
-	$('#nextSighting2').click(function(e) {
-		gBirdSongPlayers[2].chooseSightingAndPlayRandomSound();
-	});
-	$('#nextSighting3').click(function(e) {
-		gBirdSongPlayers[3].chooseSightingAndPlayRandomSound();
-	});
+	gBirdSongPlayers[0].initializeControls();
+	gBirdSongPlayers[1].initializeControls();
+	gBirdSongPlayers[2].initializeControls();
+	gBirdSongPlayers[3].initializeControls();
 
 	window.setInterval(function() {
 		// TODO: call "update last action" method from each button above or other event handler
@@ -253,6 +189,3 @@ $(document).ready(function(){
 		// console.log('last action ' + gBirdSongPlayers[3].lastActionTime + ', currently ' + gAudioContext.currentTime);
 	}, 1000);
 });
-
-
-
