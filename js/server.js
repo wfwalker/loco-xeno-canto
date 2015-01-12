@@ -6,7 +6,6 @@ var http = require('http');
 var https = require('https');
 var request = require('request');
 var bodyParser = require('body-parser');
-var args = require('system').args;
 
 // set up logging
 var winston = require('winston');
@@ -22,7 +21,7 @@ var redis = require("redis");
 var gRedisClient = redis.createClient();
 
 // parse commandline arguments
-var gCommandLineArgs = args.slice(2);
+var gCommandLineArgs = process.argv.slice(2);
 
 var gRealData = (gCommandLineArgs.indexOf('-test') < 0);
 logger.info('use real sighting and recording data: ' + gRealData);
