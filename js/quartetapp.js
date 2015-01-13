@@ -38,10 +38,10 @@ $(document).ready(function(){
 		$.getJSON('/saved/' + window.location.href.split('#')[1], function(data) {
 			console.log('retrieved saved session data');
 			console.log(data);
-			gBirdSongPlayers[0].initializeFromSavedSession(data.savedPlayer[0], '#player0');
-			gBirdSongPlayers[1].initializeFromSavedSession(data.savedPlayer[1], '#player1');
-			gBirdSongPlayers[2].initializeFromSavedSession(data.savedPlayer[2], '#player2');
-			gBirdSongPlayers[3].initializeFromSavedSession(data.savedPlayer[3], '#player3');
+
+			for (var i = 0; i < 4; i++) {
+				gBirdSongPlayers[i].initializeFromSavedSession(data.savedPlayer[i], '#player' + i);
+			}
 		}.bind(this))
 		.fail(function(e) {
 			console.log("failure to get saved session");
