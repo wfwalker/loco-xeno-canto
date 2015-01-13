@@ -25,10 +25,10 @@ gListener.setOrientation(0,0,-1,0,1,0);
 $(document).ready(function(){ 
 	// GLOBAL sound sources for bird song playback
 	gBirdSongPlayers = [];
-	gBirdSongPlayers[0] = new BirdSongPlayer(gAudioContext, '#player0');
-	gBirdSongPlayers[1] = new BirdSongPlayer(gAudioContext, '#player1');
-	gBirdSongPlayers[2] = new BirdSongPlayer(gAudioContext, '#player2');
-	gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext, '#player3');
+
+	for (var i = 0; i < 4; i++) {
+		gBirdSongPlayers[i] = new BirdSongPlayer(gAudioContext, '#player' + i);
+	}
 
 	// does the initial url have a saved session?
 	if (window.location.href.split('#')[1]) {
@@ -178,10 +178,9 @@ $(document).ready(function(){
 		});
 	});
 
-	gBirdSongPlayers[0].initializeControls();
-	gBirdSongPlayers[1].initializeControls();
-	gBirdSongPlayers[2].initializeControls();
-	gBirdSongPlayers[3].initializeControls();
+	for (i = 0; i < 4; i++) {
+		gBirdSongPlayers[i].initializeControls();
+	}
 
 	window.setInterval(function() {
 		// TODO: call "update last action" method from each button above or other event handler
