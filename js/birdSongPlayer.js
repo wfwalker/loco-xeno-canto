@@ -14,8 +14,9 @@ function getAverageVolume(array) {
 }
 
 // BirdSongPlayer
-var BirdSongPlayer = function (audioContext, inPlayerSelector) {
+var BirdSongPlayer = function (inAudioContext, inPlayerSelector) {
 	this.playerSelector = inPlayerSelector;
+	this.audioContext = inAudioContext
 	this.soundSource = null;
 	this.playbackRate = 1.0;
 
@@ -26,12 +27,12 @@ var BirdSongPlayer = function (audioContext, inPlayerSelector) {
 	this.recordingIndex = null;
 	this.recording = null;
 
-	this.lastActionTime = audioContext.currentTime;
+	this.lastActionTime = this.audioContext.currentTime;
 
-	this.gain = audioContext.createGain(); 
+	this.gain = this.audioContext.createGain(); 
 
 	// see https://developer.mozilla.org/en-US/docs/Web/API/PannerNode
-	this.panner = audioContext.createPanner();
+	this.panner = this.audioContext.createPanner();
 	this.panner.panningModel = 'HRTF';
 	this.panner.distanceModel = 'inverse';
 	this.panner.refDistance = 1;
@@ -51,9 +52,9 @@ var BirdSongPlayer = function (audioContext, inPlayerSelector) {
 	var volumeHistory = new Array(260);
 
 	// setup a analyzer
-	var analyser = audioContext.createAnalyser();
+	var analyser = this.audioContext.createAnalyser();
 	this.panner.connect(analyser);
-	this.panner.connect(audioContext.destination);
+	this.panner.connect(this.audioContext.destination);
 
 	analyser.smoothingTimeConstant = 0.3;
 	analyser.fftSize = 64;
@@ -89,7 +90,7 @@ var BirdSongPlayer = function (audioContext, inPlayerSelector) {
 
 // reset the last action time
 BirdSongPlayer.prototype.resetLastActionTime = function() {
-	this.lastActionTime = gAudioContext.currentTime;
+	this.lastActionTime = this.audioContext.currentTime;
 }
 
 // sets the X,Y,Z position of the Panner to random values between -1 and +1
@@ -107,8 +108,8 @@ BirdSongPlayer.prototype.randomizePlaybackRate = function() {
 
 	if (this.soundSource) {
 		this.playbackRate = 0.1 + Math.random();
-		this.soundSource.playbackRate.cancelScheduledValues(gAudioContext.currentTime);
-		this.soundSource.playbackRate.linearRampToValueAtTime(this.playbackRate, gAudioContext.currentTime + 3);
+		this.soundSource.playbackRate.cancelScheduledValues(this.audioContext.currentTime);
+		this.soundSource.playbackRate.linearRampToValueAtTime(this.playbackRate, this.audioContext.currentTime + 3);
 		$(this.playerSelector).find('.playbackRate').text((Math.round(100 * this.playbackRate) / 100.0) + "x");
 	} else {
 		console.log('cannot randomize, no sound source');
@@ -123,17 +124,17 @@ BirdSongPlayer.prototype.setSourceFromBuffer = function(inBuffer) {
 		this.soundSource = null;
 	}
 
-	this.soundSource = gAudioContext.createBufferSource();
+	this.soundSource = this.audioContext.createBufferSource();
 	this.soundSource.connect(this.gain);
 	this.soundSource.buffer = inBuffer;
 	// restore old playback rate value
 	console.log('restore playbackRate to ' + this.playbackRate);
-	this.soundSource.playbackRate.setValueAtTime(this.playbackRate, gAudioContext.currentTime);
+	this.soundSource.playbackRate.setValueAtTime(this.playbackRate, this.audioContext.currentTime);
 
 	// set gain to zero and then ramp up. 
-	this.gain.gain.cancelScheduledValues(gAudioContext.currentTime);
-	this.gain.gain.setValueAtTime(0.0, gAudioContext.currentTime);
-	this.gain.gain.linearRampToValueAtTime(0.99, gAudioContext.currentTime + 10);
+	this.gain.gain.cancelScheduledValues(this.audioContext.currentTime);
+	this.gain.gain.setValueAtTime(0.0, this.audioContext.currentTime);
+	this.gain.gain.linearRampToValueAtTime(0.99, this.audioContext.currentTime + 10);
 
 	// start playing immediately in a loop	 
 	this.soundSource.loop = true;
@@ -150,7 +151,7 @@ BirdSongPlayer.prototype.reversePlayback = function() {
 	var normalData = Array.prototype.slice.call( oldData );
 	Array.prototype.reverse.call(normalData);	
 
-	var newBuffer = gAudioContext.createBuffer(1, this.soundSource.buffer.length, this.soundSource.buffer.sampleRate);
+	var newBuffer = this.audioContext.createBuffer(1, this.soundSource.buffer.length, this.soundSource.buffer.sampleRate);
 	var newData = newBuffer.getChannelData(0);
 
 	for (i = 0; i < newBuffer.length; i++) {
@@ -177,7 +178,7 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 	mp3Request.onload = function(e) {
 		$(this.playerSelector).find('.status').text('...');
 
-	    gAudioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
+	    this.audioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
 	    	this.setSourceFromBuffer(decodedBuffer);
 			$(this.playerSelector).find('.status').text(Math.round(decodedBuffer.duration) + 's');
 			$(this.playerSelector).find('.recordingLocation').text(this.recording.loc);
@@ -273,6 +274,7 @@ BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function() {
 	// get sounds for this species if needed, and pick one at random
 	gBirds.getSoundsForSightingIndex(this.sightingIndex, function(soundsData) {
 		if (soundsData == null) {
+			// TODO can't tell missing sounds from inability to contact server
 			console.log('NO SOUNDS');
 			$(this.playerSelector).find('.status').text('retrying');
 			this.chooseSightingAndPlayRandomSound(this.playerSelector);
