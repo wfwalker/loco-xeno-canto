@@ -261,6 +261,7 @@ BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function() {
 
 	this.resetLastActionTime();
 	this.sightingIndex = gBirds.chooseRandomSighting();
+	// TODO, if this is a saved session, gBirds.sightings will be EMPTY
 	this.sighting = gBirds.sightings[this.sightingIndex];
 
 	console.log('chooseSightingAndPlayRandomSound random sighting ' + this.sightingIndex);

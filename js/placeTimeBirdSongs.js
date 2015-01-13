@@ -67,6 +67,7 @@ PlaceTimeBirdSongs.prototype.getSoundsForSightingIndex = function(inID, callback
 					callback(this.sounds[inID]); 
 				} else {
 					// TODO: retry?
+					// TODO: can't tell inability to reach server from missing sounds
 					console.log('xeno canto fail');
 					callback(null);
 				}
@@ -74,6 +75,7 @@ PlaceTimeBirdSongs.prototype.getSoundsForSightingIndex = function(inID, callback
 			error: function(xhr, status, error) {
 				// TODO: retry?
 				console.log('xeno canto fail');
+				// TODO: can't tell inability to reach server from missing sounds
 				callback(null);
 			}
 		});		
