@@ -14,7 +14,7 @@ function getAverageVolume(array) {
 }
 
 // BirdSongPlayer
-var BirdSongPlayer = function (audioContext, inPlayerSelector, inCanvasID) {
+var BirdSongPlayer = function (audioContext, inPlayerSelector) {
 	this.playerSelector = inPlayerSelector;
 	this.soundSource = null;
 	this.playbackRate = 1.0;

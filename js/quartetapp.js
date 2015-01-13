@@ -25,10 +25,10 @@ gListener.setOrientation(0,0,-1,0,1,0);
 $(document).ready(function(){ 
 	// GLOBAL sound sources for bird song playback
 	gBirdSongPlayers = [];
-	gBirdSongPlayers[0] = new BirdSongPlayer(gAudioContext, '#player0', 'volumeMeter0');
-	gBirdSongPlayers[1] = new BirdSongPlayer(gAudioContext, '#player1', 'volumeMeter1');
-	gBirdSongPlayers[2] = new BirdSongPlayer(gAudioContext, '#player2', 'volumeMeter2');
-	gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext, '#player3', 'volumeMeter3');
+	gBirdSongPlayers[0] = new BirdSongPlayer(gAudioContext, '#player0');
+	gBirdSongPlayers[1] = new BirdSongPlayer(gAudioContext, '#player1');
+	gBirdSongPlayers[2] = new BirdSongPlayer(gAudioContext, '#player2');
+	gBirdSongPlayers[3] = new BirdSongPlayer(gAudioContext, '#player3');
 
 	// does the initial url have a saved session?
 	if (window.location.href.split('#')[1]) {
