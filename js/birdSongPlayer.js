@@ -98,7 +98,7 @@ BirdSongPlayer.prototype.randomizePanner = function() {
 	this.resetLastActionTime();
 
 	var xPosition = 2 * Math.random() - 1;
-	$(this.playerSelector).find('.panPosition').text(Math.round(100 * xPosition) / 100.0);	
+	$(this.playerSelector).find('.panPosition').text(Math.round(10 * xPosition) / 10.0);	
 	this.panner.setPosition(xPosition, 2 * Math.random() - 1, 2 * Math.random() - 1);
 }
 
@@ -110,7 +110,7 @@ BirdSongPlayer.prototype.randomizePlaybackRate = function() {
 		this.playbackRate = 0.1 + Math.random();
 		this.soundSource.playbackRate.cancelScheduledValues(this.audioContext.currentTime);
 		this.soundSource.playbackRate.linearRampToValueAtTime(this.playbackRate, this.audioContext.currentTime + 3);
-		$(this.playerSelector).find('.playbackRate').text((Math.round(100 * this.playbackRate) / 100.0) + "x");
+		$(this.playerSelector).find('.playbackRate').text((Math.round(10 * this.playbackRate) / 10.0) + "x");
 	} else {
 		console.log('cannot randomize, no sound source');
 	}
@@ -127,6 +127,7 @@ BirdSongPlayer.prototype.setSourceFromBuffer = function(inBuffer) {
 	this.soundSource = this.audioContext.createBufferSource();
 	this.soundSource.connect(this.gain);
 	this.soundSource.buffer = inBuffer;
+
 	// restore old playback rate value
 	console.log('restore playbackRate to ' + this.playbackRate);
 	this.soundSource.playbackRate.setValueAtTime(this.playbackRate, this.audioContext.currentTime);
@@ -183,7 +184,7 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 			$(this.playerSelector).find('.status').text(Math.round(decodedBuffer.duration) + 's');
 			$(this.playerSelector).find('.recordingLocation').text(this.recording.loc);
 			$(this.playerSelector).find('.recordist').text(this.recording.rec);
-			$(this.playerSelector).find('.playbackRate').text((Math.round(100 * this.playbackRate) / 100.0) + "x");
+			$(this.playerSelector).find('.playbackRate').text((Math.round(10 * this.playbackRate) / 10.0) + "x");
 			$(this.playerSelector).find('.nextRecording').button('reset');
 			$(this.playerSelector).find('button').prop('disabled', false);
 			$(this.playerSelector).find('.panel-body').collapse('show');
