@@ -32,22 +32,21 @@ PlaceTimeBirdSongs.prototype.getSightings = function(callback) {
 
 	$.getJSON(urlString, function(data) {
 		if (data.length == 0) {
-			throw "No sightings found!";
+			callback(false, 'No sightings found');
+		} else {
+			$('#sightings').text(data.length + ' sightings from ' + this.description);
+
+			for (var index in data) {
+				this.sightings.push(data[index]);
+			}
+
+			callback(true, data.length);			
 		}
-
-		$('#sightings').text(data.length + ' sightings from ' + this.description);
-
-		for (var index in data) {
-			this.sightings.push(data[index]);
-		}
-
-		callback();
 	}.bind(this))
-	.fail(function(e) {
+	.fail(function(jqXHR, textStatus, errorThrown) {
 		console.log("failure to get sightings");
-		console.log(e);
-		// TODO: retry?
-		$('#sightings').text('error while retrieving sightings');
+		console.log(jqXHR.responseText);
+		callback(false, 'Cannot reach server');
 	});
 }
 

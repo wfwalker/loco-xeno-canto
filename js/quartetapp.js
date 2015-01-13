@@ -110,12 +110,12 @@ $(document).ready(function(){
 				newDescription = $(this).text();
 			});		
 
-			var newDistance = {};
+			var newDistance = 0;
 	 		$("select#distanceChooser option:selected").each(function() {
 				newDistance = parseFloat($(this).attr('data-distance'));
 			});		
 
-			var newTime = {};
+			var newTime = 0;
 	 		$("select#timeChooser option:selected").each(function() {
 				newTime = parseFloat($(this).attr('data-time'));
 			});		
@@ -128,12 +128,17 @@ $(document).ready(function(){
 			$('#setupStatus').text('Retrieving bird sightings');
 			$('#goSoundscape').button('loading');
 
-			gBirds.getSightings(function() {
-				$('#setupStatus').text('Choosing birds based on');
-				$('#goSoundscape').button('reset');
+			gBirds.getSightings(function(success, errorMessage) {
+				if (success) {
+					$('#setupStatus').text('Choosing birds based on');
+					$('#goSoundscape').button('reset');
 
-				for (var i = 0; i < gBirdSongPlayers.length; i++) {
-					gBirdSongPlayers[i].chooseSightingAndPlayRandomSound();
+					for (var i = 0; i < gBirdSongPlayers.length; i++) {
+						gBirdSongPlayers[i].chooseSightingAndPlayRandomSound();
+					}
+				} else {
+					$('#setupStatus').text(errorMessage);
+					$('#goSoundscape').button('reset');
 				}
 			});
 		});
