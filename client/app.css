@@ -2,6 +2,10 @@
 	app.css
 */
 
+.license {
+	opacity: 0.5;
+}
+
 .panel-nowrap {
 	white-space: nowrap;
 	overflow: hidden;
