@@ -18,7 +18,8 @@ var BirdSongPlayer = function (inAudioContext, inPlayerSelector) {
 	this.playerSelector = inPlayerSelector;
 	this.audioContext = inAudioContext
 	this.soundSource = null;
-	this.playbackRate = 1.0;
+
+	this.randomizePlaybackRate();
 
 	this.sighting = null;
 	this.sightingIndex = null;
@@ -42,8 +43,9 @@ var BirdSongPlayer = function (inAudioContext, inPlayerSelector) {
 	this.panner.coneOuterAngle = 0;
 	this.panner.coneOuterGain = 0;
 	this.panner.setOrientation(1,0,0);
-	this.panner.setPosition(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
 	this.panner.setVelocity(0, 0, 0);
+	this.randomizePanner();
+	this.showPanPosition();
 
 	this.gain.connect(this.panner);
 
@@ -77,7 +79,7 @@ var BirdSongPlayer = function (inAudioContext, inPlayerSelector) {
 		graphicsContext.drawImage(volumeMeterCanvas, -1, 0);
 
 		// clear the rightmost column state
-		graphicsContext.fillStyle = 'rgb(256,256,256)'
+		graphicsContext.fillStyle = 'rgb(250,250,250)'
 		graphicsContext.fillRect(259, 0, 1, 130);
 
 		// set the fill style for the last line (matches bootstrap button)
@@ -93,26 +95,34 @@ BirdSongPlayer.prototype.resetLastActionTime = function() {
 	this.lastActionTime = this.audioContext.currentTime;
 }
 
+BirdSongPlayer.prototype.showPanPosition = function() {
+	$(this.playerSelector).find('.panPosition').text((this.panPosition.x > 0 ? 'L' : 'R') + Math.abs(Math.round(100 * this.panPosition.x)));	
+}
+
 // sets the X,Y,Z position of the Panner to random values between -1 and +1
 BirdSongPlayer.prototype.randomizePanner = function() {
 	this.resetLastActionTime();
+	this.panPosition = { x: 2 * Math.random() - 1, y: 2 * Math.random() - 1, z: 2 * Math.random() - 1}
+	this.panner.setPosition( this.panPosition.x, this.panPosition.y, this.panPosition.z);
+	this.showPanPosition();
+}
 
-	var xPosition = 2 * Math.random() - 1;
-	$(this.playerSelector).find('.panPosition').text(Math.round(10 * xPosition) / 10.0);	
-	this.panner.setPosition(xPosition, 2 * Math.random() - 1, 2 * Math.random() - 1);
+BirdSongPlayer.prototype.showPlaybackRate = function() {
+	$(this.playerSelector).find('.playbackRate').text((Math.round(10 * this.playbackRate) / 10.0) + "x");
 }
 
 // Sets the playback rate for the current sound to a random value between 0.1 and 1.1
 BirdSongPlayer.prototype.randomizePlaybackRate = function() {
+	console.log('randomizePlaybackRate');
 	this.resetLastActionTime();
+	this.playbackRate = 0.1 + Math.random();
 
 	if (this.soundSource) {
-		this.playbackRate = 0.1 + Math.random();
 		this.soundSource.playbackRate.cancelScheduledValues(this.audioContext.currentTime);
 		this.soundSource.playbackRate.linearRampToValueAtTime(this.playbackRate, this.audioContext.currentTime + 3);
-		$(this.playerSelector).find('.playbackRate').text((Math.round(10 * this.playbackRate) / 10.0) + "x");
+		this.showPlaybackRate();
 	} else {
-		console.log('cannot randomize, no sound source');
+		console.log('cannot implement yet, no sound source');
 	}
 }
 
@@ -184,7 +194,7 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 			$(this.playerSelector).find('.status').text(Math.round(decodedBuffer.duration) + 's');
 			$(this.playerSelector).find('.recordingLocation').text(this.recording.loc);
 			$(this.playerSelector).find('.recordist').text(this.recording.rec);
-			$(this.playerSelector).find('.playbackRate').text((Math.round(10 * this.playbackRate) / 10.0) + "x");
+			this.showPlaybackRate();
 			$(this.playerSelector).find('.nextRecording').button('reset');
 			$(this.playerSelector).find('button').prop('disabled', false);
 			$(this.playerSelector).find('.panel-body').collapse('show');
@@ -243,6 +253,8 @@ BirdSongPlayer.prototype.initializeFromSavedSession = function(inSavedData) {
 
 	this.playbackRate = parseFloat(inSavedData.playbackRate);
 	console.log('restored playbackRate ' + this.playbackRate);
+	this.showPlaybackRate();
+
 	this.soundsForSighting = {};
 	this.soundsForSighting.recordings = [inSavedData.recording];
 	this.chooseRandomRecording(this.playerSelector);
