@@ -1,4 +1,4 @@
-function getAverageVolume(array) {
+	function getAverageVolume(array) {
 	var values = 0;
 	var average;
 
@@ -244,7 +244,7 @@ BirdSongPlayer.prototype.chooseRandomRecording = function() {
 
 BirdSongPlayer.prototype.initializeFromSavedSession = function(inSavedData) {
 	console.log('restoring ' + this.playerSelector);
-	console.lo9g(inSavedData);
+	console.log(inSavedData);
 	this.sightingIndex = 0;
 	this.sighting = inSavedData.sighting;
 
