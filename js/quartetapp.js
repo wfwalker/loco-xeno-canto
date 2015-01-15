@@ -61,9 +61,9 @@ $(document).ready(function(){
 					console.log('got saved sessions');
 					console.log(data);
 
-					// for (var index in data) {
-					// 	$('#savedSessions').append($('<div>' + data[index] + '</div>'));
-					// }
+					for (var index in data) {
+						$('.savedSessions').append($('<li><a target=blank href="#' + data[index] + '"">' + data[index] + '</a></li>'));
+					}
 				} else {
 					// TODO: retry?
 					console.log('cannot retrieve saved sessions');

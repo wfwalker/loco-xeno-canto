@@ -67,8 +67,6 @@
 						<a target='_blank' href='http://www.sjsu.edu/music/faculty_staff/belet_brian/'>Brian Belet</a> and
 						<a target='_blank' href='http://softwarewalker.com/'>Bill Walker</a>
 					</p>
-
-					<div id='savedSessions'></div>
 				</div>
 			</div>
 
@@ -236,11 +234,19 @@
 			<div class='row'>
 				<div class='col-md-12' style='padding-bottom: 20px'>
 					<button class="btn btn-default btn-sm" data-target="#aboutBox" data-toggle="modal" type="button">
-						What is this?
+						what is this?
 					</button>
 
 					<a class='btn btn-default btn-sm' target='_blank' href="https://github.com/wfwalker/loco-xeno-canto">source code on github</a>	
-					<button class='btn btn-default btn-sm' id='share'><span class='glyphicon glyphicon-cloud-upload'></span> Share</button>
+					<button class='btn btn-default btn-sm' id='share'><span class='glyphicon glyphicon-cloud-upload'></span> share</button>
+
+					<div class="btn-group">
+						<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							shared sessions <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu savedSessions" role="menu">
+						</ul>
+					</div>
 				</div>
 			</div>
 		</div>
