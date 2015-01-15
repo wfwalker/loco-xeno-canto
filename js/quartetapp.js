@@ -50,6 +50,8 @@ $(document).ready(function(){
 			console.log('retrieved saved session data');
 			console.log(data);
 
+			$('#sightings').text('"' + data.description + '"');
+
 			for (var i = 0; i < 4; i++) {
 				gBirdSongPlayers[i].initializeFromSavedSession(data.savedPlayer[i], '#player' + i);
 			}
