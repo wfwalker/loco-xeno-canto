@@ -22,6 +22,17 @@ gListener.dopplerFactor = 1;
 gListener.speedOfSound = 343.3;
 gListener.setOrientation(0,0,-1,0,1,0);
 
+function insertSavedSessionMenuItem(key) {
+	$.getJSON('/saved/' + key, function(sessionData) {
+		var description = '-- no name --';
+
+		if (sessionData.description) {
+			description = sessionData.description;
+		}
+		$('.savedSessions').append($('<li><a id="' + key + '" target=blank href="#' + key + '">' + description + ' </a></li>'));
+	});
+}
+
 $(document).ready(function(){ 
 	// GLOBAL sound sources for bird song playback
 	gBirdSongPlayers = [];
@@ -58,11 +69,8 @@ $(document).ready(function(){
 			dataType: 'json',
 			success: function(data) {
 				if (data) {
-					console.log('got saved sessions');
-					console.log(data);
-
 					for (var index in data) {
-						$('.savedSessions').append($('<li><a target=blank href="#' + data[index] + '"">' + data[index] + '</a></li>'));
+						insertSavedSessionMenuItem(data[index]);
 					}
 				} else {
 					// TODO: retry?
