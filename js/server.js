@@ -89,6 +89,13 @@ app.post('/share', function (req, resp, next) {
     logger.debug(req.body);
 });
 
+function makeSetDescriptionFunction(inKey) {
+    return function(keyError, keyReply){
+        console.log('inKey ' + inKey + ' description ' + JSON.parse(keyReply).description); 
+    }
+}
+
+// retrieve a list of all the saved sessions
 app.get('/saved', function(req, resp, next) {
     var listOfSavedSessions = [];
 
@@ -97,6 +104,11 @@ app.get('/saved', function(req, resp, next) {
 
         for(var i = 0, len = keys.length; i < len; i++) {
             listOfSavedSessions.push(keys[i]);
+        }
+
+        for(var i = 0, len = keys.length; i < len; i++) {
+            var myKey = listOfSavedSessions[i];
+            gRedisClient.get(myKey, makeSetDescriptionFunction(myKey));
         }
 
         resp.json(listOfSavedSessions);
@@ -117,6 +129,8 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
 	var urlString = 'http://www.xeno-canto.org/api/2/recordings?query=' + req.latin_name.replace(' ', '+');
 	logger.info('seeking recording list ' + urlString);
 
+    // TODO: progress debugging events?
+
     if (gRealData) {
         req.pipe(request({
             uri: urlString,
@@ -125,7 +139,12 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
             if (!error && response.statusCode == 200) {
                 logger.debug('retrieved recording list OK');
             } else {
-                logger.debug('error retrieving recording list ' + response.statusCode);
+                // something went wrong
+                logger.debug('error retrieving recording list');
+                logger.error(error.code);
+                logger.error(response);
+                logger.error(body);
+                resp.sendStatus(500);
             }
         })).pipe(resp);
         logger.debug('seeking recording list, set up pipe');    
@@ -151,6 +170,8 @@ app.use('/soundfile', function(req, resp, next) {
     var urlString = 'http://www.xeno-canto.org' + req.path;
     logger.info('seeking sound file ' + urlString);
 
+    // TODO: progress debugging events?
+
     req.pipe(request({
         uri: urlString,
         strictSSL: false
@@ -158,7 +179,11 @@ app.use('/soundfile', function(req, resp, next) {
         if (!error && response.statusCode == 200) {
             logger.debug('retrieved soundfile OK');
         } else {
-            logger.error('error retrieving soundfile ' + response.statusCode);
+            logger.error('error retrieving soundfile ');
+            logger.error(error.code);
+            logger.error(response);
+            logger.error(body);
+            resp.sendStatus(500);
         }
     })).pipe(resp);
 
@@ -172,6 +197,8 @@ app.use('/ebird', function(req, resp, next) {
     var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent';
     logger.info('seeking ebird sightings', req.query);
 
+    // TODO: progress debugging events?
+
     if (gRealData) {
         req.pipe(request({
             uri: urlString,
@@ -181,7 +208,11 @@ app.use('/ebird', function(req, resp, next) {
             if (!error && response.statusCode == 200) {
                 logger.debug('piping recording list OK');
             } else {
-                logger.error('error piping ebird recent sightings' + response.statusCode);
+                logger.error('error piping ebird recent sightings');
+                logger.error(error.code);
+                logger.error(response);
+                logger.error(body);
+                resp.sendStatus(500);
             }
         })).pipe(resp);
         logger.debug('seeking ebird sightings set up pipe');        
