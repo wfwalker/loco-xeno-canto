@@ -1,4 +1,6 @@
-	function getAverageVolume(array) {
+
+// Computes the average value from the FFT array
+function getAverageVolume(array) {
 	var values = 0;
 	var average;
 
@@ -13,7 +15,7 @@
 	return average;
 }
 
-// BirdSongPlayer
+// BirdSongPlayer constructor
 var BirdSongPlayer = function (inAudioContext, inPlayerSelector) {
 	this.playerSelector = inPlayerSelector;
 	this.audioContext = inAudioContext
@@ -196,6 +198,7 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 			$(this.playerSelector).find('.recordist').text(this.recording.rec);
 			this.showPlaybackRate();
 			$(this.playerSelector).find('.nextRecording').button('reset');
+			// TODO: don't enable nextRecording or nextSighting button if this is a saved session!
 			$(this.playerSelector).find('button').prop('disabled', false);
 			$(this.playerSelector).find('.panel-body').collapse('show');
 
