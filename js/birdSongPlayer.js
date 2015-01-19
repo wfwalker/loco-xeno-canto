@@ -274,6 +274,7 @@ BirdSongPlayer.prototype.saveData = function() {
 BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function() {
 	$(this.playerSelector).find('.nextSighting').button('loading');
 	$(this.playerSelector).find('button').prop('disabled', true);
+	$(this.playerSelector).collapse('show');
 
 	this.resetLastActionTime();
 	this.sightingIndex = gBirds.chooseRandomSighting();
@@ -287,6 +288,19 @@ BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function() {
 	$(this.playerSelector).find('.speciesName').text(this.sighting.comName);
 	$(this.playerSelector).find('.locationName').text(this.sighting.locName);
 	$(this.playerSelector).find('.status').text('...');
+
+	// get photos for this species
+	// gBirds.getPhotosForSightingIndex(this.sightingIndex, function(photosData) {
+	// 	console.log('PHOTOS!');
+	// 	console.log(photosData);
+	// 	// http://www.birdwalker.com/images/photo/2014-07-02-clanut-DM6C1132.jpg
+	// 	if (photosData && photosData[0]) {
+	// 		console.log('APPEND');
+	// 		$('#photos').append($('<img height="50px" />').attr('src', 'http://birdwalker.com/images/photo/' + photosData[0].image_filename));
+	// 	} else {
+	// 		console.log('DID NOT APPEND');
+	// 	}
+	// });
 
 	// get sounds for this species if needed, and pick one at random
 	gBirds.getSoundsForSightingIndex(this.sightingIndex, function(soundsData) {

@@ -162,6 +162,34 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
     }
 });
 
+app.get('/photos/:latin_name', function(req, resp, next) {
+    var urlString = 'http://birdwalker.com/taxons/latin/' + req.latin_name.replace(' ', '%20') + '.json';
+    logger.info('seeking photo list ' + urlString);
+
+    // TODO: progress debugging events?
+
+    if (gRealData) {
+        req.pipe(request({
+            uri: urlString,
+            strictSSL: false
+        }, function(error, response, body) {
+            if (!error && response.statusCode == 200) {
+                logger.debug('retrieved photo list OK');
+            } else {
+                // something went wrong
+                logger.debug('error retrieving photo list');
+                // birdwalker server already returns 500
+                // don't try to return error status here or it crashes with
+                // "Error: Can't set headers after they are sent."
+            }
+        })).pipe(resp);
+        logger.debug('seeking recording list, set up pipe');    
+    } else {
+        // TODO: need fake photo data
+        resp.json({});
+    }
+});
+
 // we must proxy soundfiles, see 
 // http://stackoverflow.com/questions/13958158/why-arent-safari-or-firefox-able-to-process-audio-data-from-mediaelementsource
 // https://www.npmjs.org/package/request

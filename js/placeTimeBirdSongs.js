@@ -3,6 +3,7 @@ function PlaceTimeBirdSongs() {
 	this.position = null;
 	this.description = '';
 	this.sightings = [];
+	this.photos = [];
 	this.sounds = [];
 	this.distance = 15;
 	this.days = 7;
@@ -76,6 +77,40 @@ PlaceTimeBirdSongs.prototype.getSoundsForSightingIndex = function(inID, callback
 				// TODO: retry?
 				console.log('xeno canto fail');
 				// TODO: can't tell inability to reach server from missing sounds
+				callback(null);
+			}
+		});		
+	}
+}
+
+PlaceTimeBirdSongs.prototype.getPhotosForSightingIndex = function(inID, callback) {
+	if (this.sounds[inID]) {
+		callback(this.sounds[inID]);		
+	} else {
+		var latinName = this.sightings[inID].sciName;
+		var urlString = '/photos/' + latinName.replace(' ', '%20');
+		console.log('seeking photos data ' + urlString);
+
+		$.ajax({
+			url: urlString,
+			dataType: 'json',
+			success: function(data) {
+				console.log('getPhotosForSightingIndex success handler');
+				console.log(data);
+				if (data[0].photos) {
+					this.photos[inID] = data[0].photos;
+					callback(this.photos[inID]); 
+				} else {
+					// TODO: retry?
+					// TODO: can't tell inability to reach server from missing photos
+					console.log('birdwalker photos fail');
+					callback(null);
+				}
+			}.bind(this),
+			error: function(xhr, status, error) {
+				// TODO: retry?
+				console.log('birdwalker photos fail');
+				// TODO: can't tell inability to reach server from missing photos
 				callback(null);
 			}
 		});		
