@@ -34,6 +34,11 @@ function insertSavedSessionMenuItem(key) {
 }
 
 $(document).ready(function(){ 
+	// opt-in to tooltips
+	$(function () {
+		$('[data-toggle="tooltip"]').tooltip()
+	})
+	
 	// GLOBAL sound sources for bird song playback
 	gBirdSongPlayers = [];
 

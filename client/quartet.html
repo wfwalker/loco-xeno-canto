@@ -121,18 +121,14 @@
 
 			<!-- TODO: graphical pictures of birds -->
 			<!-- TODO: bootstrap panel colors don't mesh with my made-up colors -->
-			<!-- TODO: needs about box -->
 			<!-- TODO: mixing board ? -->
 			<!-- TODO: graphical download progress indicator -->
-			<!-- TODO: omit playback rate until playback starts -->
-
-			<!-- TODO: Performers take the stage -->
 
 			<div class='row'>
 				<div class='col-md-6'>
 					<div class='panel panel-default collapse' id='player0'>
 						<div class='panel-heading panel-nowrap'>
-							<button class='btn btn-primary btn-sm nextSighting' data-loading-text='...'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
+							<button class='btn btn-default btn-sm nextSighting' data-loading-text='...' data-toggle='tooltip' data-placement='bottom' title='New bird'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
 							<strong><span class='speciesName'>Bird</span></strong>
 							@ <span class='locationName'>location</span>
 						</div>
@@ -142,10 +138,10 @@
 								<canvas class='vumeter' height="130" width="260"></canvas>
 							</div>
 							<div class="btn-group btn-padding" role="group">
-								<button class='btn btn-info btn-sm nextRecording' data-loading-text='...'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
-								<button class='btn btn-info btn-sm rate'>Rate</button>
-								<button class='btn btn-info btn-sm pan'>Pan</button>
-								<button class='btn btn-info btn-sm reverse'>Reverse</button>
+								<button class='btn btn-info btn-sm nextRecording' data-loading-text='...' data-toggle='tooltip' data-placement='bottom' title='New sound'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
+								<button class='btn btn-info btn-sm rate' data-toggle='tooltip' data-placement='bottom' title='Change the playback rate'>Rate</button>
+								<button class='btn btn-info btn-sm pan' data-toggle='tooltip' data-placement='bottom' title='Move to a new stereo position'>Pan</button>
+								<button class='btn btn-info btn-sm reverse' data-toggle='tooltip' data-placement='bottom' title='Reverse the sound playback'>Reverse</button>
 							</div>
 							<div class='panel-nowrap'>
 								<img class='license' src='/cc-placeholder.png' height='20px'></img>
@@ -159,7 +155,7 @@
 				<div class='col-md-6'>
 					<div class='panel panel-default collapse' id='player1'>
 						<div class='panel-heading panel-nowrap'>
-							<button class='btn btn-primary btn-sm nextSighting' data-loading-text='...'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
+							<button class='btn btn-default btn-sm nextSighting' data-loading-text='...' data-toggle='tooltip' data-placement='bottom' title='New bird'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
 							<strong><span class='speciesName'>Bird</span></strong>
 							@ <span class='locationName'>location</span>
 						</div>
@@ -169,10 +165,10 @@
 								<canvas class='vumeter' height="130" width="260"></canvas>
 							</div>
 							<div class="btn-group btn-padding" role="group">
-								<button class='btn btn-info btn-sm nextRecording' data-loading-text='...'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
-								<button class='btn btn-info btn-sm rate'>Rate</button>
-								<button class='btn btn-info btn-sm pan'>Pan</button>
-								<button class='btn btn-info btn-sm reverse'>Reverse</button>
+								<button class='btn btn-info btn-sm nextRecording' data-loading-text='...' data-toggle='tooltip' data-placement='bottom' title='New sound'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
+								<button class='btn btn-info btn-sm rate' data-toggle='tooltip' data-placement='bottom' title='Change the playback rate'>Rate</button>
+								<button class='btn btn-info btn-sm pan' data-toggle='tooltip' data-placement='bottom' title='Move to a new stereo position'>Pan</button>
+								<button class='btn btn-info btn-sm reverse' data-toggle='tooltip' data-placement='bottom' title='Reverse the sound playback'>Reverse</button>
 							</div>
 							<div class='panel-nowrap'>
 								<img class='license' src='/cc-placeholder.png' height='20px'></img>
@@ -188,7 +184,7 @@
 				<div class='col-md-6'>
 					<div class='panel panel-default collapse' id='player2'>
 						<div class='panel-heading panel-nowrap'>
-							<button class='btn btn-primary btn-sm nextSighting' data-loading-text='...'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
+							<button class='btn btn-default btn-sm nextSighting' data-loading-text='...' data-toggle='tooltip' data-placement='bottom' title='New bird'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
 							<strong><span class='speciesName'>Bird</span></strong>
 							@ <span class='locationName'>location</span>
 						</div>
@@ -198,10 +194,10 @@
 								<canvas class='vumeter' height="130" width="260"></canvas>
 							</div>
 							<div class="btn-group btn-padding" role="group">
-								<button class='btn btn-info btn-sm nextRecording' data-loading-text='...'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
-								<button class='btn btn-info btn-sm rate'>Rate</button>
-								<button class='btn btn-info btn-sm pan'>Pan</button>
-								<button class='btn btn-info btn-sm reverse'>Reverse</button>
+								<button class='btn btn-info btn-sm nextRecording' data-loading-text='...' data-toggle='tooltip' data-placement='bottom' title='New sound'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
+								<button class='btn btn-info btn-sm rate' data-toggle='tooltip' data-placement='bottom' title='Change the playback rate'>Rate</button>
+								<button class='btn btn-info btn-sm pan' data-toggle='tooltip' data-placement='bottom' title='Move to a new stereo position'>Pan</button>
+								<button class='btn btn-info btn-sm reverse' data-toggle='tooltip' data-placement='bottom' title='Reverse the sound playback'>Reverse</button>
 							</div>
 							<div class='panel-nowrap'>
 								<img class='license' src='/cc-placeholder.png' height='20px'></img>
@@ -215,7 +211,7 @@
 				<div class='col-md-6'>
 					<div class='panel panel-default collapse' id='player3'>
 						<div class='panel-heading panel-nowrap'>
-							<button class='btn btn-primary btn-sm nextSighting' data-loading-text='...'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
+							<button class='btn btn-default btn-sm nextSighting' data-loading-text='...' data-toggle='tooltip' data-placement='bottom' title='New bird'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
 							<strong><span class='speciesName'>Bird</span></strong>
 							@ <span class='locationName'>location</span>
 						</div>
@@ -225,10 +221,10 @@
 								<canvas class='vumeter' height="130" width="260"></canvas>
 							</div>
 							<div class="btn-group btn-padding" role="group">
-								<button class='btn btn-info btn-sm nextRecording' data-loading-text='...'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
-								<button class='btn btn-info btn-sm rate'>Rate</button>
-								<button class='btn btn-info btn-sm pan'>Pan</button>
-								<button class='btn btn-info btn-sm reverse'>Reverse</button>
+								<button class='btn btn-info btn-sm nextRecording' data-loading-text='...' data-toggle='tooltip' data-placement='bottom' title='New sound'><span class='glyphicon glyphicon-random'></span>&nbsp;</button>
+								<button class='btn btn-info btn-sm rate' data-toggle='tooltip' data-placement='bottom' title='Change the playback rate'>Rate</button>
+								<button class='btn btn-info btn-sm pan' data-toggle='tooltip' data-placement='bottom' title='Move to a new stereo position'>Pan</button>
+								<button class='btn btn-info btn-sm reverse' data-toggle='tooltip' data-placement='bottom' title='Reverse the sound playback'>Reverse</button>
 							</div>
 							<div class='panel-nowrap'>
 								<img class='license' src='/cc-placeholder.png' height='20px'></img>
@@ -248,7 +244,7 @@
 						what is this?
 					</button>
 
-					<a class='btn btn-default btn-sm' target='_blank' href="https://github.com/wfwalker/loco-xeno-canto">source code on github</a>	
+					<a class='btn btn-default btn-sm' target='_blank' href="https://github.com/wfwalker/loco-xeno-canto">source code</a>	
 					<button class='btn btn-default btn-sm' id='share'><span class='glyphicon glyphicon-cloud-upload'></span> share</button>
 
 					<div class="btn-group dropup">

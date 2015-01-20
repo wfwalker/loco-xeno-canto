@@ -81,7 +81,7 @@ var BirdSongPlayer = function (inAudioContext, inPlayerSelector) {
 		graphicsContext.drawImage(volumeMeterCanvas, -1, 0);
 
 		// clear the rightmost column state
-		graphicsContext.fillStyle = 'rgb(250,250,250)'
+		graphicsContext.fillStyle = 'rgb(245,245,245)'
 		graphicsContext.fillRect(259, 0, 1, 130);
 
 		// set the fill style for the last line (matches bootstrap button)
@@ -261,6 +261,8 @@ BirdSongPlayer.prototype.initializeFromSavedSession = function(inSavedData) {
 	this.soundsForSighting = {};
 	this.soundsForSighting.recordings = [inSavedData.recording];
 	this.chooseRandomRecording(this.playerSelector);
+
+	$(this.playerSelector).collapse('show');
 }
 
 BirdSongPlayer.prototype.saveData = function() {
