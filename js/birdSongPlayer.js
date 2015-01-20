@@ -53,7 +53,7 @@ var BirdSongPlayer = function (inAudioContext, inPlayerSelector) {
 
 	var volumeMeterCanvas = $(this.playerSelector).find('canvas')[0];
 	var graphicsContext = volumeMeterCanvas.getContext('2d');
-	var volumeHistory = new Array(260);
+	var previousVolume = 0;
 
 	// setup a analyzer
 	var analyser = this.audioContext.createAnalyser();
@@ -70,12 +70,9 @@ var BirdSongPlayer = function (inAudioContext, inPlayerSelector) {
 		var average = getAverageVolume(array);
 		average = Math.max(Math.min(average, 128), 0);
 
-		volumeHistory.push(average);
-		volumeHistory.shift();
-
 		// draw the rightmost line in black right before shifting
 		graphicsContext.fillStyle = 'rgb(0,0,0)'
-		graphicsContext.fillRect(258, 128 - volumeHistory[258], 2, volumeHistory[258]);
+		graphicsContext.fillRect(258, 128 - previousVolume, 2, previousVolume);
 
 		// shift the drawing over one pixel
 		graphicsContext.drawImage(volumeMeterCanvas, -1, 0);
@@ -86,9 +83,10 @@ var BirdSongPlayer = function (inAudioContext, inPlayerSelector) {
 
 		// set the fill style for the last line (matches bootstrap button)
 		graphicsContext.fillStyle = '#5BC0DE'
-		graphicsContext.fillRect(258, 128 - volumeHistory[259], 2, volumeHistory[259]);
+		graphicsContext.fillRect(258, 128 - average, 2, average);
 
 		requestAnimationFrame(vuMeter);
+		previousVolume = average;
 	});
 }
 
@@ -346,3 +344,6 @@ BirdSongPlayer.prototype.initializeControls = function() {
 	$(this.playerSelector).find('button').prop('disabled', true);
 }
 
+if (typeof module != 'undefined') {
+	module.exports = BirdSongPlayer;
+}
