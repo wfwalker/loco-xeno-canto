@@ -260,6 +260,9 @@ BirdSongPlayer.prototype.initializeFromSavedSession = function(inSavedData) {
 	this.soundsForSighting.recordings = [inSavedData.recording];
 	this.chooseRandomRecording(this.playerSelector);
 
+	$(this.playerSelector).find('.nextSighting').remove();
+	$(this.playerSelector).find('.nextRecording').remove();
+
 	$(this.playerSelector).collapse('show');
 }
 

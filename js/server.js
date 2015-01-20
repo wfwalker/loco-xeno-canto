@@ -141,7 +141,7 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
             } else {
                 // something went wrong
                 logger.debug('error retrieving recording list');
-                logger.error(error.code);
+                logger.error(error);
                 logger.error(response);
                 logger.error(body);
                 resp.sendStatus(500);
@@ -208,7 +208,7 @@ app.use('/soundfile', function(req, resp, next) {
             logger.debug('retrieved soundfile OK');
         } else {
             logger.error('error retrieving soundfile ');
-            logger.error(error.code);
+            logger.error(error);
             logger.error(response);
             logger.error(body);
             resp.sendStatus(500);
@@ -237,7 +237,7 @@ app.use('/ebird', function(req, resp, next) {
                 logger.debug('piping recording list OK');
             } else {
                 logger.error('error piping ebird recent sightings');
-                logger.error(error.code);
+                logger.error(error);
                 logger.error(response);
                 logger.error(body);
                 resp.sendStatus(500);
