@@ -46,27 +46,31 @@ var BirdSongPlayer = function (inAudioContext, inPlayerSelector) {
 	this.panner.coneOuterGain = 0;
 	this.panner.setOrientation(1,0,0);
 	this.panner.setVelocity(0, 0, 0);
+
 	this.randomizePanner();
-	this.showPanPosition();
 
 	this.gain.connect(this.panner);
 
+	// setup a analyser
+	this.analyser = this.audioContext.createAnalyser();
+	this.panner.connect(this.analyser);
+	this.panner.connect(this.audioContext.destination);
+
+	this.analyser.smoothingTimeConstant = 0.3;
+	this.analyser.fftSize = 64;
+}
+
+BirdSongPlayer.prototype.initializeVUMeter = function() {
+	// set up VU meter
+	var myAnalyser = this.analyser;
 	var volumeMeterCanvas = $(this.playerSelector).find('canvas')[0];
 	var graphicsContext = volumeMeterCanvas.getContext('2d');
 	var previousVolume = 0;
 
-	// setup a analyzer
-	var analyser = this.audioContext.createAnalyser();
-	this.panner.connect(analyser);
-	this.panner.connect(this.audioContext.destination);
-
-	analyser.smoothingTimeConstant = 0.3;
-	analyser.fftSize = 64;
-
 	requestAnimationFrame(function vuMeter() {
 		// get the average, bincount is fftsize / 2
-		var array =  new Uint8Array(analyser.frequencyBinCount);
-		analyser.getByteFrequencyData(array);
+		var array =  new Uint8Array(myAnalyser.frequencyBinCount);
+		myAnalyser.getByteFrequencyData(array);
 		var average = getAverageVolume(array);
 		average = Math.max(Math.min(average, 128), 0);
 
@@ -104,7 +108,6 @@ BirdSongPlayer.prototype.randomizePanner = function() {
 	this.resetLastActionTime();
 	this.panPosition = { x: 2 * Math.random() - 1, y: 2 * Math.random() - 1, z: 2 * Math.random() - 1}
 	this.panner.setPosition( this.panPosition.x, this.panPosition.y, this.panPosition.z);
-	this.showPanPosition();
 }
 
 BirdSongPlayer.prototype.showPlaybackRate = function() {
@@ -120,7 +123,6 @@ BirdSongPlayer.prototype.randomizePlaybackRate = function() {
 	if (this.soundSource) {
 		this.soundSource.playbackRate.cancelScheduledValues(this.audioContext.currentTime);
 		this.soundSource.playbackRate.linearRampToValueAtTime(this.playbackRate, this.audioContext.currentTime + 3);
-		this.showPlaybackRate();
 	} else {
 		console.log('cannot implement yet, no sound source');
 	}
@@ -338,13 +340,18 @@ BirdSongPlayer.prototype.initializeControls = function() {
 
 	$(this.playerSelector).find('.pan').click(function(e) {
 		player.randomizePanner();
+		player.showPanPosition();
 	});
 
 	$(this.playerSelector).find('.rate').click(function(e) {
 		player.randomizePlaybackRate();
+		player.showPlaybackRate();
 	});
 
 	$(this.playerSelector).find('button').prop('disabled', true);
+
+	showPlaybackRate();
+	showPanPosition();
 }
 
 if (typeof module != 'undefined') {

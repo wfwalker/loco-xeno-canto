@@ -194,6 +194,7 @@ $(document).ready(function(){
 	});
 
 	for (i = 0; i < 4; i++) {
+		gBirdSongPlayers[i].initializeVUMeter();
 		gBirdSongPlayers[i].initializeControls();
 	}
 
