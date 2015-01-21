@@ -350,8 +350,8 @@ BirdSongPlayer.prototype.initializeControls = function() {
 
 	$(this.playerSelector).find('button').prop('disabled', true);
 
-	showPlaybackRate();
-	showPanPosition();
+	this.showPlaybackRate();
+	this.showPanPosition();
 }
 
 if (typeof module != 'undefined') {
