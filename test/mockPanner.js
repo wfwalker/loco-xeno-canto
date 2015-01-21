@@ -5,15 +5,19 @@ var MockPanner = function() {
 }
 
 MockPanner.prototype.setOrientation = function() {
-	console.log('MockPanner.setOrientation');
+	// console.log('MockPanner.setOrientation');
 }
 
 MockPanner.prototype.setVelocity = function() {
-	console.log('MockPanner.setVelocity');
+	// console.log('MockPanner.setVelocity');
 }
 
 MockPanner.prototype.setPosition = function() {
-	console.log('MockPanner.setPosition');
+	// console.log('MockPanner.setPosition');
+}
+
+MockPanner.prototype.connect = function(inArg) {
+	// console.log('MockPanner.connect', inArg);
 }
 
 module.exports = MockPanner;

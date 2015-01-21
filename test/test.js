@@ -19,7 +19,7 @@ describe('BirdSongPlayer', function() {
 	describe('constructor()', function() {
 		it('constructor should work', function() {
 			var audioContext = new MockAudioContext();
-			assert.equal(new BirdSongPlayer(audioContext), null);
+			assert.ok(new BirdSongPlayer(audioContext));
 		})
 	})
 })
