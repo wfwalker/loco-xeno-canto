@@ -116,3 +116,7 @@ PlaceTimeBirdSongs.prototype.getPhotosForSightingIndex = function(inID, callback
 		});		
 	}
 }
+
+if (typeof module != 'undefined') {
+	module.exports = PlaceTimeBirdSongs;
+}
