@@ -39,9 +39,9 @@ var BirdSongPlayer = function (inAudioContext, inPlayerSelector) {
 	this.panner.panningModel = 'HRTF';
 	this.panner.distanceModel = 'inverse';
 	this.panner.refDistance = 1;
-	this.panner.maxDistance = 10000;
+	this.panner.maxDistance = 10000; /* NOTE: probably not in use */
 	this.panner.rolloffFactor = 1;
-	this.panner.coneInnerAngle = 360;
+	this.panner.coneInnerAngle = 360; /* Note using directional sound attenuation */
 	this.panner.coneOuterAngle = 0;
 	this.panner.coneOuterGain = 0;
 	this.panner.setOrientation(1,0,0);
@@ -100,7 +100,7 @@ BirdSongPlayer.prototype.resetLastActionTime = function() {
 }
 
 BirdSongPlayer.prototype.showPanPosition = function() {
-	$(this.playerSelector).find('.panPosition').text((this.panPosition.x > 0 ? 'L' : 'R') + Math.abs(Math.round(100 * this.panPosition.x)));	
+	$(this.playerSelector).find('.panPosition').text((this.panPosition.x > 0 ? 'L' : 'R') + Math.abs(Math.round(10 * this.panPosition.x) / 10.0));	
 }
 
 // sets the X,Y,Z position of the Panner to random values between -1 and +1
