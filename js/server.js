@@ -7,6 +7,7 @@ var https = require('https');
 var request = require('request');
 var bodyParser = require('body-parser');
 var args = require('system').args;
+var fs = require('fs');
 
 // set up logging
 var winston = require('winston');
@@ -25,7 +26,26 @@ var gRedisClient = redis.createClient();
 var gCommandLineArgs = args.slice(2);
 
 var gRealData = (gCommandLineArgs.indexOf('-test') < 0);
+var gFakeData = {};
+var gSciNameToRecordings = {};
 logger.info('use real sighting and recording data: ' + gRealData);
+
+if (! gRealData) {
+    var filename = gCommandLineArgs[gCommandLineArgs.indexOf('-test') + 1];
+
+    fs.readFile(filename, 'utf8', function (err,data) {
+        if (err) {
+            return console.log(err);
+        }
+        gFakeData = JSON.parse(data);
+
+        for (var index = 0; index < gFakeData.savedPlayer.length; index++) {
+            var savedPlayer = gFakeData.savedPlayer[index];
+            gSciNameToRecordings[savedPlayer.sighting.sciName] = [ savedPlayer.recording ];
+        }
+        logger.info(gSciNameToRecordings);
+    });
+}
 
 // set up server
 var app = express();
@@ -63,14 +83,14 @@ logger.info("running " + mHost + " " + myPort);
 
 app.param('latin_name', function(req, resp, next, id) {
     var latin_name = req.param('latin_name')
-    logger.debug('latin_name ' + latin_name);
+    logger.debug('latin_name', latin_name);
     req.latin_name = latin_name;
     next();
 });
 
 app.param('saved_session_id', function(req, resp, next, id) {
     var saved_session_id = req.param('saved_session_id')
-    logger.debug('saved_session_id ' + saved_session_id);
+    logger.debug('saved_session_id', saved_session_id);
     req.saved_session_id = saved_session_id;
     next();
 });
@@ -78,11 +98,11 @@ app.param('saved_session_id', function(req, resp, next, id) {
 // Routes
 
 app.post('/share', function (req, resp, next) {
-    logger.info('receiving shared session: ' + req.session.id);
+    logger.info('receiving shared session', req.session.id);
     resp.json([req.session.id]);
 
     gRedisClient.set(req.session.id, JSON.stringify(req.body), function(reply) {
-        logger.info('saved session for ' + req.session.id);
+        logger.info('saved session', req.session.id);
         logger.debug(reply);
     });
 
@@ -91,7 +111,7 @@ app.post('/share', function (req, resp, next) {
 
 function makeSetDescriptionFunction(inKey) {
     return function(keyError, keyReply){
-        console.log('inKey ' + inKey + ' description ' + JSON.parse(keyReply).description); 
+        logger.debug('inKey ' + inKey, JSON.parse(keyReply)); 
     }
 }
 
@@ -119,7 +139,7 @@ app.get('/saved/:saved_session_id', function(req, resp, next) {
     // respond with the saved data previously uploaded
     
     gRedisClient.get(req.saved_session_id, function(err, reply) {
-        logger.info('retrieved session for ' + req.saved_session_id);
+        logger.info('retrieved session', req.saved_session_id);
         logger.debug(reply);
         resp.send(reply);
     });
@@ -127,7 +147,7 @@ app.get('/saved/:saved_session_id', function(req, resp, next) {
 
 app.get('/sounds/:latin_name', function(req, resp, next) {
 	var urlString = 'http://www.xeno-canto.org/api/2/recordings?query=' + req.latin_name.replace(' ', '+');
-	logger.info('seeking recording list ' + urlString);
+	logger.info('seeking recording list', urlString);
 
     // TODO: progress debugging events?
 
@@ -149,22 +169,22 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
         })).pipe(resp);
         logger.debug('seeking recording list, set up pipe');    
     } else {
-        resp.json({
-            recordings: [
-                {
-                    file: 'saw440.mp3',
-                    lic: 'CC-something',
-                    rec: 'recordist1',
-                    loc: 'loc1'
-                }
-            ]
-        });
+        var sciName = req.latin_name.replace('+', ' ');
+        console.log(sciName)
+
+        if (gSciNameToRecordings[sciName]) {
+            console.log('RESPONSE');
+            console.log({"recordings" :gSciNameToRecordings[sciName]});
+            resp.json({"recordings" :gSciNameToRecordings[sciName]});
+        } else {
+            throw "missing fake data for " + sciName;
+        }
     }
 });
 
 app.get('/photos/:latin_name', function(req, resp, next) {
     var urlString = 'http://birdwalker.com/taxons/latin/' + req.latin_name.replace(' ', '%20') + '.json';
-    logger.info('seeking photo list ' + urlString);
+    logger.info('seeking photo list', urlString);
 
     // TODO: progress debugging events?
 
@@ -196,7 +216,7 @@ app.get('/photos/:latin_name', function(req, resp, next) {
 
 app.use('/soundfile', function(req, resp, next) {
     var urlString = 'http://www.xeno-canto.org' + req.path;
-    logger.info('seeking sound file ' + urlString);
+    logger.info('seeking sound file', urlString);
 
     // TODO: progress debugging events?
 
@@ -245,23 +265,12 @@ app.use('/ebird', function(req, resp, next) {
         })).pipe(resp);
         logger.debug('seeking ebird sightings set up pipe');        
     } else {
-        resp.json([{
-            sciName: 'sciName1',
-            comName: 'comName1',
-            locName: 'locName1'
-        }, {
-            sciName: 'sciName2',
-            comName: 'comName2',
-            locName: 'locName2'
-        }, {
-            sciName: 'sciName3',
-            comName: 'comName3',
-            locName: 'locName3'
-        }, {
-            sciName: 'sciName4',
-            comName: 'comName4',
-            locName: 'locName4'
-        }]);
+        resp.json([
+            gFakeData.savedPlayer[0].sighting,
+            gFakeData.savedPlayer[1].sighting,
+            gFakeData.savedPlayer[2].sighting,
+            gFakeData.savedPlayer[3].sighting
+        ]);
     }
 });
 
