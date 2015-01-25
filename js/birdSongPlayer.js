@@ -106,6 +106,7 @@ BirdSongPlayer.prototype.showPanPosition = function() {
 // sets the X,Y,Z position of the Panner to random values between -1 and +1
 BirdSongPlayer.prototype.randomizePanner = function() {
 	this.resetLastActionTime();
+	// NOTE: x = -1 is LEFT
 	this.panPosition = { x: 2 * Math.random() - 1, y: 2 * Math.random() - 1, z: 2 * Math.random() - 1}
 	this.panner.setPosition( this.panPosition.x, this.panPosition.y, this.panPosition.z);
 }
