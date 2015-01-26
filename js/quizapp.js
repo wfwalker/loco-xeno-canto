@@ -128,7 +128,7 @@ function chooseNextBird() {
 	$('#sightingDate').text(gQuizScope.sightings[gCurrentQuizSighting].obsDt);
 
 	// get sounds for this species if needed, and pick one at random
-	gQuizScope.getSoundsForSighting(gCurrentQuizSighting, function(soundsData) {
+	gQuizScope.getSoundsForSightingIndex(gCurrentQuizSighting, function(soundsData) {
 		$('#another').removeClass('disabled');
 		chooseRandomRecording(soundsData);
 	});	
