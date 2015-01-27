@@ -201,7 +201,6 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 			$(this.playerSelector).find('.nextRecording').button('reset');
 			// TODO: don't enable nextRecording or nextSighting button if this is a saved session!
 			$(this.playerSelector).find('button').prop('disabled', false);
-			$(this.playerSelector).find('.panel-body').collapse('show');
 
 			var licenseIcon = 'http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png';
 
@@ -221,6 +220,7 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 	mp3Request.open("GET", inSoundDataURL, true);
 	mp3Request.responseType = 'arraybuffer';
 	mp3Request.send();
+	$(this.playerSelector).find('.panel-body').collapse('show');
 }
 
 BirdSongPlayer.prototype.chooseRandomRecording = function() {
