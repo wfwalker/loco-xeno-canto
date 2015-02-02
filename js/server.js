@@ -5,15 +5,21 @@ var url = require('url');
 var http = require('http');
 var https = require('https');
 var request = require('request');
+var progress = require('request-progress');
 var bodyParser = require('body-parser');
 var args = require('system').args;
 var fs = require('fs');
+
+// increase maximum simultaneous sockets
+http.globalAgent.maxSockets = 500;
+https.globalAgent.maxSockets = 500;
 
 // set up logging
 var winston = require('winston');
 var logger = new (winston.Logger)({
     transports: [
-        new (winston.transports.Console)(),
+        // TODO: only show debug logs if this is dev server
+        new (winston.transports.Console)({ level: 'info' }),
         new (winston.transports.File)({ filename: 'oiseaux.log' })
     ]
 });
@@ -25,9 +31,11 @@ var gRedisClient = redis.createClient();
 // parse commandline arguments
 var gCommandLineArgs = args.slice(2);
 
+// support for reading fake data from a JSON file
 var gRealData = (gCommandLineArgs.indexOf('-test') < 0);
 var gFakeData = {};
 var gSciNameToRecordings = {};
+
 logger.info('use real sighting and recording data: ' + gRealData);
 
 if (! gRealData) {
@@ -115,6 +123,38 @@ function makeSetDescriptionFunction(inKey) {
     }
 }
 
+function pipeRequest(inReq, inResp, inURLString) {
+    logger.info('seeking', inURLString);
+
+    inReq.pipe(progress(request({
+        uri: inURLString,
+        qs: inReq.query,
+        strictSSL: false
+    }, function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+            logger.info('success', inURLString);
+        } else {
+            // something went wrong
+            logger.info('error', inURLString);
+
+            if (response.headers['content-length'] > 0) {
+                logger.error('CONTENT LENGTH NONZERO');
+            } else {
+                inResp.sendStatus(500);
+            }
+        }
+    }), {
+        throttle: 200,
+        delay: 100
+    })).on('close', function(error) {
+        logger.info('closed ' + inURLString);
+    }).on('progress', function(state) {
+        logger.debug(inURLString, state);
+    }).pipe(inResp);
+    
+    logger.debug('set up pipe for', inURLString);
+}
+
 // retrieve a list of all the saved sessions
 app.get('/saved', function(req, resp, next) {
     var listOfSavedSessions = [];
@@ -147,35 +187,15 @@ app.get('/saved/:saved_session_id', function(req, resp, next) {
 
 app.get('/sounds/:latin_name', function(req, resp, next) {
 	var urlString = 'http://www.xeno-canto.org/api/2/recordings?query=' + req.latin_name.replace(' ', '+');
-	logger.info('seeking recording list', urlString);
-
-    // TODO: progress debugging events?
 
     if (gRealData) {
-        req.pipe(request({
-            uri: urlString,
-            strictSSL: false
-        }, function(error, response, body) {
-            if (!error && response.statusCode == 200) {
-                logger.debug('retrieved recording list OK');
-            } else {
-                // something went wrong
-                logger.debug('error retrieving recording list');
-                logger.error(error);
-                logger.error(response);
-                logger.error(body);
-                resp.sendStatus(500);
-            }
-        })).pipe(resp);
-        logger.debug('seeking recording list, set up pipe');    
+        pipeRequest(req, resp, urlString);  
     } else {
         var sciName = req.latin_name.replace('+', ' ');
-        console.log(sciName)
 
         if (gSciNameToRecordings[sciName]) {
-            console.log('RESPONSE');
-            console.log({"recordings" :gSciNameToRecordings[sciName]});
-            resp.json({"recordings" :gSciNameToRecordings[sciName]});
+            logger.debug('RESPONSE', gSciNameToRecordings[sciName]);
+            resp.json({"recordings": gSciNameToRecordings[sciName]});
         } else {
             throw "missing fake data for " + sciName;
         }
@@ -184,26 +204,9 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
 
 app.get('/photos/:latin_name', function(req, resp, next) {
     var urlString = 'http://birdwalker.com/taxons/latin/' + req.latin_name.replace(' ', '%20') + '.json';
-    logger.info('seeking photo list', urlString);
-
-    // TODO: progress debugging events?
 
     if (gRealData) {
-        req.pipe(request({
-            uri: urlString,
-            strictSSL: false
-        }, function(error, response, body) {
-            if (!error && response.statusCode == 200) {
-                logger.debug('retrieved photo list OK');
-            } else {
-                // something went wrong
-                logger.debug('error retrieving photo list');
-                // birdwalker server already returns 500
-                // don't try to return error status here or it crashes with
-                // "Error: Can't set headers after they are sent."
-            }
-        })).pipe(resp);
-        logger.debug('seeking recording list, set up pipe');    
+        pipeRequest(req, resp, urlString);      
     } else {
         // TODO: need fake photo data
         resp.json({});
@@ -216,54 +219,17 @@ app.get('/photos/:latin_name', function(req, resp, next) {
 
 app.use('/soundfile', function(req, resp, next) {
     var urlString = 'http://www.xeno-canto.org' + req.path;
-    logger.info('seeking sound file', urlString);
-
-    // TODO: progress debugging events?
-
-    req.pipe(request({
-        uri: urlString,
-        strictSSL: false
-    }, function(error, response, body) {
-        if (!error && response.statusCode == 200) {
-            logger.debug('retrieved soundfile OK');
-        } else {
-            logger.error('error retrieving soundfile ');
-            logger.error(error);
-            logger.error(response);
-            logger.error(body);
-            resp.sendStatus(500);
-        }
-    })).pipe(resp);
-
-    logger.debug('seeking sound file set up pipe');        
+    pipeRequest(req, resp, urlString);  
 });
 
 // proxy eBird sightings as well, so we can provide fake data instead for testing and offline development
 
 app.use('/ebird', function(req, resp, next) {
-    logger.debug(req.query);
-    var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent';
-    logger.info('seeking ebird sightings', req.query);
-
-    // TODO: progress debugging events?
+    logger.debug('DEBUG', req.query);
 
     if (gRealData) {
-        req.pipe(request({
-            uri: urlString,
-            strictSSL: false,
-            qs: req.query
-        }, function(error, response, body) {
-            if (!error && response.statusCode == 200) {
-                logger.debug('piping recording list OK');
-            } else {
-                logger.error('error piping ebird recent sightings');
-                logger.error(error);
-                logger.error(response);
-                logger.error(body);
-                resp.sendStatus(500);
-            }
-        })).pipe(resp);
-        logger.debug('seeking ebird sightings set up pipe');        
+        var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent';
+        pipeRequest(req, resp, urlString);  
     } else {
         resp.json([
             gFakeData.savedPlayer[0].sighting,
@@ -273,5 +239,3 @@ app.use('/ebird', function(req, resp, next) {
         ]);
     }
 });
-
-
