@@ -126,7 +126,7 @@ function makeSetDescriptionFunction(inKey) {
 function pipeRequest(inReq, inResp, inURLString) {
     logger.info('seeking', inURLString);
 
-    inReq.pipe(progress(request({
+    progress(request({
         uri: inURLString,
         qs: inReq.query,
         strictSSL: false
@@ -146,7 +146,7 @@ function pipeRequest(inReq, inResp, inURLString) {
     }), {
         throttle: 200,
         delay: 100
-    })).on('close', function(error) {
+    }).on('close', function(error) {
         logger.info('closed ' + inURLString);
     }).on('progress', function(state) {
         logger.debug(inURLString, state);
