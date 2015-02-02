@@ -101,8 +101,9 @@ $(document).ready(function(){
 					$('#placeChooser').append($('<option selected />').attr('data-lat', inPosition.coords.latitude).attr('data-long', inPosition.coords.longitude).text('your location (' + Math.round(inPosition.coords.latitude * 100) / 100.0 + '°, ' + Math.round(inPosition.coords.longitude * 100) / 100.0 + '°)'));
 					$('#setupStatus').text('Found your location');
 				}.bind(this),
-				function error() {
+				function error(error) {
 					console.log('error during geolocation');
+					console.log(error);
 					$('#setupStatus').text('Could not find your location');
 				}.bind(this),
 				{
