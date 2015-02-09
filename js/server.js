@@ -11,10 +11,12 @@ var args = require('system').args;
 var fs = require('fs');
 
 // increase maximum simultaneous sockets
+
 http.globalAgent.maxSockets = 500;
 https.globalAgent.maxSockets = 500;
 
 // set up logging
+
 var winston = require('winston');
 var logger = new (winston.Logger)({
     transports: [
@@ -24,14 +26,17 @@ var logger = new (winston.Logger)({
     ]
 });
 
-// connect to database
+// connect to Redis database
+
 var redis = require("redis");
 var gRedisClient = redis.createClient();
 
 // parse commandline arguments
+
 var gCommandLineArgs = args.slice(2);
 
 // support for reading fake data from a JSON file
+
 var gRealData = (gCommandLineArgs.indexOf('-test') < 0);
 var gFakeData = {};
 var gSciNameToRecordings = {};
@@ -56,6 +61,7 @@ if (! gRealData) {
 }
 
 // set up server
+
 var app = express();
 var session = require('express-session');
 
@@ -65,14 +71,13 @@ app.use(session({
   saveUninitialized: true
 }));
 
-// TODO: this will cache the index.html for a day, which is bad
-// TODO: but it caches the bootstrap.css for a day which is good.
-app.use("/", express.static('client', {
-    maxage: 86400000
-}));
-app.use("/js", express.static('js', {
-    maxage: 86400000
-}));
+// this will cache the index.html for a day, which is bad
+// but it caches the bootstrap.css for a day which is good.
+
+app.use("/", express.static('client', { maxage: 86400000 }));
+app.use("/js", express.static('js', { maxage: 86400000 }));
+
+// configure the body parser to expect 10MB of JSON
 
 app.use(bodyParser({limit: '10mb'}));
 app.use(bodyParser.json());
@@ -105,6 +110,8 @@ app.param('saved_session_id', function(req, resp, next, id) {
 
 // Routes
 
+// retrieve data about a shared session
+
 app.post('/share', function (req, resp, next) {
     logger.info('receiving shared session', req.session.id);
     resp.json([req.session.id]);
@@ -126,27 +133,29 @@ function makeSetDescriptionFunction(inKey) {
 function pipeRequest(inReq, inResp, inURLString) {
     logger.info('seeking', inURLString);
 
-    progress(request({
-        uri: inURLString,
-        qs: inReq.query,
-        strictSSL: false
-    }, function(error, response, body) {
-        if (!error && response.statusCode == 200) {
-            logger.info('success', inURLString);
-        } else {
-            // something went wrong
-            logger.info('error', inURLString);
-
-            if (response.headers['content-length'] > 0) {
-                logger.error('CONTENT LENGTH NONZERO');
+    progress(
+        request({
+            uri: inURLString,
+            qs: inReq.query,
+            strictSSL: false
+        }, function(error, response, body) {
+            if (!error && response.statusCode == 200) {
+                logger.info('success', inURLString);
             } else {
-                inResp.sendStatus(500);
+                // something went wrong
+                logger.info('error', inURLString);
+
+                if (response.headers['content-length'] > 0) {
+                    logger.error('CONTENT LENGTH NONZERO');
+                } else {
+                    inResp.sendStatus(500);
+                }
             }
+        }), {
+            throttle: 200,
+            delay: 100
         }
-    }), {
-        throttle: 200,
-        delay: 100
-    }).on('close', function(error) {
+    ).on('close', function(error) {
         logger.info('closed ' + inURLString);
     }).on('progress', function(state) {
         logger.debug(inURLString, state);
@@ -156,6 +165,7 @@ function pipeRequest(inReq, inResp, inURLString) {
 }
 
 // retrieve a list of all the saved sessions
+
 app.get('/saved', function(req, resp, next) {
     var listOfSavedSessions = [];
 
@@ -175,6 +185,8 @@ app.get('/saved', function(req, resp, next) {
     });
 });
 
+// retrieve info about a saved session
+
 app.get('/saved/:saved_session_id', function(req, resp, next) {
     // respond with the saved data previously uploaded
     
@@ -184,6 +196,8 @@ app.get('/saved/:saved_session_id', function(req, resp, next) {
         resp.send(reply);
     });
 });
+
+// retrieve list of recordings of this species
 
 app.get('/sounds/:latin_name', function(req, resp, next) {
 	var urlString = 'http://www.xeno-canto.org/api/2/recordings?query=' + req.latin_name.replace(' ', '+');
@@ -202,6 +216,8 @@ app.get('/sounds/:latin_name', function(req, resp, next) {
     }
 });
 
+// retrieve list of photos for this species
+
 app.get('/photos/:latin_name', function(req, resp, next) {
     var urlString = 'http://birdwalker.com/taxons/latin/' + req.latin_name.replace(' ', '%20') + '.json';
 
@@ -213,16 +229,14 @@ app.get('/photos/:latin_name', function(req, resp, next) {
     }
 });
 
-// we must proxy soundfiles, see 
-// http://stackoverflow.com/questions/13958158/why-arent-safari-or-firefox-able-to-process-audio-data-from-mediaelementsource
-// https://www.npmjs.org/package/request
+// retrieve the soundfile
 
 app.use('/soundfile', function(req, resp, next) {
     var urlString = 'http://www.xeno-canto.org' + req.path;
     pipeRequest(req, resp, urlString);  
 });
 
-// proxy eBird sightings as well, so we can provide fake data instead for testing and offline development
+// retrieve a list of ebird sightings
 
 app.use('/ebird', function(req, resp, next) {
     logger.debug('DEBUG', req.query);
