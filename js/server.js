@@ -21,7 +21,7 @@ var winston = require('winston');
 var logger = new (winston.Logger)({
     transports: [
         // TODO: only show debug logs if this is dev server
-        new (winston.transports.Console)({ level: 'info' }),
+        new (winston.transports.Console)({ level: 'debug' }),
         new (winston.transports.File)({ filename: 'oiseaux.log' })
     ]
 });
