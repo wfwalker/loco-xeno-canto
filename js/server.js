@@ -131,7 +131,7 @@ function makeSetDescriptionFunction(inKey) {
 }
 
 function pipeRequest(inReq, inResp, inURLString) {
-    logger.info('seeking', inURLString);
+    logger.info('open pipe', inURLString);
 
     progress(
         request({
@@ -139,29 +139,39 @@ function pipeRequest(inReq, inResp, inURLString) {
             qs: inReq.query,
             strictSSL: false
         }, function(error, response, body) {
-            if (!error && response.statusCode == 200) {
-                logger.info('success', inURLString);
+            if (!error && response && response.statusCode == 200) {
+                logger.info('success', inURLString), response.statusMessage;
             } else {
                 // something went wrong
-                logger.info('error', inURLString);
+                logger.error('error', inURLString, response.statusCode, response.statusMessage);
 
-                if (response.headers['content-length'] > 0) {
+                if (response && response.headers && response.headers['content-length'] > 0) {
                     logger.error('CONTENT LENGTH NONZERO');
                 } else {
                     inResp.sendStatus(500);
                 }
             }
+        }).on('response', function(message) {
+          logger.info('response', inURLString);
+
+          message.on('close', function() {
+            logger.info('response closed', inURLString);
+          });
+          message.on('error', function() {
+            logger.error('response error', inURLString);
+          });
+          message.on('end', function() {
+            logger.info('response end', inURLString);
+          });
         }), {
             throttle: 200,
             delay: 100
         }
-    ).on('close', function(error) {
-        logger.info('closed ' + inURLString);
-    }).on('progress', function(state) {
+    ).on('progress', function(state) {
         logger.debug(inURLString, state);
     }).pipe(inResp);
     
-    logger.debug('set up pipe for', inURLString);
+    logger.debug('done opening pipe', inURLString);
 }
 
 // retrieve a list of all the saved sessions
