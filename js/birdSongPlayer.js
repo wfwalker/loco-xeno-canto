@@ -18,8 +18,9 @@ function getAverageVolume(array) {
 // BirdSongPlayer constructor
 var BirdSongPlayer = function (inAudioContext, inPlayerSelector) {
 	this.playerSelector = inPlayerSelector;
-	this.audioContext = inAudioContext
+	this.audioContext = inAudioContext;
 	this.soundSource = null;
+	this.playForward = true;
 
 	this.randomizePlaybackRate();
 
@@ -66,6 +67,7 @@ BirdSongPlayer.prototype.initializeVUMeter = function() {
 	var volumeMeterCanvas = $(this.playerSelector).find('canvas')[0];
 	var graphicsContext = volumeMeterCanvas.getContext('2d');
 	var previousVolume = 0;
+	var player = this;
 
 	requestAnimationFrame(function vuMeter() {
 		// get the average, bincount is fftsize / 2
@@ -74,20 +76,37 @@ BirdSongPlayer.prototype.initializeVUMeter = function() {
 		var average = getAverageVolume(array);
 		average = Math.max(Math.min(average, 128), 0);
 
-		// draw the rightmost line in black right before shifting
-		graphicsContext.fillStyle = 'rgb(0,0,0)'
-		graphicsContext.fillRect(258, 128 - previousVolume, 2, previousVolume);
+		if (player.playForward) {
+			// draw the rightmost column in black right before shifting
+			graphicsContext.fillStyle = 'rgb(0,0,0)'
+			graphicsContext.fillRect(258, 128 - previousVolume, 2, previousVolume);
 
-		// shift the drawing over one pixel
-		graphicsContext.drawImage(volumeMeterCanvas, -1, 0);
+			// shift the drawing over one pixel to the left
+			graphicsContext.drawImage(volumeMeterCanvas, -1, 0);
 
-		// clear the rightmost column state
-		graphicsContext.fillStyle = 'rgb(245,245,245)'
-		graphicsContext.fillRect(259, 0, 1, 130);
+			// clear the rightmost column state
+			graphicsContext.fillStyle = 'rgb(245,245,245)'
+			graphicsContext.fillRect(259, 0, 1, 130);
 
-		// set the fill style for the last line (matches bootstrap button)
-		graphicsContext.fillStyle = '#5BC0DE'
-		graphicsContext.fillRect(258, 128 - average, 2, average);
+			// set the fill style for the rightmost column (matches bootstrap button)
+			graphicsContext.fillStyle = '#5BC0DE'
+			graphicsContext.fillRect(258, 128 - average, 2, average);
+		} else {
+			// draw the LEFTMOST column in black right before shifting
+			graphicsContext.fillStyle = 'rgb(0,0,0)'
+			graphicsContext.fillRect(0, 128 - previousVolume, 2, previousVolume);
+
+			// shift the drawing over one pixel to the right
+			graphicsContext.drawImage(volumeMeterCanvas, 1, 0);
+
+			// clear the LEFTMOST column state
+			graphicsContext.fillStyle = 'rgb(245,245,245)'
+			graphicsContext.fillRect(0, 0, 1, 130);
+
+			// set the fill style for the leftmost column (matches bootstrap button)
+			graphicsContext.fillStyle = '#5BC0DE'
+			graphicsContext.fillRect(0, 128 - average, 2, average);
+		}
 
 		requestAnimationFrame(vuMeter);
 		previousVolume = average;
@@ -160,6 +179,7 @@ BirdSongPlayer.prototype.setSourceFromBuffer = function(inBuffer) {
 BirdSongPlayer.prototype.reversePlayback = function() {
 	console.log('reversePlayback');
 	this.resetLastActionTime();
+	this.playForward = ! this.playForward;
 
 	var oldData = this.soundSource.buffer.getChannelData(0);
 	var normalData = Array.prototype.slice.call( oldData );
