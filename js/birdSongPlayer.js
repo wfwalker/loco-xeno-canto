@@ -1,3 +1,4 @@
+var request = require('request');
 
 // Computes the average value from the FFT array
 function getAverageVolume(array) {
@@ -36,29 +37,27 @@ var BirdSongPlayer = function (inAudioContext, inPlayerSelector) {
 	this.gain = this.audioContext.createGain(); 
 
 	// see https://developer.mozilla.org/en-US/docs/Web/API/PannerNode
-	this.panner = this.audioContext.createPanner();
-	this.panner.panningModel = 'HRTF';
-	this.panner.distanceModel = 'inverse';
-	this.panner.refDistance = 1;
-	this.panner.maxDistance = 10000; /* NOTE: probably not in use */
-	this.panner.rolloffFactor = 1;
-	this.panner.coneInnerAngle = 360; /* Note using directional sound attenuation */
-	this.panner.coneOuterAngle = 0;
-	this.panner.coneOuterGain = 0;
-	this.panner.setOrientation(1,0,0);
-	this.panner.setVelocity(0, 0, 0);
+	// this.panner = this.audioContext.createPanner();
+	// this.panner.panningModel = 'HRTF';
+	// this.panner.distanceModel = 'inverse';
+	// this.panner.refDistance = 1;
+	// this.panner.maxDistance = 10000; /* NOTE: probably not in use */
+	// this.panner.rolloffFactor = 1;
+	// this.panner.coneInnerAngle = 360; /* Note using directional sound attenuation */
+	// this.panner.coneOuterAngle = 0;
+	// this.panner.coneOuterGain = 0;
+	// this.panner.setOrientation(1,0,0);
+	// this.panner.setVelocity(0, 0, 0);
+	// this.randomizePanner();
+	// this.gain.connect(this.panner);
+	// // setup a analyser
+	// this.analyser = this.audioContext.createAnalyser();
+	// this.panner.connect(this.analyser);
+	// this.panner.connect(this.audioContext.destination);
+	// this.analyser.smoothingTimeConstant = 0.3;
+	// this.analyser.fftSize = 64;
 
-	this.randomizePanner();
-
-	this.gain.connect(this.panner);
-
-	// setup a analyser
-	this.analyser = this.audioContext.createAnalyser();
-	this.panner.connect(this.analyser);
-	this.panner.connect(this.audioContext.destination);
-
-	this.analyser.smoothingTimeConstant = 0.3;
-	this.analyser.fftSize = 64;
+	this.gain.connect(this.audioContext.destination);
 }
 
 BirdSongPlayer.prototype.initializeVUMeter = function() {
@@ -165,14 +164,14 @@ BirdSongPlayer.prototype.setSourceFromBuffer = function(inBuffer) {
 	this.soundSource.playbackRate.setValueAtTime(this.playbackRate, this.audioContext.currentTime);
 
 	// set gain to zero and then ramp up. 
-	this.gain.gain.cancelScheduledValues(this.audioContext.currentTime);
+	// this.gain.gain.cancelScheduledValues(this.audioContext.currentTime);
 	this.gain.gain.setValueAtTime(0.0, this.audioContext.currentTime);
 	this.gain.gain.linearRampToValueAtTime(0.99, this.audioContext.currentTime + 10);
 
 	// start playing immediately in a loop	 
 	this.soundSource.loop = true;
 	this.soundSource.start(0);	
-	$('#setupStatus').text('Playing soundscape based on');
+	// $('#setupStatus').text('Playing soundscape based on');
 }
 
 // Reverses the audio buffer so that the sound plays backwards
@@ -197,62 +196,70 @@ BirdSongPlayer.prototype.reversePlayback = function() {
 }
 
 BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
-	console.log('setBufferFromURL ' + inSoundDataURL);
+	console.log('setBufferFromURL', 'http://birdwalker.com:9090' + inSoundDataURL);
 
-	var mp3Request = new XMLHttpRequest();
-
-	mp3Request.onerror = function(e) {
-		$(this.playerSelector).find('.status').text('error downloading');		
-	}.bind(this);
-
-	mp3Request.onprogress = function(e) {
-		$(this.playerSelector).find('.status').text(Math.round(100 * e.loaded / e.total) + '%');
-	}.bind(this);
-
-	mp3Request.onload = function(e) {
-		$(this.playerSelector).find('.status').text('...');
-
-	    this.audioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
+	request({ url: 'http://birdwalker.com:9090' + inSoundDataURL, encoding: null }, function (error, response, body) {
+		console.log('got mp3', typeof body);
+	    this.audioContext.decodeAudioData(body, function(decodedBuffer) {
 	    	this.setSourceFromBuffer(decodedBuffer);
-			$(this.playerSelector).find('.status').text(Math.round(decodedBuffer.duration) + 's');
-			$(this.playerSelector).find('.recordingLocation').text(this.recording.loc);
-			$(this.playerSelector).find('.recordist').text(this.recording.rec);
-			this.showPlaybackRate();
-			$(this.playerSelector).find('.nextRecording').button('reset');
-			// TODO: don't enable nextRecording or nextSighting button if this is a saved session!
-			$(this.playerSelector).find('button').prop('disabled', false);
-
-			var licenseIcon = 'http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png';
-
-			if (this.recording.lic.indexOf('by-nc-nd') > 0) {
-				licenseIcon = 'http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png';
-			} else if (this.recording.lic.indexOf('by-nc-sa') > 0) {
-				licenseIcon = 'http://i.creativecommons.org/l/by-nc-sa/3.0/us/88x31.png';
-			} else {
-				console.log('LICENSE NOT RECOGNIZED ' + this.recording.lic);
-			}
-
-			$(this.playerSelector).find('.license').attr('src', licenseIcon);
-
 		}.bind(this));
-	}.bind(this);
+	}.bind(this));
 
-	mp3Request.open("GET", inSoundDataURL, true);
-	mp3Request.responseType = 'arraybuffer';
-	mp3Request.send();
-	$(this.playerSelector).find('.panel-body').collapse('show');
+	// var mp3Request = new XMLHttpRequest();
+
+	// mp3Request.onerror = function(e) {
+	// 	$(this.playerSelector).find('.status').text('error downloading');		
+	// }.bind(this);
+
+	// mp3Request.onprogress = function(e) {
+	// 	$(this.playerSelector).find('.status').text(Math.round(100 * e.loaded / e.total) + '%');
+	// }.bind(this);
+
+	// mp3Request.onload = function(e) {
+	// 	$(this.playerSelector).find('.status').text('...');
+
+	//     this.audioContext.decodeAudioData(mp3Request.response, function(decodedBuffer) {
+	//     	this.setSourceFromBuffer(decodedBuffer);
+	// 		// $(this.playerSelector).find('.status').text(Math.round(decodedBuffer.duration) + 's');
+	// 		// $(this.playerSelector).find('.recordingLocation').text(this.recording.loc);
+	// 		// $(this.playerSelector).find('.recordist').text(this.recording.rec);
+	// 		// this.showPlaybackRate();
+	// 		// $(this.playerSelector).find('.nextRecording').button('reset');
+	// 		// TODO: don't enable nextRecording or nextSighting button if this is a saved session!
+	// 		// $(this.playerSelector).find('button').prop('disabled', false);
+
+	// 		// var licenseIcon = 'http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png';
+
+	// 		// if (this.recording.lic.indexOf('by-nc-nd') > 0) {
+	// 		// 	licenseIcon = 'http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png';
+	// 		// } else if (this.recording.lic.indexOf('by-nc-sa') > 0) {
+	// 		// 	licenseIcon = 'http://i.creativecommons.org/l/by-nc-sa/3.0/us/88x31.png';
+	// 		// } else {
+	// 		// 	console.log('LICENSE NOT RECOGNIZED ' + this.recording.lic);
+	// 		// }
+
+	// 		// $(this.playerSelector).find('.license').attr('src', licenseIcon);
+
+	// 	}.bind(this));
+	// }.bind(this);
+
+	// mp3Request.open("GET", inSoundDataURL, true);
+	// mp3Request.responseType = 'arraybuffer';
+	// mp3Request.send();
+	// $(this.playerSelector).find('.panel-body').collapse('show');
 }
 
 BirdSongPlayer.prototype.chooseRandomRecording = function() {
-	$(this.playerSelector).find('button').prop('disabled', true);
+	console.log('chooseRandomRecording', this.soundsForSighting.recordings.length);
+	// $(this.playerSelector).find('button').prop('disabled', true);
 	this.resetLastActionTime();
 
-	$('#setupStatus').text('Retrieving bird recordings based on');
-	$(this.playerSelector).find('.nextRecording').button('loading');
+	// $('#setupStatus').text('Retrieving bird recordings based on');
+	// $(this.playerSelector).find('.nextRecording').button('loading');
 
 	if (this.soundsForSighting == null || this.soundsForSighting.recordings.length == 0) {
-		$(this.playerSelector).find('.status').text('retrying');
-		console.log('FAILED loading recording for, retrying');
+		// $(this.playerSelector).find('.status').text('retrying');
+		console.log('FAILED loading recording, retrying', this.soundsForSighting);
 		this.chooseSightingAndPlayRandomSound(this.playerSelector);
 	} else {
 		this.recordingIndex = Math.floor(Math.random() * this.soundsForSighting.recordings.length);
@@ -261,7 +268,7 @@ BirdSongPlayer.prototype.chooseRandomRecording = function() {
 		// rewrite URL's from xeno-canto JSON, route through my own server due to missing CORS
 		var soundURL = this.recording.file.replace('http://www.xeno-canto.org','/soundfile');
 
-		$(this.playerSelector).find('.status').text('...');
+		// $(this.playerSelector).find('.status').text('...');
 		this.setBufferFromURL(soundURL);
 	}
 }
@@ -272,8 +279,8 @@ BirdSongPlayer.prototype.initializeFromSavedSession = function(inSavedData) {
 	this.sightingIndex = 0;
 	this.sighting = inSavedData.sighting;
 
-	$(this.playerSelector).find('.speciesName').text(this.sighting.comName);
-	$(this.playerSelector).find('.locationName').text(this.sighting.locName);
+	// $(this.playerSelector).find('.speciesName').text(this.sighting.comName);
+	// $(this.playerSelector).find('.locationName').text(this.sighting.locName);
 
 	this.playbackRate = parseFloat(inSavedData.playbackRate);
 	console.log('restored playbackRate ' + this.playbackRate);
@@ -283,10 +290,10 @@ BirdSongPlayer.prototype.initializeFromSavedSession = function(inSavedData) {
 	this.soundsForSighting.recordings = [inSavedData.recording];
 	this.chooseRandomRecording(this.playerSelector);
 
-	$(this.playerSelector).find('.nextSighting').remove();
-	$(this.playerSelector).find('.nextRecording').remove();
+	// $(this.playerSelector).find('.nextSighting').remove();
+	// $(this.playerSelector).find('.nextRecording').remove();
 
-	$(this.playerSelector).collapse('show');
+	// $(this.playerSelector).collapse('show');
 }
 
 BirdSongPlayer.prototype.saveData = function() {
@@ -297,10 +304,10 @@ BirdSongPlayer.prototype.saveData = function() {
 	};
 }
 
-BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function() {
-	$(this.playerSelector).find('.nextSighting').button('loading');
-	$(this.playerSelector).find('button').prop('disabled', true);
-	$(this.playerSelector).collapse('show');
+BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function(gBirds) {
+	// $(this.playerSelector).find('.nextSighting').button('loading');
+	// $(this.playerSelector).find('button').prop('disabled', true);
+	// $(this.playerSelector).collapse('show');
 
 	this.resetLastActionTime();
 	this.sightingIndex = gBirds.chooseRandomSighting();
@@ -308,12 +315,11 @@ BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function() {
 	this.sighting = gBirds.sightings[this.sightingIndex];
 
 	console.log('chooseSightingAndPlayRandomSound random sighting ' + this.sightingIndex);
-	console.log(this.sighting);
 
 	// TODO: duplicated from initialized from saved setting
-	$(this.playerSelector).find('.speciesName').text(this.sighting.comName);
-	$(this.playerSelector).find('.locationName').text(this.sighting.locName);
-	$(this.playerSelector).find('.status').text('...');
+	// $(this.playerSelector).find('.speciesName').text(this.sighting.comName);
+	// $(this.playerSelector).find('.locationName').text(this.sighting.locName);
+	// $(this.playerSelector).find('.status').text('...');
 
 	// get photos for this species
 	// gBirds.getPhotosForSightingIndex(this.sightingIndex, function(photosData) {
@@ -333,12 +339,12 @@ BirdSongPlayer.prototype.chooseSightingAndPlayRandomSound = function() {
 		if (soundsData == null) {
 			// TODO can't tell missing sounds from inability to contact server
 			console.log('NO SOUNDS');
-			$(this.playerSelector).find('.status').text('retrying');
+			// $(this.playerSelector).find('.status').text('retrying');
 			this.chooseSightingAndPlayRandomSound(this.playerSelector);
 		} else {
 			console.log('got recording list');
 			this.soundsForSighting = soundsData;
-			$(this.playerSelector).find('.nextSighting').button('reset');
+			// $(this.playerSelector).find('.nextSighting').button('reset');
 			this.chooseRandomRecording(this.playerSelector);
 		}
 	}.bind(this));
@@ -377,4 +383,8 @@ BirdSongPlayer.prototype.initializeControls = function() {
 
 if (typeof module != 'undefined') {
 	module.exports = BirdSongPlayer;
+}
+
+if (typeof exports != 'undefined') {
+	exports.BirdSongPlayer = BirdSongPlayer;
 }

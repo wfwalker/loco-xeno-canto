@@ -1,3 +1,5 @@
+var request = require('request');
+
 // PlaceTimeBirdSongs
 function PlaceTimeBirdSongs() {
 	this.position = null;
@@ -10,10 +12,12 @@ function PlaceTimeBirdSongs() {
 }
 
 PlaceTimeBirdSongs.prototype.chooseRandomSighting = function() {
+	console.log('choosing random sighting', this.sightings.length);
 	return Math.floor(Math.random() * this.sightings.length);
 }
 
 PlaceTimeBirdSongs.prototype.getSightings = function(callback) {
+	console.log('get sightings');
 	// initialize query parameters and sightings query URL
 	var queryParams = {
 		lat: this.position.coords.latitude,
@@ -23,32 +27,31 @@ PlaceTimeBirdSongs.prototype.getSightings = function(callback) {
 		back: this.days
 	};
 
-	var urlString = '/ebird?' + $.param(queryParams);
 
-	// Re-initialize list of sightings, so this method is more or less idempotent
-	this.sightings = [];
+	request({ url: 'http://birdwalker.com:9090/ebird', qs: queryParams, json: true }, function (error, response, body) {
+		if (!error && response.statusCode == 200) {
+			if (body.length == 0) {
+				callback(false, 'No sightings found');
+			} else {
+				// Re-initialize list of sightings, so this method is more or less idempotent
+				this.sightings = [];
 
-	console.log(urlString);
-	$('#sightings').text('');
+				for (var index in body) {
+					this.sightings.push(body[index]);
+				}
 
-	$.getJSON(urlString, function(data) {
-		if (data.length == 0) {
-			callback(false, 'No sightings found');
-		} else {
-			$('#sightings').text(data.length + ' sightings from ' + this.description);
+				console.log('found sightings', this.sightings.length);
 
-			for (var index in data) {
-				this.sightings.push(data[index]);
+				callback(true, this.sightings.length);			
 			}
-
-			callback(true, data.length);			
 		}
-	}.bind(this))
-	.fail(function(jqXHR, textStatus, errorThrown) {
-		console.log("failure to get sightings");
-		console.log(jqXHR.responseText);
-		callback(false, 'Cannot reach server');
-	});
+	}.bind(this));
+
+	// .fail(function(jqXHR, textStatus, errorThrown) {
+	// 	console.log("failure to get sightings");
+	// 	console.log(jqXHR.responseText);
+	// 	callback(false, 'Cannot reach server');
+	// });
 }
 
 PlaceTimeBirdSongs.prototype.getSoundsForSightingIndex = function(inID, callback) {
@@ -56,30 +59,46 @@ PlaceTimeBirdSongs.prototype.getSoundsForSightingIndex = function(inID, callback
 		callback(this.sounds[inID]);		
 	} else {
 		var latinName = this.sightings[inID].sciName;
-		var urlString = '/sounds/' + latinName.replace(' ', '+');
+		var urlString = 'http://birdwalker.com:9090/sounds/' + latinName.replace(' ', '+');
 		console.log('seeking sound data ' + urlString);
 
-		$.ajax({
-			url: urlString,
-			dataType: 'json',
-			success: function(data) {
-				if (data.recordings) {
-					this.sounds[inID] = data;
+		request({ url: urlString, json: true }, function (error, response, body) {
+			if (!error && response.statusCode == 200) {
+				if (body.recordings) {
+					this.sounds[inID] = body;
 					callback(this.sounds[inID]); 
 				} else {
 					// TODO: retry?
-					// TODO: can't tell inability to reach server from missing sounds
 					console.log('xeno canto fail');
+					// TODO: can't tell inability to reach server from missing sounds
 					callback(null);
 				}
-			}.bind(this),
-			error: function(xhr, status, error) {
-				// TODO: retry?
-				console.log('xeno canto fail');
-				// TODO: can't tell inability to reach server from missing sounds
-				callback(null);
+			} else {
+				console.log('getSoundsForSightingIndex', error, response);
 			}
-		});		
+		}.bind(this));
+
+		// $.ajax({
+		// 	url: urlString,
+		// 	dataType: 'json',
+		// 	success: function(data) {
+		// 		if (data.recordings) {
+		// 			this.sounds[inID] = data;
+		// 			callback(this.sounds[inID]); 
+		// 		} else {
+		// 			// TODO: retry?
+		// 			// TODO: can't tell inability to reach server from missing sounds
+		// 			console.log('xeno canto fail');
+		// 			callback(null);
+		// 		}
+		// 	}.bind(this),
+		// 	error: function(xhr, status, error) {
+		// 		// TODO: retry?
+		// 		console.log('xeno canto fail');
+		// 		// TODO: can't tell inability to reach server from missing sounds
+		// 		callback(null);
+		// 	}
+		// });		
 	}
 }
 
@@ -119,4 +138,8 @@ PlaceTimeBirdSongs.prototype.getPhotosForSightingIndex = function(inID, callback
 
 if (typeof module != 'undefined') {
 	module.exports = PlaceTimeBirdSongs;
+}
+
+if (typeof exports != 'undefined') {
+	exports.PlaceTimeBirdSongs = PlaceTimeBirdSongs;
 }
