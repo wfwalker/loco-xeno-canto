@@ -2,6 +2,12 @@ var PlaceTimeBirdSongs = require('./placeTimeBirdSongs');
 var BirdSongPlayer = require('./birdSongPlayer');
 var webAudioAPI = require('web-audio-api');
 
+
+// THIS IS THE NODE VERSION
+// advice from  Sebastien Piquemal sebpiq is:
+// maybe you could try piping the output with a big buffer size and block size to e.g. aplay 
+// https://github.com/sebpiq/node-web-audio-api#example--playing-back-sound-with-aplay
+
 // app.js
 
 // ‘Anything … may happen. A “mistake” is beside the point, for once anything happens it authentically is.’
