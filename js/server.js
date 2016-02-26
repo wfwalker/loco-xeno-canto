@@ -7,7 +7,6 @@ var https = require('https');
 var request = require('request');
 var progress = require('request-progress');
 var bodyParser = require('body-parser');
-var args = require('system').args;
 var fs = require('fs');
 
 // increase maximum simultaneous sockets
@@ -26,14 +25,18 @@ var logger = new (winston.Logger)({
     ]
 });
 
+process.on('uncaughtException', function(err) {
+  logger.error('Caught exception: ' + err);
+});
+
 // connect to Redis database
 
-var redis = require("redis");
-var gRedisClient = redis.createClient();
+// var redis = require("redis");
+// var gRedisClient = redis.createClient();
 
 // parse commandline arguments
 
-var gCommandLineArgs = args.slice(2);
+var gCommandLineArgs = process.argv.slice(2);
 
 // support for reading fake data from a JSON file
 
@@ -116,10 +119,10 @@ app.post('/share', function (req, resp, next) {
     logger.info('receiving shared session', req.session.id);
     resp.json([req.session.id]);
 
-    gRedisClient.set(req.session.id, JSON.stringify(req.body), function(reply) {
-        logger.info('saved session', req.session.id);
-        logger.debug(reply);
-    });
+    // gRedisClient.set(req.session.id, JSON.stringify(req.body), function(reply) {
+    //     logger.info('saved session', req.session.id);
+    //     logger.debug(reply);
+    // });
 
     logger.debug(req.body);
 });
@@ -178,33 +181,35 @@ function pipeRequest(inReq, inResp, inURLString) {
 
 app.get('/saved', function(req, resp, next) {
     var listOfSavedSessions = [];
+    resp.json(listOfSavedSessions);
 
-    gRedisClient.keys('*', function (err, keys) {
-        if (err) return logger.error(err);
+    // gRedisClient.keys('*', function (err, keys) {
+    //     if (err) return logger.error(err);
 
-        for(var i = 0, len = keys.length; i < len; i++) {
-            listOfSavedSessions.push(keys[i]);
-        }
+    //     for(var i = 0, len = keys.length; i < len; i++) {
+    //         listOfSavedSessions.push(keys[i]);
+    //     }
 
-        for(var i = 0, len = keys.length; i < len; i++) {
-            var myKey = listOfSavedSessions[i];
-            gRedisClient.get(myKey, makeSetDescriptionFunction(myKey));
-        }
+    //     for(var i = 0, len = keys.length; i < len; i++) {
+    //         var myKey = listOfSavedSessions[i];
+    //         gRedisClient.get(myKey, makeSetDescriptionFunction(myKey));
+    //     }
 
-        resp.json(listOfSavedSessions);
-    });
+    //     resp.json(listOfSavedSessions);
+    // });
 });
 
 // retrieve info about a saved session
 
 app.get('/saved/:saved_session_id', function(req, resp, next) {
     // respond with the saved data previously uploaded
+    resp.send({});
     
-    gRedisClient.get(req.saved_session_id, function(err, reply) {
-        logger.info('retrieved session', req.saved_session_id);
-        logger.debug(reply);
-        resp.send(reply);
-    });
+    // gRedisClient.get(req.saved_session_id, function(err, reply) {
+    //     logger.info('retrieved session', req.saved_session_id);
+    //     logger.debug(reply);
+    //     resp.send(reply);
+    // });
 });
 
 // retrieve list of recordings of this species

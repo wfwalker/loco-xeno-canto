@@ -11,10 +11,11 @@
     "body-parser": "^1.10.0",
     "express": "^4.10.6",
     "express-session": "^1.9.3",
-    "request": "^2.51.0",
     "redis": "^0.12.1",
-    "winston": "^0.8.3",
-    "request-progress": "^0.3.1"
+    "request": "^2.51.0",
+    "request-progress": "^0.3.1",
+    "system": "^1.0.4",
+    "winston": "^0.8.3"
   },
   "repository": "https://github.com/wfwalker/loco-xeno-canto.git",
   "author": "Bill Walker",
