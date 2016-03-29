@@ -160,7 +160,27 @@ $(document).ready(function(){
 		chooseRandomRecording(gQuizScope.sounds[gCurrentQuizSighting]);
 	});
 
-	getLocation();
+
+    if (window.location.hash) {
+        window.location.queryString = {};
+        window.location.hash.substr(1).split('&').forEach(function (pair) {
+            if (pair === '') return;
+            var parts = pair.split('=');
+            location.queryString[parts[0]] = parts[1] &&
+                decodeURIComponent(parts[1].replace(/\+/g, ' '));
+        });
+
+        if (window.location.queryString.latitude == 'NaN') throw 'Bogus latitude' ;
+        if (window.location.queryString.longitude == 'NaN') throw 'Bogus longitude' ;
+
+        console.log('parsed', window.location.queryString);
+		initializeQuizForPosition({ coords: { latitude: window.location.queryString.latitude, longitude: window.location.queryString.longitude }});
+    } else {
+        console.log('no location.hash');
+		getLocation();
+    }
+
+
 	// initializeQuizForPosition({ coords: { latitude: 26.122, longitude: -80.137314 }});
 });
 
