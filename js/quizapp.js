@@ -37,22 +37,22 @@ function haversine(lat1, lon1, lat2, lon2) {
 	return d;
 }
 
+function initializeQuizForPosition(inPosition){
+	gQuizScope.position = inPosition;
+	$('.progress-bar').css('width', '33%');
+
+	gQuizScope.getSightings(function() {
+		$('.progress-bar').css('width', '66%');
+		$('#quizHeading').text(gQuizScope.sightings.length + ' birds to identify');
+		chooseNextBird();
+	});
+}
+
 // TODO: handle errors
 function getLocation() {
 	if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(
-			function success(inPosition) {
-				gQuizScope.position = inPosition;
-				$('.progress-bar').css('width', '33%');
-
-				gQuizScope.getSightings(function() {
-					$('.progress-bar').css('width', '66%');
-					$('#quizHeading').text(gQuizScope.sightings.length + ' birds to identify');
-					chooseNextBird();
-				});
-
-				// getRecentNearbySightings(inPosition.coords.latitude, inPosition.coords.longitude);
-			},
+			initializeQuizForPosition,
 			function error() {
 				console.log('error');
 				var fakePosition = { coords: { latitude: 37, longitude: -122 }};
@@ -161,6 +161,7 @@ $(document).ready(function(){
 	});
 
 	getLocation();
+	// initializeQuizForPosition({ coords: { latitude: 26.122, longitude: -80.137314 }});
 });
 
 
