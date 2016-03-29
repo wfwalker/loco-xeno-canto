@@ -43,7 +43,7 @@ function initializeQuizForPosition(inPosition){
 
 	gQuizScope.getSightings(function() {
 		$('.progress-bar').css('width', '66%');
-		$('#quizHeading').text(gQuizScope.sightings.length + ' birds to identify');
+		$('#quizHeading').text(gQuizScope.sightings.length + ' birds to identify near ' + inPosition.coords.latitude + ', ' + inPosition.coords.longitude);
 		chooseNextBird();
 	});
 }
