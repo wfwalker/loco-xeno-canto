@@ -1,12 +1,8 @@
 // app.js
 
 // TODO: error handling for bogus sciName (throw exception?)
-// TODO: push state / fragments in URL, repeatable testing?
-// TODO: structured global / singleton
-// TODO: factor out use of JSON api's for reuse
 // TODO: add ember for quiz?
 // TODO: do real web audio API four calls at once
-// TODO: real object for sound library
 
 var gQuizScope = new PlaceTimeBirdSongs();
 var gCurrentQuizSighting = 0;
@@ -129,8 +125,13 @@ function chooseNextBird() {
 
 	// get sounds for this species if needed, and pick one at random
 	gQuizScope.getSoundsForSightingIndex(gCurrentQuizSighting, function(soundsData) {
-		$('#another').removeClass('disabled');
-		chooseRandomRecording(soundsData);
+		if (soundsData) {
+			$('#another').removeClass('disabled');
+			chooseRandomRecording(soundsData);
+		} else {
+			console.log('cannot find data for', gCurrentQuizSighting, 'retrying');
+			chooseNextBird();
+		}
 	});	
 
 	$('.progress-bar').css('width', '100%');	
@@ -179,9 +180,6 @@ $(document).ready(function(){
         console.log('no location.hash');
 		getLocation();
     }
-
-
-	// initializeQuizForPosition({ coords: { latitude: 26.122, longitude: -80.137314 }});
 });
 
 
