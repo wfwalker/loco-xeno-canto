@@ -46,7 +46,6 @@ var BirdSongPlayer = function (inAudioContext, inPlayerSelector) {
 	this.panner.coneOuterAngle = 0;
 	this.panner.coneOuterGain = 0;
 	this.panner.setOrientation(1,0,0);
-	this.panner.setVelocity(0, 0, 0);
 
 	this.randomizePanner();
 
