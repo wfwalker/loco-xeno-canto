@@ -221,12 +221,12 @@ BirdSongPlayer.prototype.setBufferFromURL = function(inSoundDataURL) {
 			// TODO: don't enable nextRecording or nextSighting button if this is a saved session!
 			$(this.playerSelector).find('button').prop('disabled', false);
 
-			var licenseIcon = 'http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png';
+			var licenseIcon = 'https://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png';
 
 			if (this.recording.lic.indexOf('by-nc-nd') > 0) {
-				licenseIcon = 'http://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png';
+				licenseIcon = 'https://i.creativecommons.org/l/by-nc-nd/3.0/us/88x31.png';
 			} else if (this.recording.lic.indexOf('by-nc-sa') > 0) {
-				licenseIcon = 'http://i.creativecommons.org/l/by-nc-sa/3.0/us/88x31.png';
+				licenseIcon = 'https://i.creativecommons.org/l/by-nc-sa/3.0/us/88x31.png';
 			} else {
 				console.log('LICENSE NOT RECOGNIZED ' + this.recording.lic);
 			}

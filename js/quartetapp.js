@@ -5,11 +5,6 @@
 // ‘Composition: To Describe the Process of Composition Used in Music of Changes and Imaginary Landscape No. 4’
 // Silence, 1961
 
-// TODO: add ember for quiz?
-
-// TODO: http://www.tulane.edu/~rscheidt/rcc_calendar.html ?
-// TODO: http://freemusicarchive.org/api ?
-
 var gBirds = new PlaceTimeBirdSongs();
 
 // GLOBAL initialize audio context and listener
