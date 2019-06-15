@@ -140,6 +140,9 @@ function pipeRequest(inReq, inResp, inURLString) {
         request({
             uri: inURLString,
             qs: inReq.query,
+            headers: {
+                'X-eBirdApiToken': process.env.EBIRD_API_KEY
+            },
             strictSSL: false
         }, function(error, response, body) {
             if (!error && response && response.statusCode == 200) {
@@ -257,7 +260,7 @@ app.use('/ebird', function(req, resp, next) {
     logger.debug('DEBUG', req.query);
 
     if (gRealData) {
-        var urlString = 'http://ebird.org/ws1.1/data/obs/geo/recent';
+        var urlString = 'http://ebird.org/ws2.0/data/obs/geo/recent?';
         pipeRequest(req, resp, urlString);  
     } else {
         resp.json([
