@@ -218,7 +218,10 @@ app.get('/saved/:saved_session_id', function(req, resp, next) {
 // retrieve list of recordings of this species
 
 app.get('/sounds/:latin_name', function(req, resp, next) {
-	var urlString = 'http://www.xeno-canto.org/api/3/recordings?query=' + req.latin_name.replace(' ', '+');
+    // SHOULD BE https://xeno-canto.org/api/3/recordings?query=sp:%22larus%20fuscus%22&key=demo
+	var urlString = 'http://www.xeno-canto.org/api/3/recordings?query=sp:%22' +
+            req.latin_name.replace(' ', '%20') +
+            '%22&key=' + process.env.XENO_CANTO_API_KEY;
 
     if (gRealData) {
         pipeRequest(req, resp, urlString);  
