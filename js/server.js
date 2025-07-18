@@ -218,7 +218,7 @@ app.get('/saved/:saved_session_id', function(req, resp, next) {
 // retrieve list of recordings of this species
 
 app.get('/sounds/:latin_name', function(req, resp, next) {
-	var urlString = 'http://www.xeno-canto.org/api/2/recordings?query=' + req.latin_name.replace(' ', '+');
+	var urlString = 'http://www.xeno-canto.org/api/3/recordings?query=' + req.latin_name.replace(' ', '+');
 
     if (gRealData) {
         pipeRequest(req, resp, urlString);  
