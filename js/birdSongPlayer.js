@@ -258,7 +258,7 @@ BirdSongPlayer.prototype.chooseRandomRecording = function() {
 		this.recording = this.soundsForSighting.recordings[this.recordingIndex];
 
 		// rewrite URL's from xeno-canto JSON, route through my own server due to missing CORS
-		var soundURL = this.recording.file.replace(/.*www.xeno-canto.org/,'/soundfile');
+		var soundURL = this.recording.file.replace(/.*xeno-canto.org/,'/soundfile');
 
 		$(this.playerSelector).find('.status').text('...');
 		this.setBufferFromURL(soundURL);
